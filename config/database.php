@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/**
+ * Retrieves the value of an environment variable from a `.env` file.
+ *
+ * @param string $key The name of the environment variable to retrieve.
+ * @param string|null $default The default value to return if the variable is not found or the file does not exist.
+ * @return string|null The value of the environment variable, or the default value if the variable is not found.
+ */
 function envValue(string $key, ?string $default = null): ?string
 {
     $envPath = __DIR__ . '/../.env';
