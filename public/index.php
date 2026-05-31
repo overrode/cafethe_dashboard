@@ -11,11 +11,14 @@ require_once __DIR__ . '/../app/Models/Client.php';
 require_once __DIR__ . '/../app/Controllers/ClientController.php';
 require_once __DIR__ . '/../app/Models/Sale.php';
 require_once __DIR__ . '/../app/Controllers/SaleController.php';
+require_once __DIR__ . '/../app/Models/Dashboard.php';
+require_once __DIR__ . '/../app/Controllers/DashboardController.php';
 
 use App\Core\Router;
 use App\Controllers\ProductController;
 use App\Controllers\ClientController;
 use App\Controllers\SaleController;
+use App\Controllers\DashboardController;
 
 $router = new Router();
 
@@ -39,5 +42,9 @@ $router->post('/clients/update', [ClientController::class, 'update']);
 $router->get('/sales', [SaleController::class, 'index']);
 $router->get('/sales/create', [SaleController::class, 'create']);
 $router->post('/sales/store', [SaleController::class, 'store']);
+
+// Dashboard
+$router->get('/', [DashboardController::class, 'index']);
+$router->get('/dashboard', [DashboardController::class, 'index']);
 
 $router->dispatch();
