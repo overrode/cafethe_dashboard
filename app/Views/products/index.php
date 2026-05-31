@@ -28,6 +28,7 @@
                 <th>TVA</th>
                 <th>Stock</th>
                 <th>Actif</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -42,6 +43,11 @@
                     <td><?= htmlspecialchars((string) $product['vat_rate']) ?>%</td>
                     <td><?= htmlspecialchars((string) $product['stock']) ?></td>
                     <td><?= $product['is_active'] ? 'Oui' : 'Non' ?></td>
+                    <td>
+                        <a href="/public/index.php?route=/products/edit&id=<?= htmlspecialchars((string) $product['id']) ?>">
+                            Modifier
+                        </a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

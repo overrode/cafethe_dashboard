@@ -91,4 +91,77 @@ class Product
             'is_active' => $data['is_active'] ?? 1,
         ]);
     }
+
+    /**
+     * Finds a product by its unique identifier.
+     *
+     * @param int $id The unique identifier of the product to find.
+     * @return array|null An associative array of the product data if found, or null if the product does not exist.
+     */
+    public function find(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM products WHERE id = :id LIMIT 1'
+        );
+
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        $product = $stmt->fetch();
+
+        return $product ?: null;
+    }
+
+    /**
+     * Updates a product's details by its unique identifier.
+     *
+     * @param int $id The unique identifier of the product to update.
+     * @param array $data An associative array containing the product's updated details, such as:
+     *                    - category_id: int The ID of the product's category.
+     *                    - sku: string The stock-keeping unit of the product.
+     *                    - name: string The name of the product.
+     *                    - description: string The description of the product.
+     *                    - sale_type: string The sale type of the product.
+     *                    - price: float The price of the product.
+     *                    - vat_rate: float The VAT rate applied to the product.
+     *                    - stock: int The stock quantity of the product.
+     *                    - image: string|null The URL or path to the product's image.
+     *                    - origin: string|null The origin of the product.
+     *                    - is_active: bool Whether the product is active.
+     * @return bool True if the update was successful, or false otherwise.
+     */
+    public function update(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE products
+             SET category_id = :category_id,
+                 sku = :sku,
+                 name = :name,
+                 description = :description,
+                 sale_type = :sale_type,
+                 price = :price,
+                 vat_rate = :vat_rate,
+                 stock = :stock,
+                 image = :image,
+                 origin = :origin,
+                 is_active = :is_active
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'category_id' => $data['category_id'],
+            'sku' => $data['sku'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'sale_type' => $data['sale_type'],
+            'price' => $data['price'],
+            'vat_rate' => $data['vat_rate'],
+            'stock' => $data['stock'],
+            'image' => $data['image'] ?: null,
+            'origin' => $data['origin'] ?: null,
+            'is_active' => $data['is_active'],
+        ]);
+    }
 }
