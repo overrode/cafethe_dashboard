@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+session_start();
+
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';
 require_once __DIR__ . '/../app/Core/Controller.php';
@@ -13,12 +15,15 @@ require_once __DIR__ . '/../app/Models/Sale.php';
 require_once __DIR__ . '/../app/Controllers/SaleController.php';
 require_once __DIR__ . '/../app/Models/Dashboard.php';
 require_once __DIR__ . '/../app/Controllers/DashboardController.php';
+require_once __DIR__ . '/../app/Models/User.php';
+require_once __DIR__ . '/../app/Controllers/AuthController.php';
 
 use App\Core\Router;
 use App\Controllers\ProductController;
 use App\Controllers\ClientController;
 use App\Controllers\SaleController;
 use App\Controllers\DashboardController;
+use App\Controllers\AuthController;
 
 $router = new Router();
 
@@ -46,5 +51,21 @@ $router->post('/sales/store', [SaleController::class, 'store']);
 // Dashboard
 $router->get('/', [DashboardController::class, 'index']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
+
+// Authentification
+$router->get('/login', [AuthController::class, 'login']);
+$router->post('/login', [AuthController::class, 'authenticate']);
+$router->get('/logout', [AuthController::class, 'logout']);
+
+$publicRoutes = [
+    '/login',
+];
+
+$currentRoute = $_GET['route'] ?? '/';
+
+if (!in_array($currentRoute, $publicRoutes, true) && !isset($_SESSION['user'])) {
+    header('Location: /public/index.php?route=/login');
+    exit;
+}
 
 $router->dispatch();

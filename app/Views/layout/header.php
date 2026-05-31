@@ -14,6 +14,7 @@
             <a href="/public/index.php?route=/products">Produits</a>
             <a href="/public/index.php?route=/clients">Clients</a>
             <a href="/public/index.php?route=/sales">Ventes</a>
+            <a href="/public/index.php?route=/logout">Déconnexion</a>
         </nav>
     </header>
 
