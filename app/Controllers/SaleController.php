@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Product;
 use App\Models\Sale;
 use JetBrains\PhpStorm\NoReturn;
+use App\Core\Auth;
 
 /**
  * Controller responsible for handling operations related to sales.
@@ -51,10 +52,15 @@ class SaleController extends Controller
     #[NoReturn]
     public function store(): void
     {
+        if (!Auth::id()) {
+            header('Location: /public/index.php?route=/login');
+            exit;
+        }
+
         $saleModel = new Sale();
 
         $saleModel->create([
-            'user_id' => 1,
+            'user_id' => Auth::id(),
             'client_id' => $_POST['client_id'] ?? null,
             'product_id' => $_POST['product_id'],
             'quantity' => $_POST['quantity'],

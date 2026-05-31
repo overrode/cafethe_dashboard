@@ -16,6 +16,12 @@
             <a href="/public/index.php?route=/sales">Ventes</a>
             <a href="/public/index.php?route=/logout">Déconnexion</a>
         </nav>
+        <?php if (!empty($_SESSION['user'])): ?>
+            <span>
+                Connecté : <?= htmlspecialchars($_SESSION['user']['name']) ?>
+                (<?= htmlspecialchars($_SESSION['user']['role']) ?>)
+            </span>
+        <?php endif; ?>
     </header>
 
     <main>

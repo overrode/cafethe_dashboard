@@ -17,6 +17,7 @@ require_once __DIR__ . '/../app/Models/Dashboard.php';
 require_once __DIR__ . '/../app/Controllers/DashboardController.php';
 require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
+require_once __DIR__ . '/../app/Core/Auth.php';
 
 use App\Core\Router;
 use App\Controllers\ProductController;
