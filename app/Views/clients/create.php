@@ -1,51 +1,46 @@
+<?php
+$title = 'Ajouter un client - CafThé';
+require __DIR__ . '/../layout/header.php';
+?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Clients - CafThé</title>
-</head>
-<body>
-    <h1>Clients</h1>
+<h2>Ajouter un client</h2>
 
-    <nav>
-        <a href="/public/index.php?route=/products">Produits</a> |
-        <a href="/public/index.php?route=/clients">Clients</a>
-    </nav>
+<p>
+    <a href="/public/index.php?route=/clients">Retour aux clients</a>
+</p>
 
+<form action="/public/index.php?route=/clients/store" method="POST">
     <p>
-        <a href="/public/index.php?route=/clients/create">Ajouter un client</a>
+        <label>Nom</label><br>
+        <input type="text" name="name" required>
     </p>
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Favoris</th>
-                <th>Panier abandonné</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($clients as $client): ?>
-                <tr>
-                    <td><?= htmlspecialchars((string) $client['id']) ?></td>
-                    <td><?= htmlspecialchars($client['name']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['email']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['phone']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['favorites']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['abandoned_cart']) ?></td>
-                    <td>
-                        <a href="/public/index.php?route=/clients/edit&id=<?= htmlspecialchars((string) $client['id']) ?>">
-                            Modifier
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</body>
-</html>
+    <p>
+        <label>Email</label><br>
+        <input type="email" name="email">
+    </p>
+
+    <p>
+        <label>Téléphone</label><br>
+        <input type="text" name="phone">
+    </p>
+
+    <p>
+        <label>Adresse</label><br>
+        <textarea name="address"></textarea>
+    </p>
+
+    <p>
+        <label>Favoris</label><br>
+        <textarea name="favorites"></textarea>
+    </p>
+
+    <p>
+        <label>Panier abandonné</label><br>
+        <textarea name="abandoned_cart"></textarea>
+    </p>
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+<?php require __DIR__ . '/../layout/footer.php'; ?>

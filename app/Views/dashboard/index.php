@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - CafThé</title>
-</head>
-<body>
-    <h1>Dashboard vendeur</h1>
+<?php
+$title = 'Dashboard - CafThé';
+require __DIR__ . '/../layout/header.php';
+?>
 
-    <nav>
-        <a href="/public/index.php?route=/dashboard">Dashboard</a> |
-        <a href="/public/index.php?route=/products">Produits</a> |
-        <a href="/public/index.php?route=/clients">Clients</a> |
-        <a href="/public/index.php?route=/sales">Ventes</a>
-    </nav>
-
+    <h1>CafThé - Dashboard vendeur</h1>
     <h2>Indicateurs clés</h2>
 
     <table border="1" cellpadding="8">
@@ -69,5 +59,5 @@
             </tbody>
         </table>
     <?php endif; ?>
-</body>
-</html>
+
+<?php require __DIR__ . '/../layout/footer.php'; ?>

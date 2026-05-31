@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Produits - CafThé</title>
-</head>
-<body>
+<?php
+$title = 'Dashboard - CafThé';
+require __DIR__ . '/../layout/header.php';
+?>
+
     <h1>CafThé - Dashboard vendeur</h1>
-
-    <nav>
-        <a href="/public/index.php">Accueil</a> |
-        <a href="/public/index.php?route=/products">Produits</a>
-    </nav>
-
     <h2>Liste des produits</h2>
 <p>
     <a href="/public/index.php?route=/products/create">Ajouter un produit</a>
@@ -59,5 +51,5 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-</body>
-</html>
+
+<?php require __DIR__ . '/../layout/footer.php'; ?>

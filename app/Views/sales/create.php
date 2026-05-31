@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Nouvelle vente - CafThé</title>
-</head>
-<body>
-    <h1>Nouvelle vente</h1>
+<?php
+$title = 'Dashboard - CafThé';
+require __DIR__ . '/../layout/header.php';
+?>
+
+    <h1>CafThé - Dashboard vendeur</h1>
+    <h2>Nouvelle vente</h2>
 
     <p>
         <a href="/public/index.php?route=/sales">Retour aux ventes</a>
@@ -55,5 +54,5 @@
 
         <button type="submit">Enregistrer la vente</button>
     </form>
-</body>
-</html>
+
+<?php require __DIR__ . '/../layout/footer.php'; ?>

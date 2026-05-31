@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Modifier un produit - CafThé</title>
-</head>
-<body>
-    <h1>Modifier un produit</h1>
+<?php
+$title = 'Dashboard - CafThé';
+require __DIR__ . '/../layout/header.php';
+?>
+
+    <h1>CafThé - Dashboard vendeur</h1>
+    <h2>Modifier un produit</h2>
 
     <p>
         <a href="/public/index.php?route=/products">Retour aux produits</a>
@@ -86,5 +85,5 @@
 
         <button type="submit">Mettre à jour</button>
     </form>
-</body>
-</html>
+
+<?php require __DIR__ . '/../layout/footer.php'; ?>
