@@ -1,4 +1,4 @@
-    <hr>
+    </main>
 
     <footer>
         <p>CafThé - Dashboard vendeur</p>
