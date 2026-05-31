@@ -95,6 +95,7 @@ class ProductController extends Controller
     /**
      * @return void
      */
+    #[NoReturn]
     public function update(): void
     {
         $id = (int) ($_POST['id'] ?? 0);
@@ -118,4 +119,24 @@ class ProductController extends Controller
         header('Location: /public/index.php?route=/products');
         exit;
     }
+
+    /**
+     * Marks a product as inactive based on the provided ID and redirects to the products page.
+     *
+     * @return void
+     */
+    #[NoReturn]
+    public function deactivate(): void
+    {
+        $id = (int) ($_GET['id'] ?? 0);
+
+        if ($id > 0) {
+            $productModel = new Product();
+            $productModel->deactivate($id);
+        }
+
+        header('Location: /public/index.php?route=/products');
+        exit;
+    }
+
 }

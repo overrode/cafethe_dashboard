@@ -47,6 +47,13 @@
                         <a href="/public/index.php?route=/products/edit&id=<?= htmlspecialchars((string) $product['id']) ?>">
                             Modifier
                         </a>
+                        <?php if ($product['is_active']): ?>
+                            |
+                            <a href="/public/index.php?route=/products/deactivate&id=<?= htmlspecialchars((string) $product['id']) ?>"
+                               onclick="return confirm('Désactiver ce produit ?');">
+                                Désactiver
+                            </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

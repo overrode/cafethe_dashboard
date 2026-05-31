@@ -22,4 +22,6 @@ $router->post('/products/store', [ProductController::class, 'store']);
 $router->get('/products/edit', [ProductController::class, 'edit']);
 $router->post('/products/update', [ProductController::class, 'update']);
 
+$router->get('/products/deactivate', [ProductController::class, 'deactivate']);
+
 $router->dispatch();

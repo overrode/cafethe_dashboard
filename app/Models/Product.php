@@ -164,4 +164,19 @@ class Product
             'is_active' => $data['is_active'],
         ]);
     }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deactivate(int $id): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE products SET is_active = 0 WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+        ]);
+    }
 }
