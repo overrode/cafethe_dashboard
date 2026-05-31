@@ -15,6 +15,8 @@ class Router
     private array $routes = [];
 
     /**
+     * Registers a GET route with the specified path and handler.
+     *
      * @param string $path
      * @param array $handler
      * @return void
@@ -22,6 +24,19 @@ class Router
     public function get(string $path, array $handler): void
     {
         $this->routes['GET'][$path] = $handler;
+    }
+
+    /**
+     * Registers a POST route with the specified path and handler.
+     *
+     * @param string $path The URI path of the POST route to be registered.
+     * @param array $handler The handler associated with the route,
+     *                       typically a controller and method combination.
+     * @return void
+     */
+    public function post(string $path, array $handler): void
+    {
+        $this->routes['POST'][$path] = $handler;
     }
 
     /**
@@ -33,12 +48,7 @@ class Router
      */
     public function dispatch(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $basePath = '/public';
-
-        $path = str_replace($basePath, '', $requestUri);
-        $path = $path === '' ? '/' : $path;
-
+        $path = $_GET['route'] ?? '/';
         $method = $_SERVER['REQUEST_METHOD'];
 
         if (!isset($this->routes[$method][$path])) {
@@ -47,16 +57,6 @@ class Router
             return;
         }
 
-        /**
-         * The fully qualified name of the controller class.
-         *
-         * This variable typically holds the name of a controller class
-         * that will be instantiated and used for handling a specific
-         * action or request in the application.
-         *
-         * It is expected to be a string representing a valid class name
-         * that adheres to the project's naming conventions and structure.
-         */
         [$controllerClass, $methodName] = $this->routes[$method][$path];
 
         $controller = new $controllerClass();

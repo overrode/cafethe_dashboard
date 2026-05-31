@@ -39,4 +39,56 @@ class Product
 
         return $stmt->fetchAll();
     }
+
+    /**
+     * @return array
+     */
+    public function getCategories(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM categories ORDER BY name ASC');
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Inserts a new product into the database with the provided data.
+     *
+     * @param array $data An associative array containing the product details, including:
+     *                    - category_id (int): The category ID of the product.
+     *                    - sku (string): The SKU (Stock Keeping Unit) of the product.
+     *                    - name (string): The name of the product.
+     *                    - description (string): The product description.
+     *                    - sale_type (string): The type of sale for the product.
+     *                    - price (float): The price of the product.
+     *                    - vat_rate (float): The VAT rate applied to the product.
+     *                    - stock (int): The stock quantity of the product.
+     *                    - image (string|null): The optional image URL or path for the product.
+     *                    - origin (string|null): The optional origin of the product.
+     *                    - is_active (int|null): The active status of the product (1 or 0).
+     *
+     * @return bool True on successful insertion, false otherwise.
+     */
+    public function create(array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO products 
+            (category_id, sku, name, description, sale_type, price, vat_rate, stock, image, origin, is_active)
+            VALUES 
+            (:category_id, :sku, :name, :description, :sale_type, :price, :vat_rate, :stock, :image, :origin, :is_active)'
+        );
+
+        return $stmt->execute([
+            'category_id' => $data['category_id'],
+            'sku' => $data['sku'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'sale_type' => $data['sale_type'],
+            'price' => $data['price'],
+            'vat_rate' => $data['vat_rate'],
+            'stock' => $data['stock'],
+            'image' => $data['image'] ?? null,
+            'origin' => $data['origin'] ?? null,
+            'is_active' => $data['is_active'] ?? 1,
+        ]);
+    }
 }

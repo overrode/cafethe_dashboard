@@ -8,12 +8,14 @@
     <h1>CafThé - Dashboard vendeur</h1>
 
     <nav>
-        <a href="/public/">Accueil</a> |
-        <a href="/public/products">Produits</a>
+        <a href="/public/index.php">Accueil</a> |
+        <a href="/public/index.php?route=/products">Produits</a>
     </nav>
 
     <h2>Liste des produits</h2>
-
+<p>
+    <a href="/public/index.php?route=/products/create">Ajouter un produit</a>
+</p>
     <table border="1" cellpadding="8">
         <thead>
             <tr>

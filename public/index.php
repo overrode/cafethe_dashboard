@@ -15,5 +15,7 @@ $router = new Router();
 
 $router->get('/', [ProductController::class, 'index']);
 $router->get('/products', [ProductController::class, 'index']);
+$router->get('/products/create', [ProductController::class, 'create']);
+$router->post('/products/store', [ProductController::class, 'store']);
 
 $router->dispatch();
