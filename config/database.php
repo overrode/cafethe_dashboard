@@ -35,9 +35,9 @@ function envValue(string $key, ?string $default = null): ?string
 }
 
 return [
-    'host' => envValue('DB_HOST', 'db'),
-    'database' => envValue('DB_NAME', 'cafethe'),
-    'username' => envValue('DB_USER', 'cafethe_user'),
+    'host' => envValue('DB_HOST', ''),
+    'database' => envValue('DB_NAME', ''),
+    'username' => envValue('DB_USER', ''),
     'password' => envValue('DB_PASSWORD', ''),
-    'charset' => envValue('DB_CHARSET', 'utf8mb4'),
+    'charset' => envValue('DB_CHARSET', ''),
 ];

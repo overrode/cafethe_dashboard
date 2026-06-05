@@ -50,8 +50,6 @@ class ProductController extends Controller
     {
         $productModel = new Product();
 
-
-
         $productModel->create([
             'category_id' => $_POST['category_id'],
             'sku' => trim($_POST['sku']),
