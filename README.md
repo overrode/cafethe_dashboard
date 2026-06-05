@@ -82,3 +82,11 @@ config/
 database/
 docs/
 public/
+
+## Compte de test
+
+Pour tester l’accès au dashboard en local, vous pouvez utiliser le compte suivant :
+
+- Email : admin@cafethe.local
+- Mot de passe : password
+

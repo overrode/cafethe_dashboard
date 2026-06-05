@@ -110,8 +110,8 @@ CREATE TABLE sale_items (
 );
 
 INSERT INTO users (name, email, password, role, is_active) VALUES
-('Admin CafThé', 'admin@cafethe.local', '$2y$10$temporary.hash.to.replace.later', 'admin', 1),
-('Vendeur CafThé', 'vendeur@cafethe.local', '$2y$10$temporary.hash.to.replace.later', 'vendeur', 1);
+('Admin CafThé', 'admin@cafethe.local', '$2y$10$FqSxpp8Aqpld/J.AZVL1e.uLkEyLmBOdw114DqLbTbhXaxLM2fWSy', 'admin', 1),
+('Vendeur CafThé', 'vendeur@cafethe.local', '$2y$10$FqSxpp8Aqpld/J.AZVL1e.uLkEyLmBOdw114DqLbTbhXaxLM2fWSy', 'vendeur', 1);
 
 INSERT INTO categories (name, description) VALUES
 ('Thé', 'Thés en vrac et thés premium.'),
