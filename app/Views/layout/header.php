@@ -14,14 +14,17 @@
             <a href="/public/index.php?route=/products">Produits</a>
             <a href="/public/index.php?route=/clients">Clients</a>
             <a href="/public/index.php?route=/sales">Ventes</a>
+            <?php if (!empty($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+                <a href="/public/index.php?route=/users">Utilisateurs</a>
+            <?php endif; ?>
             <a href="/public/index.php?route=/logout">Déconnexion</a>
+            <?php if (!empty($_SESSION['user'])): ?>
+                <span>
+                    Connecté : <?= htmlspecialchars($_SESSION['user']['name']) ?>
+                    (<?= htmlspecialchars($_SESSION['user']['role']) ?>)
+                </span>
+            <?php endif; ?>
         </nav>
-        <?php if (!empty($_SESSION['user'])): ?>
-            <span>
-                Connecté : <?= htmlspecialchars($_SESSION['user']['name']) ?>
-                (<?= htmlspecialchars($_SESSION['user']['role']) ?>)
-            </span>
-        <?php endif; ?>
     </header>
 
     <main>
