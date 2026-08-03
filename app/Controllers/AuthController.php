@@ -15,7 +15,7 @@ class AuthController extends Controller
      */
     public function login(): void
     {
-        $this->view('auth/login');
+        $this->view('backend/auth/login');
     }
 
     /**
@@ -32,7 +32,7 @@ class AuthController extends Controller
         if (!$user || !password_verify($password, $user['password'])) {
             $error = 'Email ou mot de passe incorrect.';
 
-            $this->view('auth/login', [
+            $this->view('backend/auth/login', [
                 'error' => $error,
             ]);
 

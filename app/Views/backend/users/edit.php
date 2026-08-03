@@ -1,6 +1,6 @@
 <?php
 $title = 'Modifier un utilisateur - CafThé';
-require __DIR__ . '/../layout/header.php';
+require BACKEND_HEADER_PATH;
 ?>
 
 <h2>Modifier un utilisateur</h2>
@@ -46,4 +46,4 @@ require __DIR__ . '/../layout/header.php';
     <button type="submit">Mettre à jour</button>
 </form>
 
-<?php require __DIR__ . '/../layout/footer.php'; ?>
+<?php require BACKEND_FOOTER_PATH; ?>

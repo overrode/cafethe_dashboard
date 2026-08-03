@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 session_start();
-
+require_once __DIR__ . '/../config/defines.php';
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';
 require_once __DIR__ . '/../app/Core/Controller.php';
@@ -19,6 +19,7 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Core/Auth.php';
 require_once __DIR__ . '/../app/Controllers/UserController.php';
+require_once __DIR__ . '/../app/Controllers/HomeController.php';
 
 use App\Core\Router;
 use App\Controllers\ProductController;
@@ -27,6 +28,9 @@ use App\Controllers\SaleController;
 use App\Controllers\DashboardController;
 use App\Controllers\AuthController;
 use App\Controllers\UserController;
+use App\Controllers\HomeController;
+
+
 
 
 $router = new Router();
@@ -68,8 +72,13 @@ $router->get('/users/edit', [UserController::class, 'edit']);
 $router->post('/users/update', [UserController::class, 'update']);
 $router->get('/users/deactivate', [UserController::class, 'deactivate']);
 
+//Home Page
+$router->get('/', [HomeController::class, 'index']);
+
 $publicRoutes = [
     '/login',
+    '/logout',
+    '/'
 ];
 
 $currentRoute = $_GET['route'] ?? '/';

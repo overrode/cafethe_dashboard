@@ -24,7 +24,7 @@ class ProductController extends Controller
         $productModel = new Product();
         $products = $productModel->all();
 
-        $this->view('products/index', [
+        $this->view('backend/products/index', [
             'products' => $products,
         ]);
     }
@@ -37,7 +37,7 @@ class ProductController extends Controller
         $productModel = new Product();
         $categories = $productModel->getCategories();
 
-        $this->view('products/create', [
+        $this->view('backend/products/create', [
             'categories' => $categories,
         ]);
     }
@@ -84,7 +84,7 @@ class ProductController extends Controller
             return;
         }
 
-        $this->view('products/edit', [
+        $this->view('backend/products/edit', [
             'product' => $product,
             'categories' => $categories,
         ]);

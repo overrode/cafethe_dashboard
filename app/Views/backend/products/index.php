@@ -1,6 +1,6 @@
 <?php
 $title = 'Dashboard - CafThé';
-require __DIR__ . '/../layout/header.php';
+require BACKEND_HEADER_PATH;
 ?>
 
     <h1>CafThé - Dashboard vendeur</h1>
@@ -52,4 +52,4 @@ require __DIR__ . '/../layout/header.php';
         </tbody>
     </table>
 
-<?php require __DIR__ . '/../layout/footer.php'; ?>
+<?php require BACKEND_FOOTER_PATH; ?>

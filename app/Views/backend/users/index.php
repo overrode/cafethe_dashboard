@@ -1,6 +1,6 @@
 <?php
 $title = 'Utilisateurs - CafThé';
-require __DIR__ . '/../layout/header.php';
+require BACKEND_HEADER_PATH;
 ?>
 
 <h2>Gestion des utilisateurs</h2>
@@ -46,4 +46,4 @@ require __DIR__ . '/../layout/header.php';
     </tbody>
 </table>
 
-<?php require __DIR__ . '/../layout/footer.php'; ?>
+<?php require BACKEND_FOOTER_PATH; ?>

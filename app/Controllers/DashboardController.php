@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $stats = $dashboardModel->getStats();
         $lowStockProducts = $dashboardModel->getLowStockProducts(5);
 
-        $this->view('dashboard/index', [
+        $this->view('backend/dashboard/index', [
             'stats' => $stats,
             'lowStockProducts' => $lowStockProducts,
         ]);

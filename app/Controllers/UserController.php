@@ -36,7 +36,7 @@ class UserController extends Controller
         $userModel = new User();
         $users = $userModel->all();
 
-        $this->view('users/index', [
+        $this->view('backend/users/index', [
             'users' => $users,
         ]);
     }
@@ -48,7 +48,7 @@ class UserController extends Controller
     {
         $this->requireAdmin();
 
-        $this->view('users/create');
+        $this->view('backend/users/create');
     }
 
     /**
@@ -90,7 +90,7 @@ class UserController extends Controller
             return;
         }
 
-        $this->view('users/edit', [
+        $this->view('backend/users/edit', [
             'user' => $user,
         ]);
     }

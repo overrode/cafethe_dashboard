@@ -18,6 +18,8 @@ class Product
      */
     private PDO $db;
 
+    const BEST_SALE_LIMIT = 6;
+
     public function __construct()
     {
         $this->db = Database::getConnection();
@@ -178,5 +180,28 @@ class Product
         return $stmt->execute([
             'id' => $id,
         ]);
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function getBestSellers(int $limit = self::BEST_SALE_LIMIT): array
+    {
+        $sql = 'SELECT products.*,
+                SUM(sale_items.quantity) AS total_sold
+                FROM products
+                INNER JOIN sale_items
+                    ON sale_items.product_id = products.id
+                WHERE products.is_active = 1
+                GROUP BY products.id
+                ORDER BY total_sold DESC
+                LIMIT :limit';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

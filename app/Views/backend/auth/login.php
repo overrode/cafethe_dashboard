@@ -1,6 +1,6 @@
 <?php
 $title = 'Connexion - CafThé';
-require __DIR__ . '/../layout/header.php';
+require BACKEND_HEADER_PATH;
 ?>
 
 <h2>Connexion</h2>
@@ -22,5 +22,10 @@ require __DIR__ . '/../layout/header.php';
 
     <button type="submit">Se connecter</button>
 </form>
+<div class="home-link">
+    <a href="/public/index.php?route=/" class="home-link__button">
+        Go to Home Page
+    </a>
+</div>
 
-<?php require __DIR__ . '/../layout/footer.php'; ?>
+<?php require BACKEND_FOOTER_PATH; ?>

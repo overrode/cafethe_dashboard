@@ -24,7 +24,7 @@ class SaleController extends Controller
         $saleModel = new Sale();
         $sales = $saleModel->all();
 
-        $this->view('sales/index', [
+        $this->view('backend/sales/index', [
             'sales' => $sales,
         ]);
     }
@@ -40,7 +40,7 @@ class SaleController extends Controller
         $clients = $clientModel->all();
         $products = $productModel->all();
 
-        $this->view('sales/create', [
+        $this->view('backend/sales/create', [
             'clients' => $clients,
             'products' => $products,
         ]);

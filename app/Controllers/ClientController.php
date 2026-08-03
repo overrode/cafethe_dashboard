@@ -18,7 +18,7 @@ class ClientController extends Controller
         $clientModel = new Client();
         $clients = $clientModel->all();
 
-        $this->view('clients/index', [
+        $this->view('backend/clients/index', [
             'clients' => $clients,
         ]);
     }
@@ -28,7 +28,7 @@ class ClientController extends Controller
      */
     public function create(): void
     {
-        $this->view('clients/create');
+        $this->view('backend/clients/create');
     }
 
     /**
@@ -67,7 +67,7 @@ class ClientController extends Controller
             return;
         }
 
-        $this->view('clients/edit', [
+        $this->view('backend/clients/edit', [
             'client' => $client,
         ]);
     }
