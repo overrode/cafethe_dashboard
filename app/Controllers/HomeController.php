@@ -15,11 +15,13 @@ class HomeController extends Controller
     public function index(): void
     {
         $productModel = new Product();
-        $bestSellers = $productModel->getBestSellers();
+        $popularProducts = $productModel->getPopularProducts();
+        $popularCategories = $productModel->getCategoriesFromProducts($popularProducts);
 
         $this->view('frontend/home/index', [
             'title' => 'CafThé',
-            'bestSellers' => $bestSellers
+            'bestSellers' => $popularProducts,
+            'popularCategories' => $popularCategories,
         ]);
     }
 }

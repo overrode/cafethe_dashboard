@@ -186,16 +186,22 @@ class Product
      * @param int $limit
      * @return array
      */
-    public function getBestSellers(int $limit = self::BEST_SALE_LIMIT): array
+    public function getPopularProducts(int $limit = self::BEST_SALE_LIMIT): array
     {
-        $sql = 'SELECT products.*,
-                SUM(sale_items.quantity) AS total_sold
-                FROM products
-                INNER JOIN sale_items
-                    ON sale_items.product_id = products.id
-                WHERE products.is_active = 1
-                GROUP BY products.id
-                ORDER BY total_sold DESC
+        $sql = 'SELECT
+                    P.*,
+                    C.name AS category_name,
+                    SUM(SI.quantity) AS TS
+                FROM products AS P
+                INNER JOIN sale_items AS SI
+                    ON SI.product_id = P.id
+                INNER JOIN categories AS C
+                    ON C.id = P.category_id
+                WHERE P.is_active = 1
+                GROUP BY
+                    P.id,
+                    C.name
+                ORDER BY TS DESC
                 LIMIT :limit';
 
         $stmt = $this->db->prepare($sql);
@@ -203,5 +209,20 @@ class Product
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * @param array $products
+     * @return array.
+     */
+    public function getCategoriesFromProducts(array $products): array
+    {
+        $categories = [];
+        foreach ($products as $product) {
+            $categoryId = (int)$product['category_id'];
+            $categories[$categoryId] = $product['category_name'];
+        }
+
+        return $categories;
     }
 }

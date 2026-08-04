@@ -1,52 +1,88 @@
 <?php require FRONTEND_HEADER_PATH; ?>
 
-<section class="products-section" id="products">
-    <div class="section-heading">
-        <p class="section-heading__eyebrow">
-            Customer favourites
-        </p>
+    <section class="products-section" id="products">
+        <div class="section-heading">
+            <p class="section-heading__eyebrow">
+                Les préférés de nos clients
+            </p>
+            <h2>Nos meilleures ventes</h2>
+            <p>
+                Découvrez les produits les plus appréciés par nos clients.
+            </p>
+        </div>
 
-        <h2>Our best sellers</h2>
+        <?php if (!empty($bestSellers)): ?>
 
-        <p>
-            Discover the products most appreciated by our customers.
-        </p>
-    </div>
-
-    <div class="products-grid">
-        <?php foreach ($bestSellers as $product): ?>
-            <article class="product-card">
-                <div class="product-card__content">
-                    <p class="product-card__category">
-                        <?= htmlspecialchars($product['category_name'] ?? 'CafThé') ?>
-                    </p>
-
-                    <h3>
-                        <?= htmlspecialchars($product['name']) ?>
-                    </h3>
-
-                    <p class="product-card__description">
+            <div class="product-filters">
+                <?php foreach ($popularCategories as $categoryId => $categoryName): ?>
+                    <button
+                            type="button"
+                            class="product-filter"
+                            data-category="<?= $categoryId ?>"
+                    >
                         <?= htmlspecialchars(
-                            $product['description'] ?? 'Discover this selected product.'
+                                $categoryName,
+                                ENT_QUOTES,
+                                'UTF-8'
                         ) ?>
-                    </p>
+                    </button>
+                <?php endforeach; ?>
+            </div>
 
-                    <div class="product-card__footer">
-                        <strong class="product-card__price">
-                            <?= number_format((float) $product['price'], 2, ',', ' ') ?> €
-                        </strong>
+            <div class="products-grid">
+                <?php foreach ($bestSellers as $product): ?>
+                    <article class="product-card"
+                             data-category="<?= (int)$product['category_id'] ?>">
 
-                        <a
-                            href="/public/index.php?route=/product&id=<?= (int) $product['id'] ?>"
-                            class="button button--primary"
-                        >
-                            View product
-                        </a>
-                    </div>
-                </div>
-            </article>
-        <?php endforeach; ?>
-    </div>
-</section>
+                        <?php if (!empty($product['image'])): ?>
+                            <?php
+                            $images = explode(';', $product['image'] ?? '');
+                            $mainImage = $images[0] ?? 'placeholder.jpg';
+                            ?>
+                            <div class="product-card__image">
+                                <img
+                                        src="<?= PRODUCT_IMAGES_URL . '/' . htmlspecialchars($mainImage ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        alt="<?= PRODUCT_IMAGES_URL . '/' . htmlspecialchars($product['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                >
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="product-card__content">
+                            <p class="product-card__category">
+                                <?= htmlspecialchars($product['category_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                            </p>
+
+                            <h3>
+                                <?= htmlspecialchars($product['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                            </h3>
+
+                            <p class="product-card__description">
+                                <?= htmlspecialchars($product['description'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                            </p>
+
+                            <?php if (!empty($product['origin'])): ?>
+                                <p class="product-card__origin">
+                                    Origine :
+                                    <?= htmlspecialchars($product['origin'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <div class="product-card__footer">
+                                <strong class="product-card__price">
+                                    <?= number_format((float)$product['price'], 2, ',', ' ') ?> €
+                                </strong>
+
+                                <a href="#" class="button button--primary">
+                                    Voir le produit
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>Aucun produit disponible pour le moment.</p>
+        <?php endif; ?>
+    </section>
 
 <?php require FRONTEND_FOOTER_PATH; ?>

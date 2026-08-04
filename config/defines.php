@@ -20,3 +20,12 @@ define(
     'FRONTEND_FOOTER_PATH',
     VIEWS_PATH . '/layout/frontend/footer.php'
 );
+define('PUBLIC_PATH', ROOT_PATH . '/public');
+define(
+    'PRODUCT_IMAGES_PATH',
+    PUBLIC_PATH . '/assets/images/products'
+);
+define(
+    'PRODUCT_IMAGES_URL',
+    '/public/assets/images/products'
+);
