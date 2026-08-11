@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@source "../../../app/Views";
+@source "../js";
+
+[x-cloak] {
+    display: none !important;
+}

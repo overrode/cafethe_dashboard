@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "dev:css": "npx @tailwindcss/cli -i ./public/assets/css/tailwind-input.css -o ./public/assets/css/tailwind.css --watch",
+    "build:css": "npx @tailwindcss/cli -i ./public/assets/css/tailwind-input.css -o ./public/assets/css/tailwind.css --minify",
+    "dev:js": "esbuild public/assets/js/app.js --bundle --outfile=public/assets/js/app.bundle.js --watch",
+    "build:js": "esbuild public/assets/js/app.js --bundle --minify --outfile=public/assets/js/app.bundle.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "esbuild": "0.14.54",
+    "tailwindcss": "^4.3.3"
+  },
+  "dependencies": {
+    "alpinejs": "^3.16.0"
+  }
+}

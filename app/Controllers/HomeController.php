@@ -20,7 +20,7 @@ class HomeController extends Controller
 
         $this->view('frontend/home/index', [
             'title' => 'CafThé',
-            'bestSellers' => $popularProducts,
+            'popularProducts' => $popularProducts,
             'popularCategories' => $popularCategories,
         ]);
     }
