@@ -16,12 +16,12 @@
             bg-fixed
             text-neutral-900
             antialiased
-        "
+    "
 >
 
 <header
-        x-data="{ open: false }"
-        class="
+    x-data="{ open: false }"
+    class="
         sticky top-4 z-50
         mx-auto mt-4
         w-[calc(100%-2rem)] max-w-7xl
@@ -36,8 +36,8 @@
     <div class="flex items-center justify-between gap-5">
 
         <a
-                href="/public/index.php?route=/"
-                class="text-2xl font-black tracking-tighter text-black no-underline"
+            href="/public/index.php?route=/"
+            class="text-2xl font-black tracking-tighter text-black no-underline"
         >
             CafThé
         </a>
@@ -48,40 +48,40 @@
                 Accueil
             </a>
 
-            <a href="#products" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a href="/public/index.php?route=/products" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
                 Produits
             </a>
 
-            <a href="#blog" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a href="/public/index.php?route=/blog" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
                 Blog
             </a>
 
-            <a href="#about" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a href="/public/index.php?route=/about" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
                 À propos
             </a>
 
-            <a href="#contact" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a href="/public/index.php?route=/contact" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
                 Contact
             </a>
 
             <a
-                    href="/public/index.php?route=/login"
-                    class="rounded-full bg-black px-4 py-2 font-semibold text-white"
+                href="/public/index.php?route=/login"
+                class="rounded-full bg-black px-4 py-2 font-semibold text-white"
             >
                 Connexion
             </a>
         </nav>
 
         <button
-                type="button"
-                class="
+            type="button"
+            class="
                 flex h-11 w-11 items-center justify-center
                 rounded-full bg-black text-white
                 md:hidden
             "
-                @click="open = !open"
-                :aria-expanded="open"
-                aria-label="Ouvrir le menu"
+            @click="open = !open"
+            :aria-expanded="open"
+            aria-label="Ouvrir le menu"
         >
             <span x-show="!open">☰</span>
             <span x-show="open">×</span>
@@ -90,9 +90,9 @@
     </div>
 
     <nav
-            x-show="open"
-            x-transition
-            class="
+        x-show="open"
+        x-transition
+        class="
             mt-4 flex flex-col gap-2
             rounded-2xl
             border border-white/60
@@ -106,15 +106,15 @@
             Accueil
         </a>
 
-        <a href="#products" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a href="/public/index.php?route=/products" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
             Produits
         </a>
 
-        <a href="#blog" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a href="/public/index.php?route=/blog" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
             Blog
         </a>
 
-        <a href="#about" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a href="/public/index.php?route=/about" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
             À propos
         </a>
 
@@ -123,8 +123,8 @@
         </a>
 
         <a
-                href="/public/index.php?route=/login"
-                class="rounded-xl bg-black px-4 py-3 font-semibold text-white"
+            href="/public/index.php?route=/login"
+            class="rounded-xl bg-black px-4 py-3 font-semibold text-white"
         >
             Connexion
         </a>

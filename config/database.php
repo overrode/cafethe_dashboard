@@ -40,4 +40,11 @@ return [
     'username' => envValue('DB_USER', ''),
     'password' => envValue('DB_PASSWORD', ''),
     'charset' => envValue('DB_CHARSET', ''),
+    'mail_host' => envValue('MAIL_HOST', ''),
+    'mail_port' => envValue('MAIL_PORT', ''),
+    'mail_username' => envValue('MAIL_USERNAME', ''),
+    'mail_password' => envValue('MAIL_PASSWORD', ''),
+    'mail_from_name' => envValue('MAIL_FROM_NAME', ''),
+    'mail_from' => envValue('MAIL_FROM', ''),
+    'mail_to' => envValue('MAIL_TO', ''),
 ];

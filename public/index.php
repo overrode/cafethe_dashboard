@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 session_start();
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once __DIR__ . '/../config/defines.php';
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';
@@ -20,6 +21,8 @@ require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Core/Auth.php';
 require_once __DIR__ . '/../app/Controllers/UserController.php';
 require_once __DIR__ . '/../app/Controllers/HomeController.php';
+require_once __DIR__ . '/../app/Controllers/AboutController.php';
+require_once __DIR__ . '/../app/Controllers/ContactController.php';
 
 use App\Core\Router;
 use App\Controllers\ProductController;
@@ -29,7 +32,8 @@ use App\Controllers\DashboardController;
 use App\Controllers\AuthController;
 use App\Controllers\UserController;
 use App\Controllers\HomeController;
-
+use App\Controllers\AboutController;
+use App\Controllers\ContactController;
 
 
 
@@ -74,11 +78,21 @@ $router->get('/users/deactivate', [UserController::class, 'deactivate']);
 
 //Home Page
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/about', [AboutController::class, 'index']);
+$router->get('/contact', [ContactController::class, 'index']);
+$router->post('/contact/send', [ContactController::class, 'sendEmail']);
+
 
 $publicRoutes = [
     '/login',
     '/logout',
-    '/'
+    '/',
+    '/about',
+    '/contact',
+    '/products',
+    '/blog',
+    '/contact',
+    '/contact/send',
 ];
 
 $currentRoute = $_GET['route'] ?? '/';
