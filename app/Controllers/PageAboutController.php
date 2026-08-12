@@ -5,10 +5,10 @@ namespace App\Controllers;
 use App\Core\Controller;
 
 /**
- * Class AboutController
+ * Class PageAboutController
  * @package App\Controllers
  */
-class AboutController extends Controller
+class PageAboutController extends Controller
 {
     /** 
      * Display the about page.

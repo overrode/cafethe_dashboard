@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\NoReturn;
 /**
  * User Controller Class
  */
-class UserController extends Controller
+class DashboardUserController extends Controller
 {
     /**
      * @return void

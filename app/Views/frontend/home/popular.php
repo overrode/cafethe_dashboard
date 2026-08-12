@@ -1,6 +1,6 @@
     <section
             id="products"
-            x-data="popularProductsFilter"
+            x-data="productFilter"
             class="mt-20 py-16"
     >
         <div class="mb-10 max-w-2xl">

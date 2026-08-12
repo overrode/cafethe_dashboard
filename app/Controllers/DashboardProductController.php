@@ -12,10 +12,10 @@ use JetBrains\PhpStorm\NoReturn;
  * Handles product-related operations such as displaying products,
  * rendering creation forms, and storing new product data.
  */
-class ProductController extends Controller
+class DashboardProductController extends Controller
 {
     /**
-     * Handles the display of the products index page.
+     * Handles the display of the product index page.
      *
      * @return void
      */

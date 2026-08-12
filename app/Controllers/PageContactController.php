@@ -8,10 +8,10 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
 /**
- * Class ContactController
+ * Class PageContactController
  * @package App\Controllers
  */
-class ContactController extends Controller
+class PageContactController extends Controller
 {
     /**
      * Display the contact page.

@@ -6,11 +6,11 @@ use App\Core\Controller;
 use App\Models\Product;
 
 /**
- * HomeController class
+ * PageHomeController class
  *
  * This controller handles the home page of the application.
  */
-class HomeController extends Controller
+class PageHomeController extends Controller
 {
     public function index(): void
     {

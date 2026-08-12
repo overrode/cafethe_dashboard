@@ -8,7 +8,7 @@ use App\Core\Controller;
 use App\Models\User;
 use JetBrains\PhpStorm\NoReturn;
 
-class AuthController extends Controller
+class DashboardAuthController extends Controller
 {
     /**
      * @return void

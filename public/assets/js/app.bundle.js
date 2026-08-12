@@ -3418,8 +3418,8 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
   var src_default = alpine_default;
   var module_default = src_default;
 
-  // public/assets/js/components/popularProductsFilter.js
-  var popularProductsFilter_default = () => ({
+  // public/assets/js/components/productFilter.js
+  var productFilter_default = () => ({
     activeCategory: "all",
     changing: false,
     filter(category) {
@@ -3442,8 +3442,26 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     }
   });
 
+  // public/assets/js/components/productPage.js
+  var productPage_default = (mainImage) => ({
+    activeImage: mainImage,
+    quantity: 1,
+    increaseQuantity() {
+      this.quantity++;
+    },
+    decreaseQuantity() {
+      if (this.quantity > 1) {
+        this.quantity--;
+      }
+    },
+    selectImage(image) {
+      this.activeImage = image;
+    }
+  });
+
   // public/assets/js/app.js
   window.Alpine = module_default;
-  module_default.data("popularProductsFilter", popularProductsFilter_default);
+  module_default.data("productFilter", productFilter_default);
+  module_default.data("productPage", productPage_default);
   module_default.start();
 })();

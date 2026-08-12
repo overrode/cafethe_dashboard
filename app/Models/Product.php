@@ -18,8 +18,15 @@ class Product
      */
     private PDO $db;
 
+    /**
+     * The maximum number of best-selling products to retrieve.
+     */
     const BEST_SALE_LIMIT = 6;
 
+    /**
+     * Product constructor.
+     * Initializes the database connection.
+     */
     public function __construct()
     {
         $this->db = Database::getConnection();
@@ -43,7 +50,9 @@ class Product
     }
 
     /**
-     * @return array
+     * Retrieves all categories from the database.
+     *
+     * @return array An array of categories sorted in ascending order by name.
      */
     public function getCategories(): array
     {
@@ -168,8 +177,10 @@ class Product
     }
 
     /**
-     * @param int $id
-     * @return bool
+     * Deactivates a product by setting its 'is_active' status to 0.
+     *
+     * @param int $id The unique identifier of the product to deactivate.
+     * @return bool True if the deactivation was successful, or false otherwise.
      */
     public function deactivate(int $id): bool
     {
@@ -183,8 +194,10 @@ class Product
     }
 
     /**
-     * @param int $limit
-     * @return array
+     * Retrieves the most popular products based on total sales quantity.
+     *
+     * @param int $limit The maximum number of popular products to retrieve. Defaults to BEST_SALE_LIMIT.
+     * @return array An array of popular products, each including product details, category name, and total sales quantity (TS).
      */
     public function getPopularProducts(int $limit = self::BEST_SALE_LIMIT): array
     {
@@ -212,8 +225,10 @@ class Product
     }
 
     /**
-     * @param array $products
-     * @return array.
+     * Extracts unique categories from a list of products.
+     *
+     * @param array $products An array of products, each containing 'category_id' and 'category_name'.
+     * @return array An associative array where keys are category IDs and values are category names.
      */
     public function getCategoriesFromProducts(array $products): array
     {
@@ -224,5 +239,61 @@ class Product
         }
 
         return $categories;
+    }
+
+    /**
+     * Retrieves all active products from the database along with their associated category names.
+     *
+     * @return array An array of active products, including category names, sorted in ascending order by product name.
+     */
+    public function getActiveProducts(): array
+    {
+        $sql = "
+            SELECT
+                p.*,
+                c.name AS category_name
+            FROM products AS p
+            INNER JOIN categories AS c
+                ON c.id = p.category_id
+            WHERE p.is_active = 1
+            ORDER BY p.name ASC
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Retrieves an active product by its unique identifier along with its associated category name.
+     *
+     * @param int $id The unique identifier of the product to retrieve.
+     * @return array|null An associative array of the product data if found and active, or null if the product does not exist or is inactive.
+     */
+    public function getActiveProductById(int $id): ?array
+    {
+        $sql = "
+            SELECT
+                p.*,
+                c.name AS category_name
+            FROM products AS p
+            INNER JOIN categories AS c
+                ON c.id = p.category_id
+            WHERE
+                p.id = :id
+                AND p.is_active = 1
+            LIMIT 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        $product = $stmt->fetch();
+
+        return $product ?: null;
     }
 }

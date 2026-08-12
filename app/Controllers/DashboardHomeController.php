@@ -13,7 +13,7 @@ use App\Models\Dashboard;
  * The `index` method retrieves statistical data and low-stock product information
  * from the dashboard model and renders them to the corresponding view.
  */
-class DashboardController extends Controller
+class DashboardHomeController extends Controller
 {
     /**
      * Renders the dashboard index view with statistical data and low stock product information.

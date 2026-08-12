@@ -43,12 +43,12 @@ Le dossier `app/Models` contient les classes responsables des requêtes SQL :
 
 Le dossier `app/Controllers` contient la logique des pages :
 
-- `ProductController`
-- `ClientController`
-- `SaleController`
-- `DashboardController`
-- `AuthController`
-- `UserController`
+- `DashboardProductController`
+- `DashboardClientController`
+- `DashboardSaleController`
+- `DashboardHomeController`
+- `DashboardAuthController`
+- `DashboardUserController`
 
 ### Views
 

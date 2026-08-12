@@ -8,7 +8,7 @@ use App\Core\Controller;
 use App\Models\Client;
 use JetBrains\PhpStorm\NoReturn;
 
-class ClientController extends Controller
+class DashboardClientController extends Controller
 {
     /**
      * @return void

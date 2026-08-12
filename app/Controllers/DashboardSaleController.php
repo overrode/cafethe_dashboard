@@ -14,7 +14,7 @@ use App\Core\Auth;
 /**
  * Controller responsible for handling operations related to sales.
  */
-class SaleController extends Controller
+class DashboardSaleController extends Controller
 {
     /**
      * @return void
