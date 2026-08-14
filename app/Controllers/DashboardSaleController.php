@@ -62,9 +62,8 @@ class DashboardSaleController extends Controller
         $saleModel->create([
             'user_id' => Auth::id(),
             'client_id' => $_POST['client_id'] ?? null,
-            'product_id' => $_POST['product_id'],
-            'quantity' => $_POST['quantity'],
             'payment_method' => $_POST['payment_method'],
+            'items' => $_POST['items'] ?? [],
         ]);
 
         header('Location: /public/index.php?route=/sales');

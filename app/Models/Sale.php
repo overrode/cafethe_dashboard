@@ -24,7 +24,9 @@ class Sale
     }
 
     /**
-     * @return array
+     * Retrieves all sales records from the database, including associated client and user names.
+     *
+     * @return array An array of sales records with client and user information.
      */
     public function all(): array
     {
@@ -40,8 +42,10 @@ class Sale
     }
 
     /**
-     * @param array $data
-     * @return bool
+     * Creates a new sale record along with its associated items and updates product stock.
+     *
+     * @param array $data The sale data including user_id, client_id, product_id, quantity, etc.
+     * @return bool True if the sale was created successfully, false otherwise.
      */
     public function create(array $data): bool
     {
@@ -52,36 +56,78 @@ class Sale
         $this->db->beginTransaction();
 
         try {
-            $productStmt = $this->db->prepare(
-                'SELECT * FROM products WHERE id = :id AND is_active = 1 LIMIT 1'
-            );
 
-            $productStmt->execute([
-                'id' => $data['product_id'],
-            ]);
+            $items = $data['items'] ?? [];
 
-            $product = $productStmt->fetch();
-
-            if (!$product) {
-                throw new \Exception('Produit introuvable');
+            if (empty($items)) {
+                throw new \Exception('Aucun produit dans la vente');
             }
 
-            $quantity = (float) $data['quantity'];
+            $totalHt = 0.0;
+            $totalVat = 0.0;
+            $totalTtc = 0.0;
 
-            if ($quantity <= 0) {
-                throw new \Exception('Quantité invalide');
+            $saleItems = [];
+
+            $productModel = new Product();
+
+            foreach ($items as $item) {
+                $productId = (int) ($item['product_id'] ?? 0);
+                $quantity = (float) ($item['quantity'] ?? 0);
+
+                if ($productId <= 0 || $quantity <= 0) {
+                    throw new \Exception('Produit ou quantité invalide');
+                }
+
+                $product = $productModel->getActiveProductById($productId);
+
+                if (!$product) {
+                    throw new \Exception('Produit introuvable');
+                }
+
+                if ((float) $product['stock'] < $quantity) {
+                    throw new \Exception(
+                        'Stock insuffisant pour le produit : ' . $product['name']
+                    );
+                }
+
+                if (
+                    !isset($product['price'], $product['vat_rate']) ||
+                    !is_numeric($product['price']) ||
+                    !is_numeric($product['vat_rate'])
+                ) {
+                    throw new \Exception(
+                        'Prix ou TVA invalide pour le produit : ' . $product['name']
+                    );
+                }
+
+                $unitPrice = (float) $product['price'];
+                $vatRate = (float) $product['vat_rate'];
+
+                if ($unitPrice < 0 || $vatRate < 0 || $vatRate > 100) {
+                    throw new \Exception(
+                        'Prix ou TVA invalide pour le produit : ' . $product['name']
+                    );
+                }
+
+                $itemTotalHt = $unitPrice * $quantity;
+                $itemTotalVat = $itemTotalHt * ($vatRate / 100);
+                $itemTotalTtc = $itemTotalHt + $itemTotalVat;
+
+                $totalHt += $itemTotalHt;
+                $totalVat += $itemTotalVat;
+                $totalTtc += $itemTotalTtc;
+
+                $saleItems[] = [
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                    'vat_rate' => $vatRate,
+                    'total_ht' => $itemTotalHt,
+                    'total_vat' => $itemTotalVat,
+                    'total_ttc' => $itemTotalTtc,
+                ];
             }
-
-            if ((float) $product['stock'] < $quantity) {
-                throw new \Exception('Stock insuffisant');
-            }
-
-            $unitPrice = (float) $product['price'];
-            $vatRate = (float) $product['vat_rate'];
-
-            $totalHt = $unitPrice * $quantity;
-            $totalVat = $totalHt * ($vatRate / 100);
-            $totalTtc = $totalHt + $totalVat;
 
             $saleStmt = $this->db->prepare(
                 'INSERT INTO sales
@@ -109,26 +155,35 @@ class Sale
                 VALUES
                 (:sale_id, :product_id, :quantity, :unit_price, :vat_rate, :total_ht, :total_vat, :total_ttc)'
             );
-
-            $itemStmt->execute([
-                'sale_id' => $saleId,
-                'product_id' => $data['product_id'],
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
-                'vat_rate' => $vatRate,
-                'total_ht' => $totalHt,
-                'total_vat' => $totalVat,
-                'total_ttc' => $totalTtc,
-            ]);
-
             $stockStmt = $this->db->prepare(
-                'UPDATE products SET stock = stock - :quantity WHERE id = :id'
+                'UPDATE products
+                 SET stock = stock - :quantity
+                 WHERE id = :id
+                 AND stock >= :required_quantity'
             );
 
-            $stockStmt->execute([
-                'quantity' => $quantity,
-                'id' => $data['product_id'],
-            ]);
+            foreach ($saleItems as $item) {
+                $itemStmt->execute([
+                    'sale_id' => $saleId,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'vat_rate' => $item['vat_rate'],
+                    'total_ht' => $item['total_ht'],
+                    'total_vat' => $item['total_vat'],
+                    'total_ttc' => $item['total_ttc'],
+                ]);
+
+                $stockStmt->execute([
+                    'quantity' => $item['quantity'],
+                    'required_quantity' => $item['quantity'],
+                    'id' => $item['product_id'],
+                ]);
+
+                if ($stockStmt->rowCount() === 0) {
+                    throw new \Exception('Stock insuffisant lors de la mise à jour');
+                }
+            }
 
             $this->db->commit();
 
