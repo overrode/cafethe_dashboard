@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title ?? 'CafThé - Dashboard vendeur') ?></title>
     <link rel="stylesheet" href="/public/assets/css/backend.css">
+    <link rel="stylesheet" href="/public/assets/css/tailwind.css">
 </head>
 <body>
     <header>

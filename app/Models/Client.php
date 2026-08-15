@@ -53,9 +53,9 @@ class Client
 
     /**
      * @param array $data
-     * @return bool
+     * @return int
      */
-    public function create(array $data): bool
+    public function create(array $data): int
     {
         $stmt = $this->db->prepare(
             'INSERT INTO clients 
@@ -64,7 +64,7 @@ class Client
             (:name, :email, :phone, :address, :favorites, :abandoned_cart)'
         );
 
-        return $stmt->execute([
+        $stmt->execute([
             'name' => $data['name'],
             'email' => $data['email'] ?: null,
             'phone' => $data['phone'] ?: null,
@@ -72,6 +72,8 @@ class Client
             'favorites' => $data['favorites'] ?: null,
             'abandoned_cart' => $data['abandoned_cart'] ?: null,
         ]);
+
+        return (int) $this->db->lastInsertId();
     }
 
     /**

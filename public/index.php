@@ -51,6 +51,7 @@ $router->get('/products/deactivate', [DashboardProductController::class, 'deacti
 $router->get('/clients', [DashboardClientController::class, 'index']);
 $router->get('/clients/create', [DashboardClientController::class, 'create']);
 $router->post('/clients/store', [DashboardClientController::class, 'store']);
+$router->post('/clients/store-from-sale', [DashboardClientController::class, 'storeFromSale']);
 $router->get('/clients/edit', [DashboardClientController::class, 'edit']);
 $router->post('/clients/update', [DashboardClientController::class, 'update']);
 

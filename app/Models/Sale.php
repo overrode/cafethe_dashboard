@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Database;
+use Exception;
 use PDO;
 
 /**
@@ -60,7 +61,7 @@ class Sale
             $items = $data['items'] ?? [];
 
             if (empty($items)) {
-                throw new \Exception('Aucun produit dans la vente');
+                throw new Exception('Aucun produit dans la vente');
             }
 
             $totalHt = 0.0;
@@ -76,17 +77,17 @@ class Sale
                 $quantity = (float) ($item['quantity'] ?? 0);
 
                 if ($productId <= 0 || $quantity <= 0) {
-                    throw new \Exception('Produit ou quantité invalide');
+                    throw new Exception('Produit ou quantité invalide');
                 }
 
                 $product = $productModel->getActiveProductById($productId);
 
                 if (!$product) {
-                    throw new \Exception('Produit introuvable');
+                    throw new Exception('Produit introuvable');
                 }
 
                 if ((float) $product['stock'] < $quantity) {
-                    throw new \Exception(
+                    throw new Exception(
                         'Stock insuffisant pour le produit : ' . $product['name']
                     );
                 }
@@ -96,7 +97,7 @@ class Sale
                     !is_numeric($product['price']) ||
                     !is_numeric($product['vat_rate'])
                 ) {
-                    throw new \Exception(
+                    throw new Exception(
                         'Prix ou TVA invalide pour le produit : ' . $product['name']
                     );
                 }
@@ -105,7 +106,7 @@ class Sale
                 $vatRate = (float) $product['vat_rate'];
 
                 if ($unitPrice < 0 || $vatRate < 0 || $vatRate > 100) {
-                    throw new \Exception(
+                    throw new Exception(
                         'Prix ou TVA invalide pour le produit : ' . $product['name']
                     );
                 }
@@ -181,7 +182,7 @@ class Sale
                 ]);
 
                 if ($stockStmt->rowCount() === 0) {
-                    throw new \Exception('Stock insuffisant lors de la mise à jour');
+                    throw new Exception('Stock insuffisant lors de la mise à jour');
                 }
             }
 

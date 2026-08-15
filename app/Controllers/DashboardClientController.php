@@ -10,6 +10,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 class DashboardClientController extends Controller
 {
+
     /**
      * @return void
      */
@@ -92,6 +93,49 @@ class DashboardClientController extends Controller
         ]);
 
         header('Location: /public/index.php?route=/clients');
+        exit;
+    }
+
+    /**
+     * @return void
+     */
+    #[NoReturn]
+    public function storeFromSale(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $name = trim($_POST['name'] ?? '');
+
+        if ($name === '') {
+            http_response_code(422);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Le nom du client est obligatoire.',
+            ]);
+
+            exit;
+        }
+
+        $clientModel = new Client();
+
+        $clientId = $clientModel->create([
+            'name' => $name,
+            'email' => trim($_POST['email'] ?? ''),
+            'phone' => trim($_POST['phone'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'favorites' => '',
+            'abandoned_cart' => '',
+        ]);
+
+        echo json_encode([
+            'success' => true,
+            'client' => [
+                'id' => $clientId,
+                'name' => $name,
+            ],
+        ]);
+
         exit;
     }
 }
