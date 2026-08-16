@@ -20,7 +20,6 @@
 >
 
 <header
-    x-data="{ open: false }"
     class="
         sticky top-4 z-50
         mx-auto mt-4
@@ -79,19 +78,15 @@
                 rounded-full bg-black text-white
                 md:hidden
             "
-            @click="open = !open"
-            :aria-expanded="open"
             aria-label="Ouvrir le menu"
         >
-            <span x-show="!open">☰</span>
-            <span x-show="open">×</span>
+            <span >☰</span>
+            <span >×</span>
         </button>
 
     </div>
 
     <nav
-        x-show="open"
-        x-transition
         class="
             mt-4 flex flex-col gap-2
             rounded-2xl

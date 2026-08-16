@@ -16,6 +16,6 @@
             <p>&copy; <?= date('Y') ?> CafThé</p>
         </footer>
 
-        <script defer src="/public/assets/js/app.bundle.js"></script>
+        <script defer src="/public/assets/js/app.js"></script>
     </body>
 </html>
