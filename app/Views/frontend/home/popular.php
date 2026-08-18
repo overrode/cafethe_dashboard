@@ -1,3 +1,7 @@
+<?php
+/** @var array $popularProducts */
+/** @var array $popularCategories */
+?>
 <section
     id="products"
     class="mt-20 py-16"

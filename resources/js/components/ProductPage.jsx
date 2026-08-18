@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {addToCart} from '../cart.js';
 
 export default function ProductPage({product, imagesUrl}) {
     const images = product.image
@@ -20,6 +21,18 @@ export default function ProductPage({product, imagesUrl}) {
             Number(product.stock),
             current + 1
         ));
+    };
+
+    const [added, setAdded] = useState(false);
+
+    const handleAddToCart = () => {
+        addToCart(product, quantity);
+
+        setAdded(true);
+
+        setTimeout(() => {
+            setAdded(false);
+        }, 1500);
     };
 
     return (
@@ -168,6 +181,7 @@ export default function ProductPage({product, imagesUrl}) {
 
                     <button
                         type="button"
+                        onClick={handleAddToCart}
                         className="
                             mt-8 w-full rounded-full
                             bg-black
@@ -177,7 +191,7 @@ export default function ProductPage({product, imagesUrl}) {
                             hover:-translate-y-0.5
                         "
                     >
-                        Ajouter au panier
+                        {added ? 'Ajouté au panier ✓' : 'Ajouter au panier'}
                     </button>
                 </div>
             </div>

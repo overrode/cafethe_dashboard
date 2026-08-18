@@ -1348,7 +1348,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React4 = require_react(), Internals = {
+        var React6 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1366,7 +1366,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2938,7 +2938,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React4.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React6.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18776,14 +18776,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React4 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React6 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21576,7 +21576,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React4.version;
+          var isomorphicReactPackageVersion = React6.version;
           if ("19.2.8" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.8\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21717,7 +21717,7 @@
   });
 
   // resources/js/app.jsx
-  var import_react3 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // resources/js/components/ProductFilter.jsx
@@ -21803,6 +21803,68 @@
 
   // resources/js/components/ProductPage.jsx
   var import_react2 = __toESM(require_react());
+
+  // resources/js/cart.js
+  var CART_KEY = "cafethe_cart";
+  function getCart() {
+    const cart = localStorage.getItem(CART_KEY);
+    return cart ? JSON.parse(cart) : [];
+  }
+  function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
+  }
+  function getCartCount() {
+    return getCart().reduce(
+      (total, item) => total + Number(item.quantity),
+      0
+    );
+  }
+  function addToCart(product, quantity) {
+    const cart = getCart();
+    const existingItem = cart.find(
+      (item) => Number(item.id) === Number(product.id)
+    );
+    if (existingItem) {
+      existingItem.quantity += Number(quantity);
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        stock: product.stock,
+        quantity: Number(quantity)
+      });
+    }
+    saveCart(cart);
+    return cart;
+  }
+  function updateCartQuantity(productId, quantity) {
+    const cart = getCart();
+    const item = cart.find(
+      (item2) => Number(item2.id) === Number(productId)
+    );
+    if (!item) {
+      return;
+    }
+    item.quantity = Math.max(
+      1,
+      Math.min(Number(item.stock), Number(quantity))
+    );
+    saveCart(cart);
+  }
+  function removeFromCart(productId) {
+    const cart = getCart().filter(
+      (item) => Number(item.id) !== Number(productId)
+    );
+    saveCart(cart);
+  }
+  function clearCart() {
+    saveCart([]);
+  }
+
+  // resources/js/components/ProductPage.jsx
   function ProductPage({ product, imagesUrl }) {
     const images = product.image ? product.image.split(";").filter(Boolean) : [];
     const [activeImage, setActiveImage] = (0, import_react2.useState)(
@@ -21817,6 +21879,14 @@
         Number(product.stock),
         current + 1
       ));
+    };
+    const [added, setAdded] = (0, import_react2.useState)(false);
+    const handleAddToCart = () => {
+      addToCart(product, quantity);
+      setAdded(true);
+      setTimeout(() => {
+        setAdded(false);
+      }, 1500);
     };
     return /* @__PURE__ */ import_react2.default.createElement("section", {
       className: "\n                mt-16 grid grid-cols-1 gap-10\n                rounded-[38px]\n                border border-white/70\n                bg-white/40\n                p-6\n                shadow-[0_25px_70px_rgba(0,0,0,0.12)]\n                backdrop-blur-3xl\n                md:grid-cols-2\n                md:p-10\n            "
@@ -21882,8 +21952,147 @@
       className: "\n                                    flex h-10 w-10 items-center justify-center\n                                    rounded-full bg-black\n                                    text-xl font-bold text-white\n                                    transition\n                                    disabled:cursor-not-allowed\n                                    disabled:opacity-30\n                                "
     }, "+"))), /* @__PURE__ */ import_react2.default.createElement("button", {
       type: "button",
+      onClick: handleAddToCart,
       className: "\n                            mt-8 w-full rounded-full\n                            bg-black\n                            px-6 py-4\n                            text-lg font-bold text-white\n                            transition\n                            hover:-translate-y-0.5\n                        "
-    }, "Ajouter au panier"))));
+    }, added ? "Ajout\xE9 au panier \u2713" : "Ajouter au panier"))));
+  }
+
+  // resources/js/components/CartButton.jsx
+  var import_react3 = __toESM(require_react());
+  function CartButton() {
+    const [count, setCount] = (0, import_react3.useState)(getCartCount());
+    (0, import_react3.useEffect)(() => {
+      const updateCount = () => {
+        setCount(getCartCount());
+      };
+      window.addEventListener("cartUpdated", updateCount);
+      return () => {
+        window.removeEventListener("cartUpdated", updateCount);
+      };
+    }, []);
+    return /* @__PURE__ */ import_react3.default.createElement("a", {
+      href: "/public/index.php?route=/cart",
+      className: "\n                relative flex h-11 w-11\n                items-center justify-center\n                rounded-full\n                bg-black text-white\n                transition\n                hover:-translate-y-0.5\n            ",
+      "aria-label": "Panier"
+    }, "\u{1F6D2}", count > 0 && /* @__PURE__ */ import_react3.default.createElement("span", {
+      className: "\n                        absolute -right-2 -top-2\n                        flex h-6 min-w-6\n                        items-center justify-center\n                        rounded-full\n                        bg-white px-1\n                        text-xs font-black text-black\n                        shadow\n                    "
+    }, count));
+  }
+
+  // resources/js/components/CartPage.jsx
+  var import_react4 = __toESM(require_react());
+  function CartPage({ imagesUrl }) {
+    const [cart, setCart] = (0, import_react4.useState)(getCart());
+    (0, import_react4.useEffect)(() => {
+      const updateCart = () => {
+        setCart(getCart());
+      };
+      window.addEventListener("cartUpdated", updateCart);
+      return () => {
+        window.removeEventListener("cartUpdated", updateCart);
+      };
+    }, []);
+    const decreaseQuantity = (item) => {
+      updateCartQuantity(
+        item.id,
+        Number(item.quantity) - 1
+      );
+    };
+    const increaseQuantity = (item) => {
+      updateCartQuantity(
+        item.id,
+        Number(item.quantity) + 1
+      );
+    };
+    const total = cart.reduce(
+      (sum, item) => sum + Number(item.price) * Number(item.quantity),
+      0
+    );
+    if (cart.length === 0) {
+      return /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "\n                    rounded-[30px]\n                    border border-white/70\n                    bg-white/40\n                    p-10 text-center\n                    shadow-lg\n                    backdrop-blur-2xl\n                "
+      }, /* @__PURE__ */ import_react4.default.createElement("h2", {
+        className: "text-3xl font-black"
+      }, "Votre panier est vide"), /* @__PURE__ */ import_react4.default.createElement("p", {
+        className: "mt-3 text-neutral-600"
+      }, "Ajoutez quelques produits pour commencer."), /* @__PURE__ */ import_react4.default.createElement("a", {
+        href: "/public/index.php?route=/products",
+        className: "\n                        mt-8 inline-block\n                        rounded-full bg-black\n                        px-6 py-3\n                        font-bold text-white\n                        transition\n                        hover:-translate-y-0.5\n                    "
+      }, "Voir les produits"));
+    }
+    return /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "grid gap-8 lg:grid-cols-[1fr_360px]"
+    }, /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "space-y-4"
+    }, cart.map((item) => {
+      const mainImage = item.image ? item.image.split(";")[0] : "placeholder.jpg";
+      return /* @__PURE__ */ import_react4.default.createElement("article", {
+        key: item.id,
+        className: "\n                                flex flex-col gap-5\n                                rounded-[28px]\n                                border border-white/70\n                                bg-white/40\n                                p-5\n                                shadow-md\n                                backdrop-blur-2xl\n                                sm:flex-row\n                                sm:items-center\n                            "
+      }, /* @__PURE__ */ import_react4.default.createElement("img", {
+        src: `${imagesUrl}/${mainImage}`,
+        alt: item.name,
+        className: "\n                                    h-28 w-full\n                                    rounded-2xl\n                                    object-cover\n                                    sm:w-28\n                                "
+      }), /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "min-w-0 flex-1"
+      }, /* @__PURE__ */ import_react4.default.createElement("h2", {
+        className: "text-xl font-bold"
+      }, item.name), /* @__PURE__ */ import_react4.default.createElement("p", {
+        className: "mt-1 font-semibold text-neutral-600"
+      }, Number(item.price).toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "\n                                    inline-flex items-center gap-3\n                                    rounded-full\n                                    border border-white/70\n                                    bg-white/50\n                                    px-2 py-2\n                                "
+      }, /* @__PURE__ */ import_react4.default.createElement("button", {
+        type: "button",
+        onClick: () => decreaseQuantity(item),
+        disabled: Number(item.quantity) <= 1,
+        className: "\n                                        flex h-9 w-9\n                                        items-center justify-center\n                                        rounded-full\n                                        bg-black\n                                        font-bold text-white\n                                        disabled:opacity-30\n                                    "
+      }, "\u2212"), /* @__PURE__ */ import_react4.default.createElement("span", {
+        className: "min-w-8 text-center font-bold"
+      }, item.quantity), /* @__PURE__ */ import_react4.default.createElement("button", {
+        type: "button",
+        onClick: () => increaseQuantity(item),
+        disabled: Number(item.quantity) >= Number(item.stock),
+        className: "\n                                        flex h-9 w-9\n                                        items-center justify-center\n                                        rounded-full\n                                        bg-black\n                                        font-bold text-white\n                                        disabled:opacity-30\n                                    "
+      }, "+")), /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "min-w-24 text-right"
+      }, /* @__PURE__ */ import_react4.default.createElement("strong", {
+        className: "text-lg"
+      }, (Number(item.price) * Number(item.quantity)).toFixed(2).replace(".", ","), " \u20AC"), /* @__PURE__ */ import_react4.default.createElement("button", {
+        type: "button",
+        onClick: () => removeFromCart(item.id),
+        className: "\n                                        mt-2 block w-full\n                                        text-sm font-semibold\n                                        text-neutral-500\n                                        hover:text-black\n                                    "
+      }, "Supprimer")));
+    })), /* @__PURE__ */ import_react4.default.createElement("aside", {
+      className: "\n                    h-fit\n                    rounded-[30px]\n                    border border-white/70\n                    bg-white/40\n                    p-7\n                    shadow-lg\n                    backdrop-blur-2xl\n                "
+    }, /* @__PURE__ */ import_react4.default.createElement("h2", {
+      className: "text-2xl font-black"
+    }, "R\xE9capitulatif"), /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "mt-6 flex justify-between"
+    }, /* @__PURE__ */ import_react4.default.createElement("span", null, "Articles"), /* @__PURE__ */ import_react4.default.createElement("strong", null, cart.reduce(
+      (sum, item) => sum + Number(item.quantity),
+      0
+    ))), /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "\n                        mt-5 flex justify-between\n                        border-t border-black/10\n                        pt-5\n                        text-xl\n                    "
+    }, /* @__PURE__ */ import_react4.default.createElement("span", null, "Total"), /* @__PURE__ */ import_react4.default.createElement("strong", null, total.toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("form", {
+      method: "POST",
+      action: "/public/index.php?route=/checkout"
+    }, /* @__PURE__ */ import_react4.default.createElement("input", {
+      type: "hidden",
+      name: "items",
+      value: JSON.stringify(
+        cart.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity
+        }))
+      )
+    }), /* @__PURE__ */ import_react4.default.createElement("button", {
+      type: "submit",
+      className: "\n                            mt-8 w-full\n                            rounded-full\n                            bg-black\n                            px-6 py-4\n                            font-bold text-white\n                            transition\n                            hover:-translate-y-0.5\n                        "
+    }, "Commander")), /* @__PURE__ */ import_react4.default.createElement("button", {
+      type: "button",
+      onClick: clearCart,
+      className: "\n                        mt-4 w-full\n                        text-sm font-semibold\n                        text-neutral-500\n                        hover:text-black\n                    "
+    }, "Vider le panier")));
   }
 
   // resources/js/app.jsx
@@ -21893,7 +22102,7 @@
     const categories = JSON.parse(productsRoot.dataset.categories);
     const imagesUrl = productsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productsRoot).render(
-      /* @__PURE__ */ import_react3.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react5.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -21905,7 +22114,7 @@
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productRoot).render(
-      /* @__PURE__ */ import_react3.default.createElement(ProductPage, {
+      /* @__PURE__ */ import_react5.default.createElement(ProductPage, {
         product,
         imagesUrl
       })
@@ -21917,10 +22126,24 @@
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
     const imagesUrl = popularProductsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(popularProductsRoot).render(
-      /* @__PURE__ */ import_react3.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react5.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
+      })
+    );
+  }
+  var cartButtonRoot = document.getElementById("cart-button-app");
+  if (cartButtonRoot) {
+    (0, import_client.createRoot)(cartButtonRoot).render(
+      /* @__PURE__ */ import_react5.default.createElement(CartButton, null)
+    );
+  }
+  var cartRoot = document.getElementById("cart-app");
+  if (cartRoot) {
+    (0, import_client.createRoot)(cartRoot).render(
+      /* @__PURE__ */ import_react5.default.createElement(CartPage, {
+        imagesUrl: cartRoot.dataset.imagesUrl
       })
     );
   }

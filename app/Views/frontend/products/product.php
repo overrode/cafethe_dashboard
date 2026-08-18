@@ -1,4 +1,8 @@
-<?php require FRONTEND_HEADER_PATH; ?>
+<?php
+
+/** @var array $product */
+
+require FRONTEND_HEADER_PATH; ?>
 
 <a
     href="/public/index.php?route=/products"

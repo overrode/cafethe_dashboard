@@ -3,6 +3,8 @@ import {createRoot} from 'react-dom/client';
 
 import ProductFilter from './components/ProductFilter.jsx';
 import ProductPage from './components/ProductPage.jsx';
+import CartButton from './components/CartButton.jsx';
+import CartPage from './components/CartPage.jsx';
 
 
 const productsRoot = document.getElementById('products-app');
@@ -47,6 +49,24 @@ if (popularProductsRoot) {
             products={products}
             categories={categories}
             imagesUrl={imagesUrl}
+        />
+    );
+}
+
+const cartButtonRoot = document.getElementById('cart-button-app');
+
+if (cartButtonRoot) {
+    createRoot(cartButtonRoot).render(
+        <CartButton />
+    );
+}
+
+const cartRoot = document.getElementById('cart-app');
+
+if (cartRoot) {
+    createRoot(cartRoot).render(
+        <CartPage
+            imagesUrl={cartRoot.dataset.imagesUrl}
         />
     );
 }

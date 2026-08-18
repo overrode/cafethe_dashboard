@@ -41,6 +41,8 @@
             CafThé
         </a>
 
+        <div id="cart-button-app"></div>
+
         <nav class="hidden items-center gap-2 md:flex">
             <a href="/public/index.php?route=/"
                class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">

@@ -296,4 +296,35 @@ class Product
 
         return $product ?: null;
     }
+
+    /**
+     * Retrieves active products by their unique identifiers.
+     *
+     * @param array $ids An array of unique product identifiers to retrieve.
+     * @return array An array of active products, each represented as an associative array, or an empty array if no active products are found.
+     */
+    public function getActiveProductsByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(
+            ',',
+            array_fill(0, count($ids), '?')
+        );
+
+        $sql = "
+            SELECT p.*, c.name AS category_name
+            FROM products p
+            LEFT JOIN categories c ON c.id = p.category_id
+            WHERE p.id IN ($placeholders)
+            AND p.is_active = 1
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($ids);
+
+        return $stmt->fetchAll();
+    }
 }

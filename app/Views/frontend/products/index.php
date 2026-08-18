@@ -1,4 +1,9 @@
-<?php require FRONTEND_HEADER_PATH; ?>
+<?php
+
+/** @var array $products */
+/** @var array $categories */
+
+require FRONTEND_HEADER_PATH; ?>
 
 <section class="mt-16 py-10">
     <div class="mb-10 max-w-2xl">

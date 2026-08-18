@@ -8,6 +8,9 @@ use App\Core\Controller;
 use App\Models\Client;
 use JetBrains\PhpStorm\NoReturn;
 
+/**
+ * Controller responsible for handling operations related to clients.
+ */
 class DashboardClientController extends Controller
 {
 

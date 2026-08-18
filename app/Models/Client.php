@@ -69,8 +69,8 @@ class Client
             'email' => $data['email'] ?: null,
             'phone' => $data['phone'] ?: null,
             'address' => $data['address'] ?: null,
-            'favorites' => $data['favorites'] ?: null,
-            'abandoned_cart' => $data['abandoned_cart'] ?: null,
+            'favorites' => $data['favorites'] ?? null,
+            'abandoned_cart' => $data['abandoned_cart'] ?? null,
         ]);
 
         return (int) $this->db->lastInsertId();
@@ -103,5 +103,24 @@ class Client
             'favorites' => $data['favorites'] ?: null,
             'abandoned_cart' => $data['abandoned_cart'] ?: null,
         ]);
+    }
+
+    /**
+     * @param string $email
+     * @return array|null
+     */
+    public function findByEmail(string $email): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT * FROM clients WHERE email = :email LIMIT 1'
+        );
+
+        $stmt->execute([
+            'email' => $email,
+        ]);
+
+        $client = $stmt->fetch();
+
+        return $client ?: null;
     }
 }

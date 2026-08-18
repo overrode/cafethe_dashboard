@@ -24,6 +24,8 @@ require_once __DIR__ . '/../app/Controllers/PageHomeController.php';
 require_once __DIR__ . '/../app/Controllers/PageAboutController.php';
 require_once __DIR__ . '/../app/Controllers/PageContactController.php';
 require_once __DIR__ . '/../app/Controllers/PageProductsController.php';
+require_once __DIR__ . '/../app/Controllers/PageCartController.php';
+require_once __DIR__ . '/../app/Controllers/PageCheckoutController.php';
 
 use App\Core\Router;
 use App\Controllers\DashboardProductController;
@@ -36,6 +38,8 @@ use App\Controllers\PageHomeController;
 use App\Controllers\PageAboutController;
 use App\Controllers\PageContactController;
 use App\Controllers\PageProductsController;
+use App\Controllers\PageCartController;
+use App\Controllers\PageCheckoutController;
 
 $router = new Router();
 // Products management
@@ -84,6 +88,9 @@ $router->get('/contact', [PageContactController::class, 'index']);
 $router->post('/contact/send', [PageContactController::class, 'sendEmail']);
 $router->get('/products', [PageProductsController::class, 'index']);
 $router->get('/product', [PageProductsController::class, 'productPage']);
+$router->get('/cart', [PageCartController::class, 'index']);
+$router->post('/checkout', [PageCheckoutController::class, 'index']);
+$router->post('/checkout/confirm', [PageCheckoutController::class, 'confirm']);
 
 $publicRoutes = [
     '/login',
@@ -96,6 +103,9 @@ $publicRoutes = [
     '/blog',
     '/contact',
     '/contact/send',
+    '/cart',
+    '/checkout',
+    '/checkout/confirm',
 ];
 
 $currentRoute = $_GET['route'] ?? '/';
