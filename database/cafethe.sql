@@ -62,15 +62,58 @@ CREATE TABLE clients (
 
 CREATE TABLE sales (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+
+    user_id INT NULL,
     client_id INT NULL,
-    status ENUM('pending', 'preparing', 'shipped', 'delivered', 'completed', 'cancelled') NOT NULL DEFAULT 'completed',
-    payment_method ENUM('cb', 'especes', 'cheque') NOT NULL,
-    delivery_method ENUM('magasin', 'livraison') NOT NULL DEFAULT 'magasin',
+
+    status ENUM(
+        'pending',
+        'preparing',
+        'completed',
+        'cancelled'
+    ) NOT NULL,
+
+    payment_status ENUM(
+        'pending',
+        'paid',
+        'failed',
+        'refunded'
+    ) NOT NULL,
+
+    paid_at DATETIME NULL,
+
+    payment_method ENUM(
+        'cb',
+        'especes',
+        'cheque',
+        'virement'
+    ) NOT NULL,
+
+    delivery_method ENUM(
+        'magasin',
+        'livraison'
+    ) NOT NULL,
+
+    delivery_status ENUM(
+        'pending',
+        'ready_for_pickup',
+        'shipped',
+        'delivered',
+        'collected'
+    ) NOT NULL DEFAULT 'pending',
+
+    source ENUM(
+        'dashboard',
+        'website'
+    ) NOT NULL,
+
     total_ht DECIMAL(10,2) NOT NULL DEFAULT 0,
     total_vat DECIMAL(10,2) NOT NULL DEFAULT 0,
     total_ttc DECIMAL(10,2) NOT NULL DEFAULT 0,
+
     sale_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    exported_at DATETIME NULL
 
     CONSTRAINT fk_sales_user
         FOREIGN KEY (user_id)

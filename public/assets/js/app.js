@@ -1348,7 +1348,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React6 = require_react(), Internals = {
+        var React7 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1366,7 +1366,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2938,7 +2938,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React6.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React7.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18776,14 +18776,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React6 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React7 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21576,7 +21576,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React6.version;
+          var isomorphicReactPackageVersion = React7.version;
           if ("19.2.8" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.8\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21717,7 +21717,7 @@
   });
 
   // resources/js/app.jsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // resources/js/components/ProductFilter.jsx
@@ -22095,6 +22095,15 @@
     }, "Vider le panier")));
   }
 
+  // resources/js/components/CheckoutSuccess.jsx
+  var import_react5 = __toESM(require_react());
+  function CheckoutSuccess() {
+    (0, import_react5.useEffect)(() => {
+      clearCart();
+    }, []);
+    return null;
+  }
+
   // resources/js/app.jsx
   var productsRoot = document.getElementById("products-app");
   if (productsRoot) {
@@ -22102,7 +22111,7 @@
     const categories = JSON.parse(productsRoot.dataset.categories);
     const imagesUrl = productsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productsRoot).render(
-      /* @__PURE__ */ import_react5.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react6.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22114,7 +22123,7 @@
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productRoot).render(
-      /* @__PURE__ */ import_react5.default.createElement(ProductPage, {
+      /* @__PURE__ */ import_react6.default.createElement(ProductPage, {
         product,
         imagesUrl
       })
@@ -22126,7 +22135,7 @@
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
     const imagesUrl = popularProductsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(popularProductsRoot).render(
-      /* @__PURE__ */ import_react5.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react6.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22136,15 +22145,23 @@
   var cartButtonRoot = document.getElementById("cart-button-app");
   if (cartButtonRoot) {
     (0, import_client.createRoot)(cartButtonRoot).render(
-      /* @__PURE__ */ import_react5.default.createElement(CartButton, null)
+      /* @__PURE__ */ import_react6.default.createElement(CartButton, null)
     );
   }
   var cartRoot = document.getElementById("cart-app");
   if (cartRoot) {
     (0, import_client.createRoot)(cartRoot).render(
-      /* @__PURE__ */ import_react5.default.createElement(CartPage, {
+      /* @__PURE__ */ import_react6.default.createElement(CartPage, {
         imagesUrl: cartRoot.dataset.imagesUrl
       })
+    );
+  }
+  var checkoutSuccessRoot = document.getElementById(
+    "checkout-success-app"
+  );
+  if (checkoutSuccessRoot) {
+    (0, import_client.createRoot)(checkoutSuccessRoot).render(
+      /* @__PURE__ */ import_react6.default.createElement(CheckoutSuccess, null)
     );
   }
 })();

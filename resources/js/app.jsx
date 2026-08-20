@@ -5,10 +5,11 @@ import ProductFilter from './components/ProductFilter.jsx';
 import ProductPage from './components/ProductPage.jsx';
 import CartButton from './components/CartButton.jsx';
 import CartPage from './components/CartPage.jsx';
+import CheckoutSuccess from './components/CheckoutSuccess.jsx';
+
 
 
 const productsRoot = document.getElementById('products-app');
-
 if (productsRoot) {
     const products = JSON.parse(productsRoot.dataset.products);
     const categories = JSON.parse(productsRoot.dataset.categories);
@@ -24,7 +25,6 @@ if (productsRoot) {
 }
 
 const productRoot = document.getElementById('product-app');
-
 if (productRoot) {
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
@@ -38,7 +38,6 @@ if (productRoot) {
 }
 
 const popularProductsRoot = document.getElementById('popular-products-app');
-
 if (popularProductsRoot) {
     const products = JSON.parse(popularProductsRoot.dataset.products);
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
@@ -54,7 +53,6 @@ if (popularProductsRoot) {
 }
 
 const cartButtonRoot = document.getElementById('cart-button-app');
-
 if (cartButtonRoot) {
     createRoot(cartButtonRoot).render(
         <CartButton />
@@ -62,11 +60,19 @@ if (cartButtonRoot) {
 }
 
 const cartRoot = document.getElementById('cart-app');
-
 if (cartRoot) {
     createRoot(cartRoot).render(
         <CartPage
             imagesUrl={cartRoot.dataset.imagesUrl}
         />
+    );
+}
+
+const checkoutSuccessRoot = document.getElementById(
+    'checkout-success-app'
+);
+if (checkoutSuccessRoot) {
+    createRoot(checkoutSuccessRoot).render(
+        <CheckoutSuccess />
     );
 }

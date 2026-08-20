@@ -4,8 +4,10 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\Product;
+use App\Models\Client;
+use App\Models\Sale;
 use RuntimeException;
-use \App\Models\Client;
+use Throwable;
 
 /**
  * PageCheckoutController class
@@ -57,6 +59,9 @@ class PageCheckoutController extends Controller
         $postalCode = trim($_POST['postal_code'] ?? '');
         $city = trim($_POST['city'] ?? '');
 
+        $paymentMethod = $_POST['payment_method'] ?? '';
+        $deliveryMethod = $_POST['delivery_method'] ?? '';
+
         $items = json_decode(
             $_POST['items'] ?? '[]',
             true
@@ -66,12 +71,21 @@ class PageCheckoutController extends Controller
             $firstname === ''
             || $lastname === ''
             || $email === ''
-            || $address === ''
-            || $postalCode === ''
-            || $city === ''
         ) {
             die('Champs obligatoires manquants.');
         }
+
+        if (
+            $deliveryMethod === 'livraison'
+            && (
+                $address === ''
+                || $postalCode === ''
+                || $city === ''
+            )
+        ) {
+            die('Adresse de livraison incomplète.');
+        }
+
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             die('Adresse e-mail invalide.');
@@ -79,6 +93,26 @@ class PageCheckoutController extends Controller
 
         if (!is_array($items) || empty($items)) {
             die('Panier invalide.');
+        }
+
+        $allowedPaymentMethods = [
+            'cb',
+            'virement',
+            'especes',
+            'cheque',
+        ];
+
+        $allowedDeliveryMethods = [
+            'livraison',
+            'magasin',
+        ];
+
+        if (!in_array($paymentMethod, $allowedPaymentMethods, true)) {
+            die('Mode de paiement invalide.');
+        }
+
+        if (!in_array($deliveryMethod, $allowedDeliveryMethods, true)) {
+            die('Mode de livraison invalide.');
         }
 
         try {
@@ -96,6 +130,7 @@ class PageCheckoutController extends Controller
             );
         }
 
+        //TODO: refactor Cusomer / Client data
         $customer = [
             'firstname' => $firstname,
             'lastname' => $lastname,
@@ -109,15 +144,27 @@ class PageCheckoutController extends Controller
             'city' => $city,
         ];
 
-        $fullAddress = sprintf(
-            '%s, %s %s',
-            $address,
-            $postalCode,
-            $city
-        );
+        $fullAddress = null;
+        if ($deliveryMethod === 'livraison') {
+            $fullAddress = sprintf(
+                '%s, %s %s',
+                $address,
+                $postalCode,
+                $city
+            );
+        }
 
         $clientModel = new Client();
         $client = $clientModel->findByEmail($email);
+
+        echo "CLIENT EMAIL: ";
+        echo "<pre>";
+        print_r($client);
+        echo "</pre>";
+        //die();
+
+
+        //TODO: if the email exists, what are we doing with the new form data? (name, addres...)
         if ($client) {
             $clientId = (int) $client['id'];
         } else {
@@ -129,16 +176,43 @@ class PageCheckoutController extends Controller
             ]);
         }
 
-        echo '<pre>';
-        echo 'Client ID: ' . $clientId . '<br>';
-        print_r([
-            'customer' => $customer,
-            'delivery' => $delivery,
-            'checkout_items' => $checkout['checkout_items'],
-            'checkout_total' => $checkout['checkout_total'],
-        ]);
+        $saleModel = new Sale();
 
-        echo '</pre>';
+        try {
+            $saleId = $saleModel->create([
+                'user_id' => null,
+                'client_id' => $clientId,
+
+                'items' => $items,
+
+                'delivery_method' => $deliveryMethod,
+                'payment_method' => $paymentMethod,
+
+                'source' => 'website',
+
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'delivery_status' => 'pending',
+
+            ]);
+
+            $_SESSION['checkout_sale_id'] = $saleId;
+
+        } catch (Throwable $exception) {
+            die(
+                htmlspecialchars(
+                    $exception->getMessage(),
+                    ENT_QUOTES,
+                    'UTF-8'
+                )
+            );
+        }
+
+        header(
+            'Location: /public/index.php?route=/checkout/success&sale_id='
+            . $saleId
+        );
+
         exit;
     }
 
@@ -249,5 +323,36 @@ class PageCheckoutController extends Controller
             'checkout_items' => $checkoutItems,
             'checkout_total' => $checkoutTotal,
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function success(): void
+    {
+        $saleId = (int)($_GET['sale_id'] ?? 0);
+        $sessionSaleId = (int)($_SESSION['checkout_sale_id'] ?? 0);
+
+        if (
+            $saleId <= 0
+            || $sessionSaleId <= 0
+            || $saleId !== $sessionSaleId
+        ) {
+            header('Location: /public/index.php?route=/products');
+            exit;
+        }
+
+        $saleModel = new Sale();
+
+        $sale = $saleModel->findById($saleId);
+
+        if (!$sale) {
+            header('Location: /public/index.php?route=/products');
+            exit;
+        }
+
+        $this->view('frontend/checkout/success', [
+            'sale_id' => $saleId,
+        ]);
     }
 }

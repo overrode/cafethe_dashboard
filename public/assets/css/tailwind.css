@@ -341,6 +341,9 @@
   .mb-auto {
     margin-bottom: auto;
   }
+  .ml-2 {
+    margin-left: calc(var(--spacing) * 2);
+  }
   .block {
     display: block;
   }
@@ -475,6 +478,9 @@
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .cursor-pointer {
+    cursor: pointer;
   }
   .resize {
     resize: both;
@@ -1089,6 +1095,9 @@
     .sm\:w-28 {
       width: calc(var(--spacing) * 28);
     }
+    .sm\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
     .sm\:flex-row {
       flex-direction: row;
     }
@@ -1123,6 +1132,10 @@
     }
     .md\:py-20 {
       padding-block: calc(var(--spacing) * 20);
+    }
+    .md\:text-5xl {
+      font-size: var(--text-5xl);
+      line-height: var(--tw-leading, var(--text-5xl--line-height));
     }
     .md\:text-6xl {
       font-size: var(--text-6xl);

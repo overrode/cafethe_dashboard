@@ -91,6 +91,7 @@ $router->get('/product', [PageProductsController::class, 'productPage']);
 $router->get('/cart', [PageCartController::class, 'index']);
 $router->post('/checkout', [PageCheckoutController::class, 'index']);
 $router->post('/checkout/confirm', [PageCheckoutController::class, 'confirm']);
+$router->get('/checkout/success', [PageCheckoutController::class, 'success']);
 
 $publicRoutes = [
     '/login',
@@ -106,6 +107,7 @@ $publicRoutes = [
     '/cart',
     '/checkout',
     '/checkout/confirm',
+    '/checkout/success',
 ];
 
 $currentRoute = $_GET['route'] ?? '/';

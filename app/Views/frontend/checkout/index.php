@@ -17,7 +17,7 @@ require FRONTEND_HEADER_PATH; ?>
         <div class="space-y-4">
             <?php foreach ($checkout_items as $checkout_item): ?>
                 <div
-                        class="
+                    class="
                         flex items-center justify-between
                         rounded-[24px]
                         border border-white/70
@@ -88,100 +88,100 @@ require FRONTEND_HEADER_PATH; ?>
                 <div class="mt-6 grid gap-5 md:grid-cols-2">
                     <div>
                         <label
-                                for="firstname"
-                                class="mb-2 block text-sm font-bold"
+                            for="firstname"
+                            class="mb-2 block text-sm font-bold"
                         >
                             Prénom
                         </label>
 
                         <input
-                                id="firstname"
-                                name="firstname"
-                                type="text"
-                                required
-                                class="
-                    w-full rounded-2xl
-                    border border-black/10
-                    bg-white/70
-                    px-4 py-3
-                    outline-none
-                    transition
-                    focus:border-black
-                "
+                            id="firstname"
+                            name="firstname"
+                            type="text"
+                            required
+                            class="
+                                w-full rounded-2xl
+                                border border-black/10
+                                bg-white/70
+                                px-4 py-3
+                                outline-none
+                                transition
+                                focus:border-black
+                            "
                         >
                     </div>
 
                     <div>
                         <label
-                                for="lastname"
-                                class="mb-2 block text-sm font-bold"
+                            for="lastname"
+                            class="mb-2 block text-sm font-bold"
                         >
                             Nom
                         </label>
 
                         <input
-                                id="lastname"
-                                name="lastname"
-                                type="text"
-                                required
-                                class="
-                    w-full rounded-2xl
-                    border border-black/10
-                    bg-white/70
-                    px-4 py-3
-                    outline-none
-                    transition
-                    focus:border-black
-                "
+                            id="lastname"
+                            name="lastname"
+                            type="text"
+                            required
+                            class="
+                                w-full rounded-2xl
+                                border border-black/10
+                                bg-white/70
+                                px-4 py-3
+                                outline-none
+                                transition
+                                focus:border-black
+                            "
                         >
                     </div>
 
                     <div>
                         <label
-                                for="email"
-                                class="mb-2 block text-sm font-bold"
+                            for="email"
+                            class="mb-2 block text-sm font-bold"
                         >
                             E-mail
                         </label>
 
                         <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                class="
-                    w-full rounded-2xl
-                    border border-black/10
-                    bg-white/70
-                    px-4 py-3
-                    outline-none
-                    transition
-                    focus:border-black
-                "
+                            id="email"
+                            name="email"
+                            type="email"
+                            required
+                            class="
+                                w-full rounded-2xl
+                                border border-black/10
+                                bg-white/70
+                                px-4 py-3
+                                outline-none
+                                transition
+                                focus:border-black
+                            "
                         >
                     </div>
 
                     <div>
                         <label
-                                for="phone"
-                                class="mb-2 block text-sm font-bold"
+                            for="phone"
+                            class="mb-2 block text-sm font-bold"
                         >
                             Téléphone
                         </label>
 
                         <input
-                                id="phone"
-                                name="phone"
-                                type="tel"
-                                class="
-                    w-full rounded-2xl
-                    border border-black/10
-                    bg-white/70
-                    px-4 py-3
-                    outline-none
-                    transition
-                    focus:border-black
-                "
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            class="
+                                w-full rounded-2xl
+                                border border-black/10
+                                bg-white/70
+                                px-4 py-3
+                                outline-none
+                                transition
+                                focus:border-black
+                            "
                         >
                     </div>
                 </div>
@@ -192,59 +192,59 @@ require FRONTEND_HEADER_PATH; ?>
 
                 <div class="mt-6">
                     <label
-                            for="address"
-                            class="mb-2 block text-sm font-bold"
+                        for="address"
+                        class="mb-2 block text-sm font-bold"
                     >
                         Adresse
                     </label>
 
                     <input
-                            id="address"
-                            name="address"
-                            type="text"
-                            required
-                            class="
-                w-full rounded-2xl
-                border border-black/10
-                bg-white/70
-                px-4 py-3
-                outline-none
-                transition
-                focus:border-black
-            "
+                        id="address"
+                        name="address"
+                        type="text"
+                        required
+                        class="
+                            w-full rounded-2xl
+                            border border-black/10
+                            bg-white/70
+                            px-4 py-3
+                            outline-none
+                            transition
+                            focus:border-black
+                        "
                     >
                 </div>
 
                 <div class="mt-5 grid gap-5 md:grid-cols-2">
                     <div>
                         <label
-                                for="postal_code"
-                                class="mb-2 block text-sm font-bold"
+                            for="postal_code"
+                            class="mb-2 block text-sm font-bold"
                         >
                             Code postal
                         </label>
 
                         <input
-                                id="postal_code"
-                                name="postal_code"
-                                type="text"
-                                required
-                                class="
-                    w-full rounded-2xl
-                    border border-black/10
-                    bg-white/70
-                    px-4 py-3
-                    outline-none
-                    transition
-                    focus:border-black
-                "
+                            id="postal_code"
+                            name="postal_code"
+                            type="text"
+                            required
+                            class="
+                                w-full rounded-2xl
+                                border border-black/10
+                                bg-white/70
+                                px-4 py-3
+                                outline-none
+                                transition
+                                focus:border-black
+                            "
                         >
                     </div>
 
                     <div>
                         <label
-                                for="city"
-                                class="mb-2 block text-sm font-bold"
+                            for="city"
+                            class="mb-2 block text-sm font-bold"
                         >
                             Ville
                         </label>
@@ -266,6 +266,87 @@ require FRONTEND_HEADER_PATH; ?>
                         >
                     </div>
                 </div>
+
+                                <!-- Payment & Delivery -->
+                <h2 class="mt-10 text-2xl font-black">
+                    Paiement
+                </h2>
+
+                <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="cb"
+                            required
+                        >
+                        <span class="ml-2 font-semibold">
+                            Carte bancaire
+                        </span>
+                    </label>
+
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="virement"
+                        >
+                        <span class="ml-2 font-semibold">
+                            Virement bancaire
+                        </span>
+                    </label>
+
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="especes"
+                        >
+                        <span class="ml-2 font-semibold">
+                            Espèces
+                        </span>
+                    </label>
+
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="payment_method"
+                            value="cheque"
+                        ><span class="ml-2 font-semibold">
+                            Chèque
+                        </span>
+                    </label>
+                </div>
+
+                <h2 class="mt-10 text-2xl font-black">
+                    Mode de livraison
+                </h2>
+
+                <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="delivery_method"
+                            value="livraison"
+                            required
+                        >
+                        <span class="ml-2 font-semibold">
+                            Livraison à domicile
+                        </span>
+                    </label>
+
+                    <label class="cursor-pointer rounded-2xl border border-white/70 bg-white/40 p-4">
+                        <input
+                            type="radio"
+                            name="delivery_method"
+                            value="magasin"
+                        >
+                        <span class="ml-2 font-semibold">
+                            Retrait en magasin
+                        </span>
+                    </label>
+                </div>
+                <!-- END Payment & Delivery -->
 
                 <input
                     type="hidden"
