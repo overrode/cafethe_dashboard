@@ -1348,7 +1348,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React9 = require_react(), Internals = {
+        var React10 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1366,7 +1366,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2938,7 +2938,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React10.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18776,14 +18776,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React10 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21576,7 +21576,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React9.version;
+          var isomorphicReactPackageVersion = React10.version;
           if ("19.2.8" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.8\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21717,7 +21717,7 @@
   });
 
   // resources/js/app.jsx
-  var import_react8 = __toESM(require_react());
+  var import_react9 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // resources/js/components/ProductFilter.jsx
@@ -22383,16 +22383,7 @@
             body: formData
           }
         );
-        const responseText = await response.text();
-        console.log(responseText);
-        let data;
-        try {
-          data = JSON.parse(responseText);
-        } catch {
-          throw new Error(
-            "Le serveur n\u2019a pas retourn\xE9 du JSON. Regarde la console."
-          );
-        }
+        const data = await response.json();
         if (!response.ok || !data.success) {
           throw new Error(
             data.error || "Impossible de cr\xE9er le client."
@@ -22720,6 +22711,166 @@
     }, clientSaving ? "Enregistrement..." : "Cr\xE9er le client")))));
   }
 
+  // resources/js/components/LoginModal.jsx
+  var import_react8 = __toESM(require_react());
+  function LoginModal() {
+    const [open, setOpen] = (0, import_react8.useState)(false);
+    const [email, setEmail] = (0, import_react8.useState)("");
+    const [password, setPassword] = (0, import_react8.useState)("");
+    const [error, setError] = (0, import_react8.useState)("");
+    const [loading, setLoading] = (0, import_react8.useState)(false);
+    (0, import_react8.useEffect)(() => {
+      const params = new URLSearchParams(
+        window.location.search
+      );
+      if (params.get("login") === "1") {
+        setOpen(true);
+      }
+      const handleLoginTrigger = (event) => {
+        const trigger = event.target.closest(
+          "[data-login-trigger]"
+        );
+        if (!trigger) {
+          return;
+        }
+        event.preventDefault();
+        setError("");
+        setOpen(true);
+      };
+      document.addEventListener(
+        "click",
+        handleLoginTrigger
+      );
+      return () => {
+        document.removeEventListener(
+          "click",
+          handleLoginTrigger
+        );
+      };
+    }, []);
+    (0, import_react8.useEffect)(() => {
+      if (!open) {
+        return;
+      }
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }, [open]);
+    (0, import_react8.useEffect)(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === "Escape" && !loading) {
+          setOpen(false);
+        }
+      };
+      document.addEventListener(
+        "keydown",
+        handleKeyDown
+      );
+      return () => {
+        document.removeEventListener(
+          "keydown",
+          handleKeyDown
+        );
+      };
+    }, [loading]);
+    const authenticate = async (event) => {
+      event.preventDefault();
+      setLoading(true);
+      setError("");
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      try {
+        const response = await fetch(
+          "/public/index.php?route=/login",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible de se connecter."
+          );
+        }
+        window.location.href = data.redirect;
+      } catch (error2) {
+        setError(error2.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (!open) {
+      return null;
+    }
+    return /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "\n                fixed inset-0 z-[100]\n                flex items-center justify-center\n                bg-black/50\n                p-4\n                backdrop-blur-xl\n            ",
+      onMouseDown: (event) => {
+        if (event.target === event.currentTarget && !loading) {
+          setOpen(false);
+        }
+      }
+    }, /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "\n                    relative\n                    w-full max-w-md\n                    overflow-hidden\n                    rounded-[32px]\n                    border border-white/50\n                    bg-white/75\n                    p-8\n                    shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                    backdrop-blur-3xl\n                "
+    }, /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "\n                        pointer-events-none\n                        absolute -right-20 -top-20\n                        h-52 w-52\n                        rounded-full\n                        bg-white/60\n                        blur-3xl\n                    "
+    }), /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "\n                        pointer-events-none\n                        absolute -bottom-24 -left-20\n                        h-56 w-56\n                        rounded-full\n                        bg-black/5\n                        blur-3xl\n                    "
+    }), /* @__PURE__ */ import_react8.default.createElement("button", {
+      type: "button",
+      disabled: loading,
+      onClick: () => setOpen(false),
+      className: "\n                        absolute right-5 top-5\n                        flex h-9 w-9\n                        items-center justify-center\n                        rounded-full\n                        bg-black/5\n                        text-xl\n                        transition\n                        hover:bg-black hover:text-white\n                    ",
+      "aria-label": "Fermer"
+    }, "\xD7"), /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "relative"
+    }, /* @__PURE__ */ import_react8.default.createElement("p", {
+      className: "\n                            text-xs font-black\n                            uppercase\n                            tracking-[0.2em]\n                            text-neutral-500\n                        "
+    }, "CafTh\xE9"), /* @__PURE__ */ import_react8.default.createElement("h2", {
+      className: "\n                            mt-3\n                            text-4xl font-black\n                            tracking-[-0.05em]\n                        "
+    }, "Bon retour."), /* @__PURE__ */ import_react8.default.createElement("p", {
+      className: "mt-2 text-neutral-500"
+    }, "Connectez-vous \xE0 votre espace."), /* @__PURE__ */ import_react8.default.createElement("form", {
+      onSubmit: authenticate,
+      className: "mt-8 space-y-5"
+    }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("label", {
+      htmlFor: "login-email",
+      className: "\n                                    mb-2 block\n                                    text-sm font-bold\n                                "
+    }, "Email"), /* @__PURE__ */ import_react8.default.createElement("input", {
+      id: "login-email",
+      type: "email",
+      required: true,
+      autoComplete: "email",
+      value: email,
+      onChange: (event) => setEmail(
+        event.target.value
+      ),
+      className: "\n                                    w-full\n                                    rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black/40\n                                    focus:bg-white\n                                "
+    })), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("label", {
+      htmlFor: "login-password",
+      className: "\n                                    mb-2 block\n                                    text-sm font-bold\n                                "
+    }, "Mot de passe"), /* @__PURE__ */ import_react8.default.createElement("input", {
+      id: "login-password",
+      type: "password",
+      required: true,
+      autoComplete: "current-password",
+      value: password,
+      onChange: (event) => setPassword(
+        event.target.value
+      ),
+      className: "\n                                    w-full\n                                    rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black/40\n                                    focus:bg-white\n                                "
+    })), error && /* @__PURE__ */ import_react8.default.createElement("div", {
+      className: "\n                                    rounded-2xl\n                                    bg-red-50\n                                    px-4 py-3\n                                    text-sm font-semibold\n                                    text-red-700\n                                "
+    }, error), /* @__PURE__ */ import_react8.default.createElement("button", {
+      type: "submit",
+      disabled: loading,
+      className: "\n                                w-full\n                                rounded-full\n                                bg-black\n                                px-5 py-4\n                                font-black text-white\n                                transition\n                                hover:-translate-y-0.5\n                                disabled:opacity-40\n                            "
+    }, loading ? "Connexion..." : "Se connecter")))));
+  }
+
   // resources/js/app.jsx
   var productsRoot = document.getElementById("products-app");
   if (productsRoot) {
@@ -22727,7 +22878,7 @@
     const categories = JSON.parse(productsRoot.dataset.categories);
     const imagesUrl = productsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productsRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react9.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22739,7 +22890,7 @@
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(ProductPage, {
+      /* @__PURE__ */ import_react9.default.createElement(ProductPage, {
         product,
         imagesUrl
       })
@@ -22751,7 +22902,7 @@
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
     const imagesUrl = popularProductsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(popularProductsRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react9.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22761,13 +22912,13 @@
   var cartButtonRoot = document.getElementById("cart-button-app");
   if (cartButtonRoot) {
     (0, import_client.createRoot)(cartButtonRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(CartButton, null)
+      /* @__PURE__ */ import_react9.default.createElement(CartButton, null)
     );
   }
   var cartRoot = document.getElementById("cart-app");
   if (cartRoot) {
     (0, import_client.createRoot)(cartRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(CartPage, {
+      /* @__PURE__ */ import_react9.default.createElement(CartPage, {
         imagesUrl: cartRoot.dataset.imagesUrl
       })
     );
@@ -22777,7 +22928,7 @@
   );
   if (checkoutSuccessRoot) {
     (0, import_client.createRoot)(checkoutSuccessRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(CheckoutSuccess, null)
+      /* @__PURE__ */ import_react9.default.createElement(CheckoutSuccess, null)
     );
   }
   var checkoutOptionsRoot = document.getElementById(
@@ -22785,7 +22936,7 @@
   );
   if (checkoutOptionsRoot) {
     (0, import_client.createRoot)(checkoutOptionsRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(CheckoutOptions, null)
+      /* @__PURE__ */ import_react9.default.createElement(CheckoutOptions, null)
     );
   }
   var dashboardSaleFormRoot = document.getElementById(
@@ -22799,10 +22950,18 @@
       dashboardSaleFormRoot.dataset.products || "[]"
     );
     (0, import_client.createRoot)(dashboardSaleFormRoot).render(
-      /* @__PURE__ */ import_react8.default.createElement(DashboardSaleForm, {
+      /* @__PURE__ */ import_react9.default.createElement(DashboardSaleForm, {
         clients,
         products
       })
+    );
+  }
+  var loginModalRoot = document.getElementById(
+    "login-modal-app"
+  );
+  if (loginModalRoot) {
+    (0, import_client.createRoot)(loginModalRoot).render(
+      /* @__PURE__ */ import_react9.default.createElement(LoginModal, null)
     );
   }
 })();

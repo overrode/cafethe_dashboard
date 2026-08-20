@@ -8,6 +8,7 @@ import CartPage from './components/CartPage.jsx';
 import CheckoutSuccess from './components/CheckoutSuccess.jsx';
 import CheckoutOptions from './components/CheckoutOptions.jsx';
 import DashboardSaleForm from './components/DashboardSaleForm.jsx';
+import LoginModal from './components/LoginModal.jsx';
 
 
 
@@ -105,5 +106,14 @@ if (dashboardSaleFormRoot) {
             clients={clients}
             products={products}
         />
+    );
+}
+
+const loginModalRoot = document.getElementById(
+    'login-modal-app'
+);
+if (loginModalRoot) {
+    createRoot(loginModalRoot).render(
+        <LoginModal />
     );
 }

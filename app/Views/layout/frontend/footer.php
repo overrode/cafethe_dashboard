@@ -16,6 +16,8 @@
             <p>&copy; <?= date('Y') ?> CafThé</p>
         </footer>
 
+        <div id="login-modal-app"></div>
+
         <script defer src="/public/assets/js/app.js"></script>
     </body>
 </html>

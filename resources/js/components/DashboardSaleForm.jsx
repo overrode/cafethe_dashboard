@@ -234,19 +234,8 @@ export default function DashboardSaleForm({
                 }
             );
 
-const responseText = await response.text();
+            const data = await response.json();
 
-console.log(responseText);
-
-let data;
-
-try {
-    data = JSON.parse(responseText);
-} catch {
-    throw new Error(
-        'Le serveur n’a pas retourné du JSON. Regarde la console.'
-    );
-}
             if (!response.ok || !data.success) {
                 throw new Error(
                     data.error || 'Impossible de créer le client.'

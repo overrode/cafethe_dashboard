@@ -71,8 +71,8 @@ $router->get('/dashboard', [DashboardHomeController::class, 'index']);
 
 // Authentification
 $router->get('/login', [DashboardAuthController::class, 'login']);
-$router->post('/login', [DashboardAuthController::class, 'authenticate']);
 $router->get('/logout', [DashboardAuthController::class, 'logout']);
+$router->post('/login', [DashboardAuthController::class, 'authenticate']);
 
 //User management
 $router->get('/users', [DashboardUserController::class, 'index']);

@@ -185,7 +185,7 @@ class DashboardClientController extends Controller
 
 
         /*
-         * Email is optional, but must be valid when supplied.
+         * Email is optional but must be valid when supplied.
          */
         if (
             $email !== ''
