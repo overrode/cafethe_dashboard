@@ -94,6 +94,21 @@ class Sale
         ],
     ];
 
+    /*
+     * @var array<string, array<string, string>> The valid delivery status transitions for each delivery method.
+     */
+    private const DELIVERY_TRANSITIONS_BY_METHOD = [
+        'livraison' => [
+            'pending' => 'shipped',
+            'shipped' => 'delivered',
+        ],
+
+        'magasin' => [
+            'pending' => 'ready_for_pickup',
+            'ready_for_pickup' => 'collected',
+        ],
+    ];
+
     public function __construct()
     {
         $this->db = Database::getConnection();
@@ -125,7 +140,7 @@ class Sale
      *
      * @param array $data
      * @return int The ID of the created sale.
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function create(array $data): int
     {
@@ -230,8 +245,8 @@ class Sale
             $quantitiesByProductId = [];
 
             foreach ($items as $item) {
-                $productId = (int) ($item['product_id'] ?? 0);
-                $quantity = (float) ($item['quantity'] ?? 0);
+                $productId = (int)($item['product_id'] ?? 0);
+                $quantity = (float)($item['quantity'] ?? 0);
 
                 if ($productId <= 0 || $quantity <= 0) {
                     throw new Exception(
@@ -266,7 +281,7 @@ class Sale
             $productsById = [];
 
             foreach ($products as $product) {
-                $productsById[(int) $product['id']] = $product;
+                $productsById[(int)$product['id']] = $product;
             }
 
 
@@ -298,7 +313,7 @@ class Sale
                  * For pending website orders this does NOT reserve the stock.
                  * Stock will be checked again when payment succeeds.
                  */
-                if ((float) $product['stock'] < $quantity) {
+                if ((float)$product['stock'] < $quantity) {
                     throw new Exception(
                         'Stock insuffisant pour le produit : '
                         . $product['name']
@@ -323,8 +338,8 @@ class Sale
                     );
                 }
 
-                $unitPrice = (float) $product['price'];
-                $vatRate = (float) $product['vat_rate'];
+                $unitPrice = (float)$product['price'];
+                $vatRate = (float)$product['vat_rate'];
 
                 if (
                     $unitPrice < 0
@@ -443,7 +458,7 @@ class Sale
              *
              * Every sale_items row will reference this ID.
              */
-            $saleId = (int) $this->db->lastInsertId();
+            $saleId = (int)$this->db->lastInsertId();
 
 
             /*
@@ -546,7 +561,7 @@ class Sale
 
             return $saleId;
 
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             /*
              * Something failed.
              *
@@ -581,5 +596,459 @@ class Sale
         $sale = $stmt->fetch();
 
         return $sale ?: null;
+    }
+
+    /**
+     * Sets a pending sale as paid and consumes its product stock.
+     *
+     * The operation is idempotent: if the sale is already paid,
+     * it does nothing and returns successfully.
+     *
+     * @param int $saleId
+     * @return bool
+     * @throws Throwable
+     */
+    public function setAsPaid(int $saleId): bool
+    {
+        $this->db->beginTransaction();
+
+        try {
+            /*
+             * Lock the sale row while payment is being processed.
+             *
+             * This prevents two simultaneous payment confirmations
+             * from decreasing stock twice for the same sale.
+             */
+            $saleStmt = $this->db->prepare(
+                'SELECT *
+                 FROM sales
+                 WHERE id = :id
+                 FOR UPDATE'
+            );
+
+            $saleStmt->execute([
+                'id' => $saleId,
+            ]);
+
+            $sale = $saleStmt->fetch();
+
+            if (!$sale) {
+                throw new Exception('Vente introuvable');
+            }
+
+
+            /*
+             * Payment confirmation can sometimes arrive more than once
+             * from a payment provider.
+             *
+             * If this sale is already paid, there is nothing more to do.
+             */
+            if ($sale['payment_status'] === 'paid') {
+                $this->db->commit();
+
+                return true;
+            }
+
+
+            /*
+             * A cancelled sale must never be paid.
+             */
+            if ($sale['status'] === 'cancelled') {
+                throw new Exception(
+                    'Impossible de payer une vente annulée'
+                );
+            }
+
+
+            /*
+             * Retrieve the products and quantities belonging to this sale.
+             *
+             * sale_items already contains the quantities validated
+             * when the order was originally created.
+             */
+            $itemsStmt = $this->db->prepare(
+                'SELECT product_id, quantity
+                 FROM sale_items
+                 WHERE sale_id = :sale_id'
+            );
+
+            $itemsStmt->execute([
+                'sale_id' => $saleId,
+            ]);
+
+            $saleItems = $itemsStmt->fetchAll();
+
+            if (empty($saleItems)) {
+                throw new Exception(
+                    'Aucun produit dans la vente'
+                );
+            }
+
+
+            /*
+             * Prepare one reusable stock update statement.
+             *
+             * The stock condition is checked directly inside MySQL.
+             * This protects against another order consuming the stock
+             * immediately before this payment is confirmed.
+             */
+            $stockStmt = $this->db->prepare(
+                'UPDATE products
+                 SET stock = stock - :quantity
+                 WHERE id = :product_id
+                 AND stock >= :required_quantity'
+            );
+
+
+            /*
+             * Consume stock for every product in the paid sale.
+             */
+            foreach ($saleItems as $item) {
+                $stockStmt->execute([
+                    'quantity' => $item['quantity'],
+                    'required_quantity' => $item['quantity'],
+                    'product_id' => $item['product_id'],
+                ]);
+
+                if ($stockStmt->rowCount() === 0) {
+                    throw new Exception(
+                        'Stock insuffisant lors du paiement'
+                    );
+                }
+            }
+
+
+            /*
+             * Payment succeeded.
+             *
+             * The order now enters preparation while delivery remains
+             * independently managed through delivery_status.
+             */
+            $updateSaleStmt = $this->db->prepare(
+                'UPDATE sales
+                 SET
+                    payment_status = :payment_status,
+                    paid_at = NOW(),
+                    status = :status
+                 WHERE id = :id'
+            );
+
+            $updateSaleStmt->execute([
+                'payment_status' => 'paid',
+                'status' => 'preparing',
+                'id' => $saleId,
+            ]);
+
+
+            /*
+             * Stock and payment status were both updated successfully.
+             */
+            $this->db->commit();
+
+            return true;
+
+        } catch (Throwable $exception) {
+            /*
+             * If anything fails, restore both stock and sale state
+             * to exactly what they were before this operation.
+             */
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param int $saleId
+     * @param string $deliveryStatus
+     * @return bool
+     * @throws Throwable
+     */
+    public function setDeliveryStatus(int $saleId, string $deliveryStatus ): bool
+    {
+        $this->db->beginTransaction();
+
+        try {
+            /*
+             * Lock the sale while its delivery state is being modified.
+             */
+            $stmt = $this->db->prepare(
+                'SELECT
+                    id,
+                    status,
+                    payment_status,
+                    delivery_method,
+                    delivery_status
+                 FROM sales
+                 WHERE id = :id
+                 FOR UPDATE'
+            );
+
+            $stmt->execute([
+                'id' => $saleId,
+            ]);
+
+            $sale = $stmt->fetch();
+
+            if (!$sale) {
+                throw new Exception('Vente introuvable');
+            }
+
+
+            /*
+             * Finished or cancelled orders cannot move anymore.
+             */
+            if (
+                in_array(
+                    $sale['status'],
+                    ['completed', 'cancelled'],
+                    true
+                )
+            ) {
+                throw new Exception(
+                    'Cette vente ne peut plus être modifiée'
+                );
+            }
+
+
+            /*
+             * Delivery starts only after payment has been confirmed.
+             */
+            if ($sale['payment_status'] !== 'paid') {
+                throw new Exception(
+                    'Le paiement doit être confirmé avant la livraison'
+                );
+            }
+
+
+            /*
+             * Get the only valid next delivery state.
+             *
+             * Livraison:
+             * pending → shipped → delivered
+             *
+             * Retrait magasin:
+             * pending → ready_for_pickup → collected
+             */
+            $deliveryMethod = $sale['delivery_method'];
+            $currentStatus = $sale['delivery_status'];
+
+            $nextStatus =
+                self::DELIVERY_TRANSITIONS_BY_METHOD[$deliveryMethod][$currentStatus]
+                ?? null;
+
+            if ($nextStatus !== $deliveryStatus) {
+                throw new Exception(
+                    'Transition de livraison invalide'
+                );
+            }
+
+            /*
+             * Save the new delivery state.
+             */
+            $updateStmt = $this->db->prepare(
+                'UPDATE sales
+                 SET delivery_status = :delivery_status
+                 WHERE id = :id'
+            );
+
+            $updateStmt->execute([
+                'delivery_status' => $deliveryStatus,
+                'id' => $saleId,
+            ]);
+
+            $this->db->commit();
+
+            return true;
+
+        } catch (\Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param int $saleId
+     * @return bool
+     * @throws Throwable
+     */
+    public function setAsCompleted(int $saleId): bool
+    {
+        $this->db->beginTransaction();
+
+        try {
+            $stmt = $this->db->prepare(
+                'SELECT
+                    id,
+                    status,
+                    payment_status,
+                    delivery_method,
+                    delivery_status
+                 FROM sales
+                 WHERE id = :id
+                 FOR UPDATE'
+            );
+
+            $stmt->execute([
+                'id' => $saleId,
+            ]);
+
+            $sale = $stmt->fetch();
+
+            if (!$sale) {
+                throw new Exception('Vente introuvable');
+            }
+
+
+            /*
+             * Already completed: nothing more to do.
+             */
+            if ($sale['status'] === 'completed') {
+                $this->db->commit();
+
+                return true;
+            }
+
+            if ($sale['status'] === 'cancelled') {
+                throw new Exception(
+                    'Une vente annulée ne peut pas être terminée'
+                );
+            }
+
+
+            /*
+             * An order can only be completed after payment.
+             */
+            if ($sale['payment_status'] !== 'paid') {
+                throw new Exception(
+                    'La vente doit être payée avant d’être terminée'
+                );
+            }
+
+
+            /*
+             * Delivery must also be finished.
+             */
+            $expectedDeliveryStatus =
+                $sale['delivery_method'] === 'livraison'
+                    ? 'delivered'
+                    : 'collected';
+
+            if (
+                $sale['delivery_status']
+                !== $expectedDeliveryStatus
+            ) {
+                throw new Exception(
+                    'La livraison ou le retrait n’est pas terminé'
+                );
+            }
+
+
+            $updateStmt = $this->db->prepare(
+                'UPDATE sales
+                 SET status = :status
+                 WHERE id = :id'
+            );
+
+            $updateStmt->execute([
+                'status' => 'completed',
+                'id' => $saleId,
+            ]);
+
+            $this->db->commit();
+
+            return true;
+
+        } catch (\Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param int $saleId
+     * @return bool
+     * @throws Throwable
+     */
+    public function setAsCancelled(int $saleId): bool
+    {
+        $this->db->beginTransaction();
+
+        try {
+            $stmt = $this->db->prepare(
+                'SELECT
+                    id,
+                    status,
+                    payment_status
+                 FROM sales
+                 WHERE id = :id
+                 FOR UPDATE'
+            );
+
+            $stmt->execute([
+                'id' => $saleId,
+            ]);
+
+            $sale = $stmt->fetch();
+
+            if (!$sale) {
+                throw new Exception('Vente introuvable');
+            }
+
+            if ($sale['status'] === 'cancelled') {
+                $this->db->commit();
+
+                return true;
+            }
+
+            if ($sale['status'] === 'completed') {
+                throw new Exception(
+                    'Une vente terminée ne peut pas être annulée'
+                );
+            }
+
+            /*
+             * Paid orders need a refund workflow.
+             *
+             * We do not cancel them here because their stock has already
+             * been removed.
+             */
+            if ($sale['payment_status'] === 'paid') {
+                throw new Exception(
+                    'Une vente payée doit être remboursée avant annulation'
+                );
+            }
+
+
+            $updateStmt = $this->db->prepare(
+                'UPDATE sales
+                 SET status = :status
+                 WHERE id = :id'
+            );
+
+            $updateStmt->execute([
+                'status' => 'cancelled',
+                'id' => $saleId,
+            ]);
+
+            $this->db->commit();
+
+            return true;
+
+        } catch (\Throwable $exception) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $exception;
+        }
     }
 }

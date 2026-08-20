@@ -67,6 +67,7 @@ class PageCheckoutController extends Controller
             true
         );
 
+        // Validations
         if (
             $firstname === ''
             || $lastname === ''
@@ -74,18 +75,6 @@ class PageCheckoutController extends Controller
         ) {
             die('Champs obligatoires manquants.');
         }
-
-        if (
-            $deliveryMethod === 'livraison'
-            && (
-                $address === ''
-                || $postalCode === ''
-                || $city === ''
-            )
-        ) {
-            die('Adresse de livraison incomplète.');
-        }
-
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             die('Adresse e-mail invalide.');
@@ -115,6 +104,28 @@ class PageCheckoutController extends Controller
             die('Mode de livraison invalide.');
         }
 
+        // A delivery address is required only for home delivery.
+        if (
+            $deliveryMethod === 'livraison'
+            && (
+                $address === ''
+                || $postalCode === ''
+                || $city === ''
+            )
+        ) {
+            die('Adresse de livraison incomplète.');
+        }
+
+        // Cash and cheque are available only for store pickup.
+        if (
+            $deliveryMethod === 'livraison'
+            && in_array($paymentMethod, ['especes', 'cheque'], true)
+        ) {
+            die('Ce mode de paiement n’est pas disponible pour la livraison.');
+        }
+
+        // Rebuild and validate the checkout from trusted database data.
+        // Product data it's loaded again from MySQL.
         try {
             $checkout = $this->buildCheckout(
                 $items,
@@ -130,20 +141,14 @@ class PageCheckoutController extends Controller
             );
         }
 
-        //TODO: refactor Cusomer / Client data
-        $customer = [
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'email' => $email,
-            'phone' => $phone,
-        ];
+        $clientModel = new Client();
+        $client = $clientModel->findByEmail($email);
 
-        $delivery = [
-            'address' => $address,
-            'postal_code' => $postalCode,
-            'city' => $city,
-        ];
-
+        //TODO Checkout authentication:
+        // - email lookup
+        // - existing client → login
+        // - authenticated client → prefill client data
+        // - new email → guest/new-client checkout
         $fullAddress = null;
         if ($deliveryMethod === 'livraison') {
             $fullAddress = sprintf(
@@ -154,17 +159,6 @@ class PageCheckoutController extends Controller
             );
         }
 
-        $clientModel = new Client();
-        $client = $clientModel->findByEmail($email);
-
-        echo "CLIENT EMAIL: ";
-        echo "<pre>";
-        print_r($client);
-        echo "</pre>";
-        //die();
-
-
-        //TODO: if the email exists, what are we doing with the new form data? (name, addres...)
         if ($client) {
             $clientId = (int) $client['id'];
         } else {
@@ -176,6 +170,19 @@ class PageCheckoutController extends Controller
             ]);
         }
 
+
+        /*
+         * Create a WEBSITE order.
+         *
+         * A newly-created website order is not considered paid yet,
+         * regardless of the selected payment method.
+         *
+         * CB / bank transfer:
+         *     payment will be confirmed later.
+         *
+         * Cash / cheque:
+         *     payment will happen when the customer collects the order.
+        */
         $saleModel = new Sale();
 
         try {
@@ -196,6 +203,8 @@ class PageCheckoutController extends Controller
 
             ]);
 
+            // Save sale ID in session to validate the success page access.
+            // The success page uses this to prevent somebody from simply changing the sale_id in the URL.
             $_SESSION['checkout_sale_id'] = $saleId;
 
         } catch (Throwable $exception) {
@@ -208,6 +217,8 @@ class PageCheckoutController extends Controller
             );
         }
 
+        // Redirect only after the sale transaction was successfully committed.
+        // The React success component will clear localStorage afterwards.
         header(
             'Location: /public/index.php?route=/checkout/success&sale_id='
             . $saleId

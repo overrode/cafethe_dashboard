@@ -58,6 +58,7 @@ $router->post('/clients/store', [DashboardClientController::class, 'store']);
 $router->post('/clients/store-from-sale', [DashboardClientController::class, 'storeFromSale']);
 $router->get('/clients/edit', [DashboardClientController::class, 'edit']);
 $router->post('/clients/update', [DashboardClientController::class, 'update']);
+$router->post('/clients/store-json', [DashboardClientController::class, 'storeJson']);
 
 // Sales management
 $router->get('/sales', [DashboardSaleController::class, 'index']);
@@ -88,10 +89,20 @@ $router->get('/contact', [PageContactController::class, 'index']);
 $router->post('/contact/send', [PageContactController::class, 'sendEmail']);
 $router->get('/products', [PageProductsController::class, 'index']);
 $router->get('/product', [PageProductsController::class, 'productPage']);
+
+//Cart and Checkout
 $router->get('/cart', [PageCartController::class, 'index']);
 $router->post('/checkout', [PageCheckoutController::class, 'index']);
 $router->post('/checkout/confirm', [PageCheckoutController::class, 'confirm']);
 $router->get('/checkout/success', [PageCheckoutController::class, 'success']);
+
+// Sales
+$router->post('/sales/set-paid', [DashboardSaleController::class, 'setPaid']);
+$router->post('/sales/set-delivery-status', [DashboardSaleController::class, 'setDeliveryStatus']);
+$router->post('/sales/set-completed', [DashboardSaleController::class, 'setCompleted']);
+$router->post('/sales/set-cancelled', [DashboardSaleController::class, 'setCancelled']);
+
+
 
 $publicRoutes = [
     '/login',

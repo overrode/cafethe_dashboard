@@ -327,4 +327,22 @@ class Product
 
         return $stmt->fetchAll();
     }
+
+    /**
+     * Retrieves all active products that are available for sale (i.e., have stock greater than zero).
+     * @return array
+     */
+    public function getActiveProductsForSale(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT p.*, c.name AS category_name
+             FROM products p
+             LEFT JOIN categories c ON c.id = p.category_id
+             WHERE p.is_active = 1
+             AND p.stock > 0
+             ORDER BY p.name'
+        );
+
+        return $stmt->fetchAll();
+    }
 }

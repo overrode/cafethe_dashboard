@@ -1348,7 +1348,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React7 = require_react(), Internals = {
+        var React9 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1366,7 +1366,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2938,7 +2938,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React7.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18776,14 +18776,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React7 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React7.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21576,7 +21576,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React7.version;
+          var isomorphicReactPackageVersion = React9.version;
           if ("19.2.8" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.8\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21717,7 +21717,7 @@
   });
 
   // resources/js/app.jsx
-  var import_react6 = __toESM(require_react());
+  var import_react8 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // resources/js/components/ProductFilter.jsx
@@ -22104,6 +22104,622 @@
     return null;
   }
 
+  // resources/js/components/CheckoutOptions.jsx
+  var import_react6 = __toESM(require_react());
+  function CheckoutOptions() {
+    const [deliveryMethod, setDeliveryMethod] = (0, import_react6.useState)("");
+    const [paymentMethod, setPaymentMethod] = (0, import_react6.useState)("");
+    const needsAddress = deliveryMethod === "livraison";
+    const paymentMethods = [
+      {
+        value: "cb",
+        label: "Carte bancaire",
+        available: true
+      },
+      {
+        value: "virement",
+        label: "Virement bancaire",
+        available: true
+      },
+      {
+        value: "especes",
+        label: "Esp\xE8ces",
+        available: deliveryMethod === "magasin"
+      },
+      {
+        value: "cheque",
+        label: "Ch\xE8que",
+        available: deliveryMethod === "magasin"
+      }
+    ];
+    const handleDeliveryChange = (method) => {
+      setDeliveryMethod(method);
+      if (method === "livraison" && ["especes", "cheque"].includes(paymentMethod)) {
+        setPaymentMethod("");
+      }
+    };
+    return /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement("h2", {
+      className: "mt-10 text-2xl font-black"
+    }, "Mode de livraison"), /* @__PURE__ */ import_react6.default.createElement("div", {
+      className: "mt-5 grid gap-3 sm:grid-cols-2"
+    }, /* @__PURE__ */ import_react6.default.createElement("label", {
+      className: `
+                        cursor-pointer rounded-2xl border p-4
+                        transition
+                        ${deliveryMethod === "livraison" ? "border-black bg-black text-white" : "border-white/70 bg-white/40"}
+                    `
+    }, /* @__PURE__ */ import_react6.default.createElement("input", {
+      type: "radio",
+      name: "delivery_method",
+      value: "livraison",
+      required: true,
+      checked: deliveryMethod === "livraison",
+      onChange: () => handleDeliveryChange("livraison")
+    }), /* @__PURE__ */ import_react6.default.createElement("span", {
+      className: "ml-2 font-semibold"
+    }, "Livraison \xE0 domicile")), /* @__PURE__ */ import_react6.default.createElement("label", {
+      className: `
+                        cursor-pointer rounded-2xl border p-4
+                        transition
+                        ${deliveryMethod === "magasin" ? "border-black bg-black text-white" : "border-white/70 bg-white/40"}
+                    `
+    }, /* @__PURE__ */ import_react6.default.createElement("input", {
+      type: "radio",
+      name: "delivery_method",
+      value: "magasin",
+      checked: deliveryMethod === "magasin",
+      onChange: () => handleDeliveryChange("magasin")
+    }), /* @__PURE__ */ import_react6.default.createElement("span", {
+      className: "ml-2 font-semibold"
+    }, "Retrait en magasin"))), needsAddress && /* @__PURE__ */ import_react6.default.createElement("div", {
+      className: "mt-8"
+    }, /* @__PURE__ */ import_react6.default.createElement("h3", {
+      className: "text-xl font-black"
+    }, "Adresse de livraison"), /* @__PURE__ */ import_react6.default.createElement("div", {
+      className: "mt-5"
+    }, /* @__PURE__ */ import_react6.default.createElement("label", {
+      htmlFor: "address",
+      className: "mb-2 block text-sm font-bold"
+    }, "Adresse"), /* @__PURE__ */ import_react6.default.createElement("input", {
+      id: "address",
+      name: "address",
+      type: "text",
+      required: true,
+      className: "\n                                w-full rounded-2xl\n                                border border-black/10\n                                bg-white/70\n                                px-4 py-3\n                                outline-none\n                                transition\n                                focus:border-black\n                            "
+    })), /* @__PURE__ */ import_react6.default.createElement("div", {
+      className: "mt-5 grid gap-5 md:grid-cols-2"
+    }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("label", {
+      htmlFor: "postal_code",
+      className: "mb-2 block text-sm font-bold"
+    }, "Code postal"), /* @__PURE__ */ import_react6.default.createElement("input", {
+      id: "postal_code",
+      name: "postal_code",
+      type: "text",
+      required: true,
+      className: "\n                                    w-full rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black\n                                "
+    })), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("label", {
+      htmlFor: "city",
+      className: "mb-2 block text-sm font-bold"
+    }, "Ville"), /* @__PURE__ */ import_react6.default.createElement("input", {
+      id: "city",
+      name: "city",
+      type: "text",
+      required: true,
+      className: "\n                                    w-full rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black\n                                "
+    })))), deliveryMethod && /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement("h2", {
+      className: "mt-10 text-2xl font-black"
+    }, "Mode de paiement"), /* @__PURE__ */ import_react6.default.createElement("div", {
+      className: "mt-5 grid gap-3 sm:grid-cols-2"
+    }, paymentMethods.filter((method) => method.available).map((method) => /* @__PURE__ */ import_react6.default.createElement("label", {
+      key: method.value,
+      className: `
+                                        cursor-pointer rounded-2xl border p-4
+                                        transition
+                                        ${paymentMethod === method.value ? "border-black bg-black text-white" : "border-white/70 bg-white/40"}
+                                    `
+    }, /* @__PURE__ */ import_react6.default.createElement("input", {
+      type: "radio",
+      name: "payment_method",
+      value: method.value,
+      required: true,
+      checked: paymentMethod === method.value,
+      onChange: () => setPaymentMethod(method.value)
+    }), /* @__PURE__ */ import_react6.default.createElement("span", {
+      className: "ml-2 font-semibold"
+    }, method.label))))));
+  }
+
+  // resources/js/components/DashboardSaleForm.jsx
+  var import_react7 = __toESM(require_react());
+  function DashboardSaleForm({
+    clients,
+    products
+  }) {
+    const [clientOptions, setClientOptions] = (0, import_react7.useState)(clients);
+    const [clientId, setClientId] = (0, import_react7.useState)("");
+    const [clientModalOpen, setClientModalOpen] = (0, import_react7.useState)(false);
+    const [clientSaving, setClientSaving] = (0, import_react7.useState)(false);
+    const [clientError, setClientError] = (0, import_react7.useState)("");
+    const [newClient, setNewClient] = (0, import_react7.useState)({
+      name: "",
+      email: "",
+      phone: "",
+      address: ""
+    });
+    const [items, setItems] = (0, import_react7.useState)([]);
+    const [productModalOpen, setProductModalOpen] = (0, import_react7.useState)(false);
+    const [selectedProductId, setSelectedProductId] = (0, import_react7.useState)("");
+    const [selectedQuantity, setSelectedQuantity] = (0, import_react7.useState)(1);
+    const [paymentMethod, setPaymentMethod] = (0, import_react7.useState)("cb");
+    const [paymentReceived, setPaymentReceived] = (0, import_react7.useState)(true);
+    const [deliveryMethod, setDeliveryMethod] = (0, import_react7.useState)("magasin");
+    const [immediateHandover, setImmediateHandover] = (0, import_react7.useState)(true);
+    const paymentMethods = [
+      {
+        value: "cb",
+        label: "Carte bancaire"
+      },
+      {
+        value: "virement",
+        label: "Virement"
+      },
+      {
+        value: "especes",
+        label: "Esp\xE8ces",
+        pickupOnly: true
+      },
+      {
+        value: "cheque",
+        label: "Ch\xE8que",
+        pickupOnly: true
+      }
+    ];
+    const availablePaymentMethods = paymentMethods.filter(
+      (method) => deliveryMethod === "magasin" || !method.pickupOnly
+    );
+    const addProduct = () => {
+      const product = products.find(
+        (product2) => String(product2.id) === String(selectedProductId)
+      );
+      const quantity = Number(selectedQuantity);
+      if (!product || quantity <= 0) {
+        return;
+      }
+      const stock = Number(product.stock);
+      setItems((currentItems) => {
+        const existingItem = currentItems.find(
+          (item) => String(item.product_id) === String(product.id)
+        );
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + quantity;
+          if (newQuantity > stock) {
+            return currentItems;
+          }
+          return currentItems.map((item) => String(item.product_id) === String(product.id) ? {
+            ...item,
+            quantity: newQuantity
+          } : item);
+        }
+        if (quantity > stock) {
+          return currentItems;
+        }
+        return [
+          ...currentItems,
+          {
+            product_id: product.id,
+            name: product.name,
+            quantity,
+            price: Number(product.price),
+            vat_rate: Number(product.vat_rate),
+            stock
+          }
+        ];
+      });
+      setSelectedProductId("");
+      setSelectedQuantity(1);
+      setProductModalOpen(false);
+    };
+    const updateQuantity = (productId, quantity) => {
+      const newQuantity = Number(quantity);
+      if (newQuantity <= 0) {
+        return;
+      }
+      setItems((currentItems) => currentItems.map((item) => String(item.product_id) === String(productId) ? {
+        ...item,
+        quantity: Math.min(
+          newQuantity,
+          item.stock
+        )
+      } : item));
+    };
+    const removeItem = (productId) => {
+      setItems((currentItems) => currentItems.filter(
+        (item) => String(item.product_id) !== String(productId)
+      ));
+    };
+    const totals = (0, import_react7.useMemo)(() => {
+      return items.reduce(
+        (totals2, item) => {
+          const lineHt = item.price * item.quantity;
+          const lineVat = lineHt * (item.vat_rate / 100);
+          totals2.ht += lineHt;
+          totals2.vat += lineVat;
+          totals2.ttc += lineHt + lineVat;
+          return totals2;
+        },
+        {
+          ht: 0,
+          vat: 0,
+          ttc: 0
+        }
+      );
+    }, [items]);
+    const changeDeliveryMethod = (method) => {
+      setDeliveryMethod(method);
+      if (method === "livraison" && ["especes", "cheque"].includes(paymentMethod)) {
+        setPaymentMethod("cb");
+      }
+      if (method === "livraison") {
+        setImmediateHandover(false);
+      }
+    };
+    const createClient = async () => {
+      if (!newClient.name.trim()) {
+        setClientError("Le nom du client est obligatoire.");
+        return;
+      }
+      setClientSaving(true);
+      setClientError("");
+      const formData = new FormData();
+      formData.append("name", newClient.name);
+      formData.append("email", newClient.email);
+      formData.append("phone", newClient.phone);
+      formData.append("address", newClient.address);
+      try {
+        const response = await fetch(
+          "/public/index.php?route=/clients/store-json",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const responseText = await response.text();
+        console.log(responseText);
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            "Le serveur n\u2019a pas retourn\xE9 du JSON. Regarde la console."
+          );
+        }
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible de cr\xE9er le client."
+          );
+        }
+        const createdClient = data.client;
+        setClientOptions((currentClients) => [...currentClients, createdClient].sort(
+          (clientA, clientB) => clientA.name.localeCompare(
+            clientB.name,
+            "fr"
+          )
+        ));
+        setClientId(String(createdClient.id));
+        setNewClient({
+          name: "",
+          email: "",
+          phone: "",
+          address: ""
+        });
+        setClientModalOpen(false);
+      } catch (error) {
+        setClientError(error.message);
+      } finally {
+        setClientSaving(false);
+      }
+    };
+    return /* @__PURE__ */ import_react7.default.createElement("form", {
+      method: "POST",
+      action: "/public/index.php?route=/sales/store",
+      className: "space-y-8"
+    }, /* @__PURE__ */ import_react7.default.createElement("section", {
+      className: "rounded-3xl border border-black/10 bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Client"), /* @__PURE__ */ import_react7.default.createElement("select", {
+      name: "client_id",
+      value: clientId,
+      onChange: (event) => setClientId(event.target.value),
+      className: "mt-4 w-full rounded-xl border border-black/20 px-4 py-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("option", {
+      value: ""
+    }, "Client non renseign\xE9"), clientOptions.map((client) => /* @__PURE__ */ import_react7.default.createElement("option", {
+      key: client.id,
+      value: client.id
+    }, client.name))), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-4"
+    }, /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      onClick: () => {
+        setClientError("");
+        setClientModalOpen(true);
+      },
+      className: "\n                            rounded-full\n                            border border-black/20\n                            px-4 py-2\n                            text-sm font-bold\n                            transition\n                            hover:bg-black hover:text-white\n                        "
+    }, "+ Nouveau client"))), /* @__PURE__ */ import_react7.default.createElement("section", {
+      className: "rounded-3xl border border-black/10 bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "flex items-center justify-between gap-4"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Produits"), /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      onClick: () => setProductModalOpen(true),
+      className: "rounded-full bg-black px-4 py-2 font-bold text-white"
+    }, "+ Ajouter un produit")), items.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "mt-6 text-neutral-500"
+    }, "Aucun produit ajout\xE9.") : /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-6 space-y-3"
+    }, items.map((item, index) => /* @__PURE__ */ import_react7.default.createElement("div", {
+      key: item.product_id,
+      className: "\n                                    flex flex-wrap items-center\n                                    justify-between gap-4\n                                    rounded-2xl\n                                    bg-neutral-100\n                                    p-4\n                                "
+    }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "font-bold"
+    }, item.name), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "text-sm text-neutral-500"
+    }, item.price.toFixed(2), " \u20AC HT", " \xB7 ", "TVA ", item.vat_rate, " %")), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "flex items-center gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "number",
+      min: "0.01",
+      max: item.stock,
+      step: "0.01",
+      value: item.quantity,
+      onChange: (event) => updateQuantity(
+        item.product_id,
+        event.target.value
+      ),
+      className: "w-24 rounded-xl border border-black/20 px-3 py-2"
+    }), /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      onClick: () => removeItem(item.product_id),
+      className: "font-bold text-red-600"
+    }, "Supprimer")), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "hidden",
+      name: `items[${index}][product_id]`,
+      value: item.product_id
+    }), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "hidden",
+      name: `items[${index}][quantity]`,
+      value: item.quantity
+    })))), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-8 border-t border-black/10 pt-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "flex justify-between"
+    }, /* @__PURE__ */ import_react7.default.createElement("span", null, "Total HT"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.ht.toFixed(2), " \u20AC")), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-2 flex justify-between"
+    }, /* @__PURE__ */ import_react7.default.createElement("span", null, "TVA"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.vat.toFixed(2), " \u20AC")), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-4 flex justify-between text-xl"
+    }, /* @__PURE__ */ import_react7.default.createElement("span", {
+      className: "font-black"
+    }, "Total TTC"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.ttc.toFixed(2), " \u20AC")))), /* @__PURE__ */ import_react7.default.createElement("section", {
+      className: "rounded-3xl border border-black/10 bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Paiement"), /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "mt-5 font-semibold"
+    }, "Moyen de paiement"), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-3 flex flex-wrap gap-3"
+    }, availablePaymentMethods.map((method) => /* @__PURE__ */ import_react7.default.createElement("label", {
+      key: method.value,
+      className: `
+                                cursor-pointer rounded-full
+                                border px-4 py-2
+                                font-semibold
+                                ${paymentMethod === method.value ? "border-black bg-black text-white" : "border-black/20"}
+                            `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "payment_method",
+      value: method.value,
+      checked: paymentMethod === method.value,
+      onChange: () => setPaymentMethod(method.value),
+      className: "sr-only"
+    }), method.label))), /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "mt-6 font-semibold"
+    }, "Paiement re\xE7u ?"), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-3 flex gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                            cursor-pointer rounded-full
+                            border px-5 py-2 font-bold
+                            ${paymentReceived ? "border-black bg-black text-white" : "border-black/20"}
+                        `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "payment_received",
+      value: "1",
+      checked: paymentReceived,
+      onChange: () => setPaymentReceived(true),
+      className: "sr-only"
+    }), "Oui"), /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                            cursor-pointer rounded-full
+                            border px-5 py-2 font-bold
+                            ${!paymentReceived ? "border-black bg-black text-white" : "border-black/20"}
+                        `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "payment_received",
+      value: "0",
+      checked: !paymentReceived,
+      onChange: () => setPaymentReceived(false),
+      className: "sr-only"
+    }), "Non"))), /* @__PURE__ */ import_react7.default.createElement("section", {
+      className: "rounded-3xl border border-black/10 bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Remise de la commande"), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-5 flex flex-wrap gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                            cursor-pointer rounded-full
+                            border px-5 py-3 font-bold
+                            ${deliveryMethod === "magasin" ? "border-black bg-black text-white" : "border-black/20"}
+                        `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "delivery_method",
+      value: "magasin",
+      checked: deliveryMethod === "magasin",
+      onChange: () => changeDeliveryMethod("magasin"),
+      className: "sr-only"
+    }), "Retrait magasin"), /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                            cursor-pointer rounded-full
+                            border px-5 py-3 font-bold
+                            ${deliveryMethod === "livraison" ? "border-black bg-black text-white" : "border-black/20"}
+                        `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "delivery_method",
+      value: "livraison",
+      checked: deliveryMethod === "livraison",
+      onChange: () => changeDeliveryMethod("livraison"),
+      className: "sr-only"
+    }), "Livraison")), deliveryMethod === "magasin" && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "mt-6 font-semibold"
+    }, "Le client prend les produits maintenant ?"), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-3 flex gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                                    cursor-pointer rounded-full
+                                    border px-5 py-2 font-bold
+                                    ${immediateHandover ? "border-black bg-black text-white" : "border-black/20"}
+                                `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "immediate_handover",
+      value: "1",
+      checked: immediateHandover,
+      onChange: () => setImmediateHandover(true),
+      className: "sr-only"
+    }), "Oui"), /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: `
+                                    cursor-pointer rounded-full
+                                    border px-5 py-2 font-bold
+                                    ${!immediateHandover ? "border-black bg-black text-white" : "border-black/20"}
+                                `
+    }, /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "radio",
+      name: "immediate_handover",
+      value: "0",
+      checked: !immediateHandover,
+      onChange: () => setImmediateHandover(false),
+      className: "sr-only"
+    }), "Non, retrait plus tard")))), /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "submit",
+      disabled: items.length === 0,
+      className: "\n                    w-full rounded-full\n                    bg-black\n                    px-6 py-4\n                    text-lg font-black text-white\n                    disabled:opacity-30\n                "
+    }, "Enregistrer la vente"), productModalOpen && /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-50\n                        flex items-center justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-sm\n                    "
+    }, /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "w-full max-w-lg rounded-3xl bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Ajouter un produit"), /* @__PURE__ */ import_react7.default.createElement("select", {
+      value: selectedProductId,
+      onChange: (event) => setSelectedProductId(event.target.value),
+      className: "mt-5 w-full rounded-xl border border-black/20 px-4 py-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("option", {
+      value: ""
+    }, "Choisir un produit"), products.map((product) => /* @__PURE__ */ import_react7.default.createElement("option", {
+      key: product.id,
+      value: product.id
+    }, product.name, " \u2014 ", Number(product.stock), " en stock"))), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "number",
+      min: "0.01",
+      step: "0.01",
+      value: selectedQuantity,
+      onChange: (event) => setSelectedQuantity(event.target.value),
+      className: "mt-4 w-full rounded-xl border border-black/20 px-4 py-3",
+      placeholder: "Quantit\xE9"
+    }), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-6 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      onClick: () => setProductModalOpen(false),
+      className: "rounded-full border border-black/20 px-4 py-2 font-bold"
+    }, "Annuler"), /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      onClick: addProduct,
+      disabled: !selectedProductId,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-4 py-2\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+    }, "Ajouter")))), clientModalOpen && /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-50\n                        flex items-center justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-sm\n                    "
+    }, /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "w-full max-w-lg rounded-3xl bg-white p-6"
+    }, /* @__PURE__ */ import_react7.default.createElement("h2", {
+      className: "text-xl font-black"
+    }, "Nouveau client"), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-6 space-y-4"
+    }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Nom *"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "text",
+      value: newClient.name,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        name: event.target.value
+      }),
+      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+    })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Email"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "email",
+      value: newClient.email,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        email: event.target.value
+      }),
+      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+    })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "T\xE9l\xE9phone"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "text",
+      value: newClient.phone,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        phone: event.target.value
+      }),
+      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+    })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Adresse"), /* @__PURE__ */ import_react7.default.createElement("textarea", {
+      rows: "3",
+      value: newClient.address,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        address: event.target.value
+      }),
+      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+    })), clientError && /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "text-sm font-semibold text-red-600"
+    }, clientError)), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "mt-6 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      disabled: clientSaving,
+      onClick: () => setClientModalOpen(false),
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-4 py-2\n                                    font-bold\n                                "
+    }, "Annuler"), /* @__PURE__ */ import_react7.default.createElement("button", {
+      type: "button",
+      disabled: clientSaving || !newClient.name.trim(),
+      onClick: createClient,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-2\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+    }, clientSaving ? "Enregistrement..." : "Cr\xE9er le client")))));
+  }
+
   // resources/js/app.jsx
   var productsRoot = document.getElementById("products-app");
   if (productsRoot) {
@@ -22111,7 +22727,7 @@
     const categories = JSON.parse(productsRoot.dataset.categories);
     const imagesUrl = productsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productsRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react8.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22123,7 +22739,7 @@
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(ProductPage, {
+      /* @__PURE__ */ import_react8.default.createElement(ProductPage, {
         product,
         imagesUrl
       })
@@ -22135,7 +22751,7 @@
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
     const imagesUrl = popularProductsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(popularProductsRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react8.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22145,13 +22761,13 @@
   var cartButtonRoot = document.getElementById("cart-button-app");
   if (cartButtonRoot) {
     (0, import_client.createRoot)(cartButtonRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(CartButton, null)
+      /* @__PURE__ */ import_react8.default.createElement(CartButton, null)
     );
   }
   var cartRoot = document.getElementById("cart-app");
   if (cartRoot) {
     (0, import_client.createRoot)(cartRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(CartPage, {
+      /* @__PURE__ */ import_react8.default.createElement(CartPage, {
         imagesUrl: cartRoot.dataset.imagesUrl
       })
     );
@@ -22161,7 +22777,32 @@
   );
   if (checkoutSuccessRoot) {
     (0, import_client.createRoot)(checkoutSuccessRoot).render(
-      /* @__PURE__ */ import_react6.default.createElement(CheckoutSuccess, null)
+      /* @__PURE__ */ import_react8.default.createElement(CheckoutSuccess, null)
+    );
+  }
+  var checkoutOptionsRoot = document.getElementById(
+    "checkout-options-app"
+  );
+  if (checkoutOptionsRoot) {
+    (0, import_client.createRoot)(checkoutOptionsRoot).render(
+      /* @__PURE__ */ import_react8.default.createElement(CheckoutOptions, null)
+    );
+  }
+  var dashboardSaleFormRoot = document.getElementById(
+    "dashboard-sale-form-app"
+  );
+  if (dashboardSaleFormRoot) {
+    const clients = JSON.parse(
+      dashboardSaleFormRoot.dataset.clients || "[]"
+    );
+    const products = JSON.parse(
+      dashboardSaleFormRoot.dataset.products || "[]"
+    );
+    (0, import_client.createRoot)(dashboardSaleFormRoot).render(
+      /* @__PURE__ */ import_react8.default.createElement(DashboardSaleForm, {
+        clients,
+        products
+      })
     );
   }
 })();

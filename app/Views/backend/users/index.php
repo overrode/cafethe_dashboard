@@ -1,5 +1,6 @@
 <?php
 $title = 'Utilisateurs - CafThé';
+/** @var array $users */
 require BACKEND_HEADER_PATH;
 ?>
 

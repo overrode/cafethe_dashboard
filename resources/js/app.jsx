@@ -6,6 +6,8 @@ import ProductPage from './components/ProductPage.jsx';
 import CartButton from './components/CartButton.jsx';
 import CartPage from './components/CartPage.jsx';
 import CheckoutSuccess from './components/CheckoutSuccess.jsx';
+import CheckoutOptions from './components/CheckoutOptions.jsx';
+import DashboardSaleForm from './components/DashboardSaleForm.jsx';
 
 
 
@@ -74,5 +76,34 @@ const checkoutSuccessRoot = document.getElementById(
 if (checkoutSuccessRoot) {
     createRoot(checkoutSuccessRoot).render(
         <CheckoutSuccess />
+    );
+}
+
+const checkoutOptionsRoot = document.getElementById(
+    'checkout-options-app'
+);
+if (checkoutOptionsRoot) {
+    createRoot(checkoutOptionsRoot).render(
+        <CheckoutOptions />
+    );
+}
+
+const dashboardSaleFormRoot = document.getElementById(
+    'dashboard-sale-form-app'
+);
+if (dashboardSaleFormRoot) {
+    const clients = JSON.parse(
+        dashboardSaleFormRoot.dataset.clients || '[]'
+    );
+
+    const products = JSON.parse(
+        dashboardSaleFormRoot.dataset.products || '[]'
+    );
+
+    createRoot(dashboardSaleFormRoot).render(
+        <DashboardSaleForm
+            clients={clients}
+            products={products}
+        />
     );
 }

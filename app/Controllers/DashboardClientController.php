@@ -7,6 +7,8 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\Client;
 use JetBrains\PhpStorm\NoReturn;
+use App\Core\Auth;
+use Throwable;
 
 /**
  * Controller responsible for handling operations related to clients.
@@ -140,5 +142,117 @@ class DashboardClientController extends Controller
         ]);
 
         exit;
+    }
+
+    /**
+     * Store a new client via JSON request.
+     * @return void
+     */
+    public function storeJson(): void
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+
+        if (!Auth::id()) {
+            http_response_code(401);
+
+            echo json_encode([
+                'success' => false,
+                'error' => 'Utilisateur non authentifié.',
+            ]);
+
+            return;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $address = trim($_POST['address'] ?? '');
+
+
+        /*
+         * Name is the only required field for a dashboard client.
+         */
+        if ($name === '') {
+            http_response_code(422);
+
+            echo json_encode([
+                'success' => false,
+                'error' => 'Le nom du client est obligatoire.',
+            ]);
+
+            return;
+        }
+
+
+        /*
+         * Email is optional, but must be valid when supplied.
+         */
+        if (
+            $email !== ''
+            && !filter_var($email, FILTER_VALIDATE_EMAIL)
+        ) {
+            http_response_code(422);
+
+            echo json_encode([
+                'success' => false,
+                'error' => 'Adresse e-mail invalide.',
+            ]);
+
+            return;
+        }
+
+        $clientModel = new Client();
+
+
+        /*
+         * Avoid creating another client with the same email.
+         */
+        if ($email !== '') {
+            $existingClient = $clientModel->findByEmail($email);
+
+            if ($existingClient) {
+                http_response_code(409);
+
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Un client avec cette adresse e-mail existe déjà.',
+                ]);
+
+                return;
+            }
+        }
+
+
+        try {
+            $clientId = $clientModel->create([
+                'name' => $name,
+                'email' => $email !== '' ? $email : null,
+                'phone' => $phone !== '' ? $phone : null,
+                'address' => $address !== '' ? $address : null,
+            ]);
+
+            echo json_encode(
+                [
+                    'success' => true,
+
+                    'client' => [
+                        'id' => $clientId,
+                        'name' => $name,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'address' => $address,
+                    ],
+                ],
+                JSON_UNESCAPED_UNICODE
+            );
+
+        } catch (Throwable $exception) {
+            http_response_code(500);
+
+            echo json_encode([
+                'success' => false,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 }

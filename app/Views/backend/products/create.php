@@ -1,5 +1,6 @@
 <?php
 $title = 'Dashboard - CafThé';
+/** @var array $categories */
 require BACKEND_HEADER_PATH;
 ?>
 

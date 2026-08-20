@@ -1,5 +1,6 @@
 <?php
 $title = 'Modifier un utilisateur - CafThé';
+/** @var array $user */
 require BACKEND_HEADER_PATH;
 ?>
 

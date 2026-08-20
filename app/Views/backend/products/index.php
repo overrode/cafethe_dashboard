@@ -1,5 +1,6 @@
 <?php
 $title = 'Dashboard - CafThé';
+/** @var array $products */
 require BACKEND_HEADER_PATH;
 ?>
 
