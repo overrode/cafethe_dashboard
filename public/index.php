@@ -69,7 +69,9 @@ $router->get('/checkout/success', [PageCheckoutController::class, 'success']);
 
 // Client dashboard.
 $router->get('/account', [PageClientController::class, 'index']);
-
+$router->get('/account/orders', [PageClientController::class, 'showOrders']);
+$router->get('/account/order', [PageClientController::class, 'showOrder']);
+$router->post('/account/deactivate', [PageClientController::class, 'deactivateAccount']);
 
 /*
  * AUTHENTICATION
@@ -81,8 +83,11 @@ $router->post('/login', [DashboardAuthController::class, 'authenticate']);
 $router->get('/logout', [DashboardAuthController::class, 'logout']);
 
 // Storefront client account.
-$router->post('/account/login', [PageClientAuthController::class, 'authenticate']);
 $router->get('/account/logout', [PageClientAuthController::class, 'logout']);
+$router->get('/account/profile', [PageClientController::class, 'profile']);
+$router->post('/account/profile/update', [PageClientController::class, 'updateProfile']);
+$router->get('/account/security', [PageClientController::class, 'security']);
+$router->post('/account/security/password', [PageClientController::class, 'updatePassword']);
 
 
 /*
@@ -141,7 +146,8 @@ if (
 
 // Protect client account pages.
 if (
-    $currentRoute === '/account'
+    str_starts_with($currentRoute, '/account')
+    && $currentRoute !== '/account/logout'
     && !isset($_SESSION['client'])
 ) {
     header('Location: /public/index.php?route=/');

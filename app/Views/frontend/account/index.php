@@ -110,6 +110,7 @@ require FRONTEND_HEADER_PATH;
                     transition
                     hover:bg-black
                     hover:text-white
+                    text-red-500!
                 "
             >
                 Se déconnecter

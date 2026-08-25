@@ -1051,4 +1051,84 @@ class Sale
             throw $exception;
         }
     }
+
+    /**
+     * Get all sales for one client.
+     *
+     * @param int $clientId
+     * @return array
+     */
+    public function getByClientId(int $clientId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT *
+             FROM sales
+             WHERE client_id = :client_id
+             ORDER BY sale_date DESC'
+        );
+
+        $stmt->execute([
+            'client_id' => $clientId,
+        ]);
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Find one sale belonging to a client.
+     *
+     * @param int $saleId
+     * @param int $clientId
+     * @return array|null
+     */
+    public function findByIdAndClientId(
+        int $saleId,
+        int $clientId
+    ): ?array {
+        $stmt = $this->db->prepare(
+            'SELECT *
+             FROM sales
+             WHERE id = :id
+             AND client_id = :client_id
+             LIMIT 1'
+        );
+
+        $stmt->execute([
+            'id' => $saleId,
+            'client_id' => $clientId,
+        ]);
+
+        $sale = $stmt->fetch();
+
+        return $sale ?: null;
+    }
+
+    /**
+     * Get all products from one sale.
+     *
+     * @param int $saleId
+     * @return array
+     */
+    public function getItemsBySaleId(int $saleId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT
+                sale_items.*,
+                products.name AS product_name,
+                products.sku AS product_sku,
+                products.image AS product_image,
+                products.sale_type
+             FROM sale_items
+             INNER JOIN products
+                ON sale_items.product_id = products.id
+             WHERE sale_items.sale_id = :sale_id
+             ORDER BY sale_items.id ASC'
+        );
+
+        $stmt->execute([
+            'sale_id' => $saleId,
+        ]);
+
+        return $stmt->fetchAll();
+    }
 }

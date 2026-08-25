@@ -1,22 +1,59 @@
 <?php
 
-// Logged-in backoffice user, if any.
+// Current authenticated account.
 $currentUser = $_SESSION['user'] ?? null;
+$currentClient = $_SESSION['client'] ?? null;
 
-$userLabel = $currentUser
-    ? ($currentUser['name'] ?: $currentUser['email'])
-    : null;
+$currentAccount = $currentUser ?? $currentClient;
+$isBackoffice = $currentUser !== null;
+
+$accountName = null;
+$accountEmail = null;
+$accountRoute = null;
+$accountLabel = null;
+$logoutRoute = null;
+
+if ($currentAccount) {
+    $accountName = $currentAccount['name']
+        ?: $currentAccount['email'];
+
+    $accountEmail = $currentAccount['email'];
+
+    $accountRoute = $isBackoffice
+        ? '/dashboard'
+        : '/account';
+
+    $accountLabel = $isBackoffice
+        ? 'Dashboard'
+        : 'Mon compte';
+
+    $logoutRoute = $isBackoffice
+        ? '/logout'
+        : '/account/logout';
+}
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title><?= htmlspecialchars($title ?? 'CafThé') ?></title>
+    <title>
+        <?= htmlspecialchars(
+            $title ?? 'CafThé',
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>
+    </title>
 
-    <link rel="stylesheet" href="/public/assets/css/tailwind.css">
+    <link
+        rel="stylesheet"
+        href="/public/assets/css/tailwind.css"
+    >
 </head>
 
 <body
@@ -44,122 +81,171 @@ $userLabel = $currentUser
 >
     <div class="flex items-center justify-between gap-5">
 
+        <!-- Logo. -->
         <a
             href="/public/index.php?route=/"
-            class="text-2xl font-black tracking-tighter text-black no-underline"
+            class="
+                text-2xl font-black
+                tracking-tighter
+                text-black no-underline
+            "
         >
             CafThé
         </a>
 
         <div id="cart-button-app"></div>
 
+        <!-- Desktop navigation. -->
         <nav class="hidden items-center gap-2 md:flex">
-            <a href="/public/index.php?route=/"
-               class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+
+            <a
+                href="/public/index.php?route=/"
+                class="
+                    rounded-full px-4 py-2
+                    font-semibold
+                    hover:bg-black
+                    hover:text-white
+                "
+            >
                 Accueil
             </a>
 
-            <a href="/public/index.php?route=/products" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a
+                href="/public/index.php?route=/products"
+                class="
+                    rounded-full px-4 py-2
+                    font-semibold
+                    hover:bg-black
+                    hover:text-white
+                "
+            >
                 Produits
             </a>
 
-            <a href="/public/index.php?route=/blog" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a
+                href="/public/index.php?route=/blog"
+                class="
+                    rounded-full px-4 py-2
+                    font-semibold
+                    hover:bg-black
+                    hover:text-white
+                "
+            >
                 Blog
             </a>
 
-            <a href="/public/index.php?route=/about" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a
+                href="/public/index.php?route=/about"
+                class="
+                    rounded-full px-4 py-2
+                    font-semibold
+                    hover:bg-black
+                    hover:text-white
+                "
+            >
                 À propos
             </a>
 
-            <a href="/public/index.php?route=/contact" class="rounded-full px-4 py-2 font-semibold hover:bg-black hover:text-white">
+            <a
+                href="/public/index.php?route=/contact"
+                class="
+                    rounded-full px-4 py-2
+                    font-semibold
+                    hover:bg-black
+                    hover:text-white
+                "
+            >
                 Contact
             </a>
-            <?php if ($currentUser): ?>
-                <!-- Connected user menu. -->
-                <details class="group relative">
+
+
+            <?php if ($currentAccount): ?>
+
+                <!-- Connected account menu. -->
+                <details class="relative">
                     <summary
                         class="
-                            flex cursor-pointer list-none
-                            items-center gap-2
+                            cursor-pointer
+                            list-none
                             rounded-full
                             bg-black
                             px-4 py-2
-                            font-semibold
+                            font-bold
                             text-white
-                            transition
-                            hover:bg-neutral-800
                         "
                     >
                         <?= htmlspecialchars(
-                            $userLabel,
+                            $accountName,
                             ENT_QUOTES,
                             'UTF-8'
                         ) ?>
-                        <span
-                            class="
-                                text-xs
-                                transition
-                                group-open:rotate-180
-                            "
-                        >
-                            ▼
-                        </span>
                     </summary>
+
                     <div
                         class="
-                            absolute right-0 top-full z-50
-                            mt-3 w-56
-                            overflow-hidden
-                            rounded-2xl
+                            absolute right-0 top-full
+                            mt-3 w-64
+                            rounded-3xl
                             border border-white/70
-                            bg-white/80
-                            p-2
+                            bg-white/90
+                            p-3
                             shadow-2xl
                             backdrop-blur-2xl
                         "
                     >
-                        <!-- User info. -->
-                        <div class="border-b border-black/10 px-3 py-3">
+                        <div
+                            class="
+                                mb-2
+                                rounded-2xl
+                                bg-black/5
+                                px-4 py-3
+                            "
+                        >
                             <p class="font-bold">
                                 <?= htmlspecialchars(
-                                    $userLabel,
+                                    $accountName,
                                     ENT_QUOTES,
                                     'UTF-8'
                                 ) ?>
                             </p>
-                            <p class="mt-1 text-xs text-neutral-500">
+
+                            <p
+                                class="
+                                    mt-1 truncate
+                                    text-xs
+                                    text-neutral-500
+                                "
+                            >
                                 <?= htmlspecialchars(
-                                    $currentUser['email'],
+                                    $accountEmail,
                                     ENT_QUOTES,
                                     'UTF-8'
                                 ) ?>
                             </p>
                         </div>
-                        <!-- Dashboard. -->
+
                         <a
-                            href="/public/index.php?route=/dashboard"
+                            href="/public/index.php?route=<?= $accountRoute ?>"
                             class="
-                                mt-2 block
+                                block
                                 rounded-xl
-                                px-3 py-2
+                                px-4 py-3
                                 font-semibold
-                                transition
                                 hover:bg-black
                                 hover:text-white
                             "
                         >
-                            Dashboard
+                            <?= $accountLabel ?>
                         </a>
-                        <!-- Logout. -->
+
                         <a
-                            href="/public/index.php?route=/logout"
+                            href="/public/index.php?route=<?= $logoutRoute ?>"
                             class="
                                 block
                                 rounded-xl
-                                px-3 py-2
+                                px-4 py-3
                                 font-semibold
                                 text-red-600
-                                transition
                                 hover:bg-red-50
                             "
                         >
@@ -169,6 +255,7 @@ $userLabel = $currentUser
                 </details>
 
             <?php else: ?>
+
                 <!-- Guest login. -->
                 <a
                     href="/public/index.php?route=/login"
@@ -177,32 +264,37 @@ $userLabel = $currentUser
                         rounded-full
                         bg-black
                         px-4 py-2
-                        font-semibold
+                        font-bold
                         text-white
-                        transition
-                        hover:bg-neutral-800
                     "
                 >
                     Connexion
                 </a>
+
             <?php endif; ?>
+
         </nav>
 
+
+        <!-- Mobile menu button. -->
         <button
             type="button"
             class="
-                flex h-11 w-11 items-center justify-center
-                rounded-full bg-black text-white
+                flex h-11 w-11
+                items-center justify-center
+                rounded-full
+                bg-black text-white
                 md:hidden
             "
             aria-label="Ouvrir le menu"
         >
-            <span >☰</span>
-            <span >×</span>
+            ☰
         </button>
 
     </div>
 
+
+    <!-- Mobile navigation. -->
     <nav
         class="
             mt-4 flex flex-col gap-2
@@ -214,26 +306,69 @@ $userLabel = $currentUser
             md:hidden
         "
     >
-        <a href="/" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a
+            href="/public/index.php?route=/"
+            class="
+                rounded-xl px-4 py-3
+                font-semibold
+                hover:bg-black
+                hover:text-white
+            "
+        >
             Accueil
         </a>
 
-        <a href="/public/index.php?route=/products" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a
+            href="/public/index.php?route=/products"
+            class="
+                rounded-xl px-4 py-3
+                font-semibold
+                hover:bg-black
+                hover:text-white
+            "
+        >
             Produits
         </a>
 
-        <a href="/public/index.php?route=/blog" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a
+            href="/public/index.php?route=/blog"
+            class="
+                rounded-xl px-4 py-3
+                font-semibold
+                hover:bg-black
+                hover:text-white
+            "
+        >
             Blog
         </a>
 
-        <a href="/public/index.php?route=/about" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a
+            href="/public/index.php?route=/about"
+            class="
+                rounded-xl px-4 py-3
+                font-semibold
+                hover:bg-black
+                hover:text-white
+            "
+        >
             À propos
         </a>
 
-        <a href="#contact" class="rounded-xl px-4 py-3 font-semibold hover:bg-black hover:text-white">
+        <a
+            href="/public/index.php?route=/contact"
+            class="
+                rounded-xl px-4 py-3
+                font-semibold
+                hover:bg-black
+                hover:text-white
+            "
+        >
             Contact
         </a>
-        <?php if ($currentUser): ?>
+
+
+        <?php if ($currentAccount): ?>
+
             <!-- Connected mobile account. -->
             <div
                 class="
@@ -244,21 +379,28 @@ $userLabel = $currentUser
             >
                 <p class="font-bold">
                     <?= htmlspecialchars(
-                        $userLabel,
+                        $accountName,
                         ENT_QUOTES,
                         'UTF-8'
                     ) ?>
                 </p>
-                <p class="mt-1 text-xs text-neutral-500">
+
+                <p
+                    class="
+                        mt-1 text-xs
+                        text-neutral-500
+                    "
+                >
                     <?= htmlspecialchars(
-                        $currentUser['email'],
+                        $accountEmail,
                         ENT_QUOTES,
                         'UTF-8'
                     ) ?>
                 </p>
             </div>
+
             <a
-                href="/public/index.php?route=/dashboard"
+                href="/public/index.php?route=<?= $accountRoute ?>"
                 class="
                     rounded-xl
                     px-4 py-3
@@ -267,10 +409,11 @@ $userLabel = $currentUser
                     hover:text-white
                 "
             >
-                Dashboard
+                <?= $accountLabel ?>
             </a>
+
             <a
-                href="/public/index.php?route=/logout"
+                href="/public/index.php?route=<?= $logoutRoute ?>"
                 class="
                     rounded-xl
                     px-4 py-3
@@ -281,7 +424,9 @@ $userLabel = $currentUser
             >
                 Déconnexion
             </a>
+
         <?php else: ?>
+
             <!-- Guest mobile login. -->
             <a
                 href="/public/index.php?route=/login"
@@ -296,7 +441,9 @@ $userLabel = $currentUser
             >
                 Connexion
             </a>
+
         <?php endif; ?>
+
     </nav>
 </header>
 
