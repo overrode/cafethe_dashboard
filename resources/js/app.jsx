@@ -9,7 +9,9 @@ import CheckoutSuccess from './components/CheckoutSuccess.jsx';
 import CheckoutOptions from './components/CheckoutOptions.jsx';
 import DashboardSaleForm from './components/DashboardSaleForm.jsx';
 import LoginModal from './components/LoginModal.jsx';
-
+import DashboardUsers from './components/DashboardUsers.jsx';
+import DashboardClients from "./components/DashboardClients";
+import DashboardProducts from './components/DashboardProducts.jsx';
 
 
 const productsRoot = document.getElementById('products-app');
@@ -27,6 +29,7 @@ if (productsRoot) {
     );
 }
 
+
 const productRoot = document.getElementById('product-app');
 if (productRoot) {
     const product = JSON.parse(productRoot.dataset.product);
@@ -39,6 +42,7 @@ if (productRoot) {
         />
     );
 }
+
 
 const popularProductsRoot = document.getElementById('popular-products-app');
 if (popularProductsRoot) {
@@ -55,12 +59,14 @@ if (popularProductsRoot) {
     );
 }
 
+
 const cartButtonRoot = document.getElementById('cart-button-app');
 if (cartButtonRoot) {
     createRoot(cartButtonRoot).render(
         <CartButton />
     );
 }
+
 
 const cartRoot = document.getElementById('cart-app');
 if (cartRoot) {
@@ -71,6 +77,7 @@ if (cartRoot) {
     );
 }
 
+
 const checkoutSuccessRoot = document.getElementById(
     'checkout-success-app'
 );
@@ -80,6 +87,7 @@ if (checkoutSuccessRoot) {
     );
 }
 
+
 const checkoutOptionsRoot = document.getElementById(
     'checkout-options-app'
 );
@@ -88,6 +96,7 @@ if (checkoutOptionsRoot) {
         <CheckoutOptions />
     );
 }
+
 
 const dashboardSaleFormRoot = document.getElementById(
     'dashboard-sale-form-app'
@@ -109,11 +118,69 @@ if (dashboardSaleFormRoot) {
     );
 }
 
+
 const loginModalRoot = document.getElementById(
     'login-modal-app'
 );
 if (loginModalRoot) {
     createRoot(loginModalRoot).render(
         <LoginModal />
+    );
+}
+
+
+const dashboardClientsRoot = document.getElementById(
+    'dashboard-clients-app'
+);
+if (dashboardClientsRoot) {
+    const clients = JSON.parse(
+        dashboardClientsRoot.dataset.clients || '[]'
+    );
+
+    createRoot(dashboardClientsRoot).render(
+        <DashboardClients clients={clients} />
+    );
+}
+
+
+const dashboardUsersRoot = document.getElementById(
+    'dashboard-users-app'
+);
+if (dashboardUsersRoot) {
+    const users = JSON.parse(
+        dashboardUsersRoot.dataset.users || '[]'
+    );
+
+    const currentUserId = Number(
+        dashboardUsersRoot.dataset.currentUserId
+    );
+
+    createRoot(dashboardUsersRoot).render(
+        <DashboardUsers
+            users={users}
+            currentUserId={currentUserId}
+        />
+    );
+}
+
+// Dashboard products manager.
+const dashboardProductsRoot = document.getElementById(
+    'dashboard-products-app'
+);
+
+if (dashboardProductsRoot) {
+    const products = JSON.parse(
+        dashboardProductsRoot.dataset.products || '[]'
+    );
+
+    const categories = JSON.parse(
+        dashboardProductsRoot.dataset.categories || '[]'
+    );
+
+    createRoot(dashboardProductsRoot).render(
+        <DashboardProducts
+            products={products}
+            categories={categories}
+        />
     );
 }

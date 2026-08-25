@@ -1,50 +1,46 @@
 <?php
+
 $title = 'Utilisateurs - CafThé';
+
 /** @var array $users */
+
 require BACKEND_HEADER_PATH;
+
+$usersJson = htmlspecialchars(
+    json_encode(
+        $users,
+        JSON_HEX_TAG
+        | JSON_HEX_AMP
+        | JSON_HEX_APOS
+        | JSON_HEX_QUOT
+    ),
+    ENT_QUOTES,
+    'UTF-8'
+);
 ?>
 
-<h2>Gestion des utilisateurs</h2>
+<section class="py-8">
+    <div class="mb-8">
+        <p
+            class="
+                mb-2 text-xs font-bold
+                uppercase tracking-[0.16em]
+                text-neutral-500
+            "
+        >
+            Administration
+        </p>
 
-<p>
-    <a class="button" href="/public/index.php?route=/users/create">Ajouter un utilisateur</a>
-</p>
+        <h1 class="text-4xl font-black tracking-[-0.05em]">
+            Utilisateurs
+        </h1>
+    </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Rôle</th>
-            <th>Actif</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($users as $user): ?>
-            <tr>
-                <td><?= htmlspecialchars((string) $user['id']) ?></td>
-                <td><?= htmlspecialchars($user['name']) ?></td>
-                <td><?= htmlspecialchars($user['email']) ?></td>
-                <td><?= htmlspecialchars($user['role']) ?></td>
-                <td><?= $user['is_active'] ? 'Oui' : 'Non' ?></td>
-                <td>
-                    <a href="/public/index.php?route=/users/edit&id=<?= htmlspecialchars((string) $user['id']) ?>">
-                        Modifier
-                    </a>
-
-                    <?php if ($user['is_active'] && (int) $user['id'] !== (int) $_SESSION['user']['id']): ?>
-                        |
-                        <a href="/public/index.php?route=/users/deactivate&id=<?= htmlspecialchars((string) $user['id']) ?>"
-                           onclick="return confirm('Désactiver cet utilisateur ?');">
-                            Désactiver
-                        </a>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+    <div
+        id="dashboard-users-app"
+        data-users="<?= $usersJson ?>"
+        data-current-user-id="<?= (int) $_SESSION['user']['id'] ?>"
+    ></div>
+</section>
 
 <?php require BACKEND_FOOTER_PATH; ?>

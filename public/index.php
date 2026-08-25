@@ -26,6 +26,8 @@ require_once __DIR__ . '/../app/Controllers/PageContactController.php';
 require_once __DIR__ . '/../app/Controllers/PageProductsController.php';
 require_once __DIR__ . '/../app/Controllers/PageCartController.php';
 require_once __DIR__ . '/../app/Controllers/PageCheckoutController.php';
+require_once __DIR__ . '/../app/Controllers/PageClientAuthController.php';
+require_once __DIR__ . '/../app/Controllers/PageClientController.php';
 
 use App\Core\Router;
 use App\Controllers\DashboardProductController;
@@ -40,91 +42,109 @@ use App\Controllers\PageContactController;
 use App\Controllers\PageProductsController;
 use App\Controllers\PageCartController;
 use App\Controllers\PageCheckoutController;
+use App\Controllers\PageClientAuthController;
+use App\Controllers\PageClientController;
 
 $router = new Router();
-// Products management
-$router->get('/', [DashboardProductController::class, 'index']);
-$router->get('/products', [DashboardProductController::class, 'index']);
-$router->get('/products/create', [DashboardProductController::class, 'create']);
-$router->post('/products/store', [DashboardProductController::class, 'store']);
-$router->get('/products/edit', [DashboardProductController::class, 'edit']);
-$router->post('/products/update', [DashboardProductController::class, 'update']);
-$router->get('/products/deactivate', [DashboardProductController::class, 'deactivate']);
 
-// Clients management
-$router->get('/clients', [DashboardClientController::class, 'index']);
-$router->get('/clients/create', [DashboardClientController::class, 'create']);
-$router->post('/clients/store', [DashboardClientController::class, 'store']);
-$router->post('/clients/store-from-sale', [DashboardClientController::class, 'storeFromSale']);
-$router->get('/clients/edit', [DashboardClientController::class, 'edit']);
-$router->post('/clients/update', [DashboardClientController::class, 'update']);
-$router->post('/clients/store-json', [DashboardClientController::class, 'storeJson']);
+/*
+ * FRONTEND
+ */
 
-// Sales management
-$router->get('/sales', [DashboardSaleController::class, 'index']);
-$router->get('/sales/create', [DashboardSaleController::class, 'create']);
-$router->post('/sales/store', [DashboardSaleController::class, 'store']);
-
-// Dashboard
-$router->get('/', [DashboardHomeController::class, 'index']);
-$router->get('/dashboard', [DashboardHomeController::class, 'index']);
-
-// Authentification
-$router->get('/login', [DashboardAuthController::class, 'login']);
-$router->get('/logout', [DashboardAuthController::class, 'logout']);
-$router->post('/login', [DashboardAuthController::class, 'authenticate']);
-
-//User management
-$router->get('/users', [DashboardUserController::class, 'index']);
-$router->get('/users/create', [DashboardUserController::class, 'create']);
-$router->post('/users/store', [DashboardUserController::class, 'store']);
-$router->get('/users/edit', [DashboardUserController::class, 'edit']);
-$router->post('/users/update', [DashboardUserController::class, 'update']);
-$router->get('/users/deactivate', [DashboardUserController::class, 'deactivate']);
-
-//Pages
+// Public pages.
 $router->get('/', [PageHomeController::class, 'index']);
 $router->get('/about', [PageAboutController::class, 'index']);
 $router->get('/contact', [PageContactController::class, 'index']);
 $router->post('/contact/send', [PageContactController::class, 'sendEmail']);
+
+// Storefront products.
 $router->get('/products', [PageProductsController::class, 'index']);
 $router->get('/product', [PageProductsController::class, 'productPage']);
 
-//Cart and Checkout
+// Cart and checkout.
 $router->get('/cart', [PageCartController::class, 'index']);
 $router->post('/checkout', [PageCheckoutController::class, 'index']);
 $router->post('/checkout/confirm', [PageCheckoutController::class, 'confirm']);
 $router->get('/checkout/success', [PageCheckoutController::class, 'success']);
 
-// Sales
-$router->post('/sales/set-paid', [DashboardSaleController::class, 'setPaid']);
-$router->post('/sales/set-delivery-status', [DashboardSaleController::class, 'setDeliveryStatus']);
-$router->post('/sales/set-completed', [DashboardSaleController::class, 'setCompleted']);
-$router->post('/sales/set-cancelled', [DashboardSaleController::class, 'setCancelled']);
+// Client dashboard.
+$router->get('/account', [PageClientController::class, 'index']);
 
 
+/*
+ * AUTHENTICATION
+ */
 
-$publicRoutes = [
-    '/login',
-    '/logout',
-    '/',
-    '/about',
-    '/contact',
-    '/products',
-    '/product',
-    '/blog',
-    '/contact',
-    '/contact/send',
-    '/cart',
-    '/checkout',
-    '/checkout/confirm',
-    '/checkout/success',
-];
+// Login to back-office modal flow.
+$router->get('/login', [DashboardAuthController::class, 'login']);
+$router->post('/login', [DashboardAuthController::class, 'authenticate']);
+$router->get('/logout', [DashboardAuthController::class, 'logout']);
+
+// Storefront client account.
+$router->post('/account/login', [PageClientAuthController::class, 'authenticate']);
+$router->get('/account/logout', [PageClientAuthController::class, 'logout']);
+
+
+/*
+ * DASHBOARD HOME
+ */
+$router->get('/dashboard', [DashboardHomeController::class, 'index']);
+
+
+/*
+ * DASHBOARD PRODUCTS
+ */
+$router->get('/dashboard/products', [DashboardProductController::class, 'index']);
+$router->post('/dashboard/products/store-json', [DashboardProductController::class, 'storeJson']);
+$router->post('/dashboard/products/update-json', [DashboardProductController::class, 'updateJson']);
+$router->post('/dashboard/products/set-active-json', [DashboardProductController::class, 'setActiveJson']);
+
+
+/*
+ * DASHBOARD CLIENTS
+ */
+$router->get('/dashboard/clients', [DashboardClientController::class, 'index']);
+$router->post('/dashboard/clients/store-json', [DashboardClientController::class, 'storeJson']);
+$router->post('/dashboard/clients/update-json', [DashboardClientController::class, 'updateJson']);
+
+
+/*
+ * DASHBOARD SALES
+ */
+$router->get('/dashboard/sales', [DashboardSaleController::class, 'index']);
+$router->get('/dashboard/sales/create', [DashboardSaleController::class, 'create']);
+$router->post('/dashboard/sales/store', [DashboardSaleController::class, 'store']);
+$router->post('/dashboard/sales/set-paid', [DashboardSaleController::class, 'setPaid']);
+$router->post('/dashboard/sales/set-delivery-status', [DashboardSaleController::class, 'setDeliveryStatus']);
+$router->post('/dashboard/sales/set-completed', [DashboardSaleController::class, 'setCompleted']);
+$router->post('/dashboard/sales/set-cancelled', [DashboardSaleController::class, 'setCancelled']);
+
+
+/*
+ * DASHBOARD USERS
+ */
+$router->get('/dashboard/users', [DashboardUserController::class, 'index']);
+$router->post('/dashboard/users/store-json', [DashboardUserController::class, 'storeJson']);
+$router->post('/dashboard/users/update-json', [DashboardUserController::class, 'updateJson']);
+$router->post('/dashboard/users/deactivate-json', [DashboardUserController::class, 'deactivateJson']);
 
 $currentRoute = $_GET['route'] ?? '/';
 
-if (!in_array($currentRoute, $publicRoutes, true) && !isset($_SESSION['user'])) {
+// Protect every backoffice route.
+if (
+    str_starts_with($currentRoute, '/dashboard')
+    && !isset($_SESSION['user'])
+) {
     header('Location: /public/index.php?route=/login');
+    exit;
+}
+
+// Protect client account pages.
+if (
+    $currentRoute === '/account'
+    && !isset($_SESSION['client'])
+) {
+    header('Location: /public/index.php?route=/');
     exit;
 }
 

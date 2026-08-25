@@ -81,12 +81,13 @@ require BACKEND_HEADER_PATH;
             </div>
 
             <a
-                href="/public/index.php?route=/sales/create"
+                href="/public/index.php?route=/dashboard/sales/create"
                 class="
                     rounded-full
                     bg-black
                     px-5 py-3
-                    font-bold text-white
+                    font-bold
+                    !text-white
                     transition
                     hover:-translate-y-0.5
                 "
@@ -264,7 +265,7 @@ require BACKEND_HEADER_PATH;
 
             <form
                 method="POST"
-                action="/public/index.php?route=/sales/set-paid"
+                action="/public/index.php?route=/dashboard/sales/set-paid"
             >
                 <input
                     type="hidden"
@@ -302,7 +303,7 @@ require BACKEND_HEADER_PATH;
 
                 <form
                     method="POST"
-                    action="/public/index.php?route=/sales/set-delivery-status"
+                    action="/public/index.php?route=/dashboard/sales/set-delivery-status"
                 >
                     <input
                         type="hidden"
@@ -337,7 +338,7 @@ require BACKEND_HEADER_PATH;
 
                 <form
                     method="POST"
-                    action="/public/index.php?route=/sales/set-delivery-status"
+                    action="/public/index.php?route=/dashboard/sales/set-delivery-status"
                 >
                     <input
                         type="hidden"
@@ -372,7 +373,7 @@ require BACKEND_HEADER_PATH;
 
                 <form
                     method="POST"
-                    action="/public/index.php?route=/sales/set-delivery-status"
+                    action="/public/index.php?route=/dashboard/sales/set-delivery-status"
                 >
                     <input
                         type="hidden"
@@ -407,7 +408,7 @@ require BACKEND_HEADER_PATH;
 
                 <form
                     method="POST"
-                    action="/public/index.php?route=/sales/set-delivery-status"
+                    action="/public/index.php?route=/dashboard/sales/set-delivery-status"
                 >
                     <input
                         type="hidden"
@@ -445,7 +446,7 @@ require BACKEND_HEADER_PATH;
 
                 <form
                     method="POST"
-                    action="/public/index.php?route=/sales/set-completed"
+                    action="/public/index.php?route=/dashboard/sales/set-completed"
                 >
                     <input
                         type="hidden"
@@ -484,7 +485,7 @@ require BACKEND_HEADER_PATH;
 
             <form
                 method="POST"
-                action="/public/index.php?route=/sales/set-cancelled"
+                action="/public/index.php?route=/dashboard/sales/set-cancelled"
             >
                 <input
                     type="hidden"

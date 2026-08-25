@@ -1,44 +1,51 @@
 <?php
-$title = 'Dashboard - CafThé';
+
+$title = 'Clients - CafThé';
+
+/** @var array $clients */
+
 require BACKEND_HEADER_PATH;
+
+$clientsJson = htmlspecialchars(
+    json_encode(
+        $clients,
+        JSON_HEX_TAG
+        | JSON_HEX_AMP
+        | JSON_HEX_APOS
+        | JSON_HEX_QUOT
+    ),
+    ENT_QUOTES,
+    'UTF-8'
+);
 ?>
 
-    <h1>CafThé - Dashboard vendeur</h1>
-    <h2>Clients</h2>
+<section class="py-8">
+    <div class="mb-8">
+        <p
+            class="
+                mb-2
+                text-xs font-bold
+                uppercase tracking-[0.16em]
+                text-neutral-500
+            "
+        >
+            Dashboard vendeur
+        </p>
 
-    <p>
-        <a href="/public/index.php?route=/clients/create">Ajouter un client</a>
-    </p>
+        <h1
+            class="
+                text-4xl font-black
+                tracking-[-0.05em]
+            "
+        >
+            Clients
+        </h1>
+    </div>
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Favoris</th>
-                <th>Panier abandonné</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($clients as $client): ?>
-                <tr>
-                    <td><?= htmlspecialchars((string) $client['id']) ?></td>
-                    <td><?= htmlspecialchars($client['name']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['email']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['phone']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['favorites']) ?></td>
-                    <td><?= htmlspecialchars((string) $client['abandoned_cart']) ?></td>
-                    <td>
-                        <a href="/public/index.php?route=/clients/edit&id=<?= htmlspecialchars((string) $client['id']) ?>">
-                            Modifier
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div
+        id="dashboard-clients-app"
+        data-clients="<?= $clientsJson ?>"
+    ></div>
+</section>
 
 <?php require BACKEND_FOOTER_PATH; ?>

@@ -35,7 +35,7 @@ $productsJson = htmlspecialchars(
     <section class="py-8">
         <div class="mb-8">
             <a
-                href="/public/index.php?route=/sales"
+                href="/public/index.php?route=/dashboard/sales"
                 class="text-sm font-semibold text-neutral-500 hover:text-black"
             >
                 ← Retour aux ventes

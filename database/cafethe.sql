@@ -54,10 +54,23 @@ CREATE TABLE clients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     email VARCHAR(180) NULL UNIQUE,
+    password VARCHAR(255) NULL,
     phone VARCHAR(30) NULL,
     address TEXT NULL,
     favorites TEXT NULL,
-    abandoned_cart TEXT NULL
+    abandoned_cart TEXT NULL,
+    source ENUM('dashboard', 'website')
+        NOT NULL DEFAULT 'dashboard',
+
+    created_at DATETIME
+        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at DATETIME
+        NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    is_active TINYINT(1)
+        NOT NULL DEFAULT 1,
 );
 
 CREATE TABLE sales (

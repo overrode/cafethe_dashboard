@@ -7,6 +7,8 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\User;
 use JetBrains\PhpStorm\NoReturn;
+use App\Models\Client;
+use Throwable;
 
 /**
  * Class DashboardAuthController
@@ -27,6 +29,8 @@ class DashboardAuthController extends Controller
 
     /**
      * Authenticates the user based on email and password.
+     *
+     * @throws Throwable
      */
     public function authenticate(): void
     {
@@ -35,6 +39,7 @@ class DashboardAuthController extends Controller
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
+        // Validate required fields.
         if ($email === '' || $password === '') {
             http_response_code(422);
 
@@ -46,36 +51,68 @@ class DashboardAuthController extends Controller
             return;
         }
 
+        // Try backoffice USER first.
         $userModel = new User();
         $user = $userModel->findByEmail($email);
 
         if (
-            !$user
-            || !password_verify($password, $user['password'])
+            $user
+            && (int)$user['is_active'] === 1
+            && password_verify($password, $user['password'])
         ) {
-            http_response_code(401);
+            session_regenerate_id(true);
+
+            unset($_SESSION['client']);
+
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'role' => $user['role'],
+            ];
 
             echo json_encode([
-                'success' => false,
-                'error' => 'Email ou mot de passe incorrect.',
+                'success' => true,
+                'redirect' => '/public/index.php?route=/dashboard',
             ]);
 
             return;
         }
 
-        // Secure the authenticated session.
-        session_regenerate_id(true);
+        // Try storefront CLIENT.
+        $clientModel = new Client();
+        $client = $clientModel->findByEmail($email);
 
-        $_SESSION['user'] = [
-            'id' => $user['id'],
-            'name' => $user['name'],
-            'email' => $user['email'],
-            'role' => $user['role'],
-        ];
+        if (
+            $client
+            && (int)$client['is_active'] === 1
+            && !empty($client['password'])
+            && password_verify($password, $client['password'])
+        ) {
+            session_regenerate_id(true);
+
+            unset($_SESSION['user']);
+
+            $_SESSION['client'] = [
+                'id' => $client['id'],
+                'name' => $client['name'],
+                'email' => $client['email'],
+            ];
+
+            echo json_encode([
+                'success' => true,
+                'redirect' => '/public/index.php?route=/account',
+            ]);
+
+            return;
+        }
+
+        // Authentication failed.
+        http_response_code(401);
 
         echo json_encode([
-            'success' => true,
-            'redirect' => '/public/index.php?route=/dashboard',
+            'success' => false,
+            'error' => 'Email ou mot de passe incorrect.',
         ]);
     }
 

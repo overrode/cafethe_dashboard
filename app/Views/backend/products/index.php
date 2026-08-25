@@ -1,56 +1,62 @@
 <?php
-$title = 'Dashboard - CafThé';
+
+$title = 'Produits - CafThé';
+
 /** @var array $products */
+/** @var array $categories */
+
 require BACKEND_HEADER_PATH;
+
+// Send PHP data safely to React.
+$productsJson = htmlspecialchars(
+    json_encode(
+        $products,
+        JSON_HEX_TAG
+        | JSON_HEX_AMP
+        | JSON_HEX_APOS
+        | JSON_HEX_QUOT
+    ),
+    ENT_QUOTES,
+    'UTF-8'
+);
+
+$categoriesJson = htmlspecialchars(
+    json_encode(
+        $categories,
+        JSON_HEX_TAG
+        | JSON_HEX_AMP
+        | JSON_HEX_APOS
+        | JSON_HEX_QUOT
+    ),
+    ENT_QUOTES,
+    'UTF-8'
+);
 ?>
 
-    <h1>CafThé - Dashboard vendeur</h1>
-    <h2>Liste des produits</h2>
-<p>
-    <a href="/public/index.php?route=/products/create">Ajouter un produit</a>
-</p>
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Catégorie</th>
-                <th>SKU</th>
-                <th>Nom</th>
-                <th>Type de vente</th>
-                <th>Prix HT</th>
-                <th>TVA</th>
-                <th>Stock</th>
-                <th>Actif</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($products as $product): ?>
-                <tr>
-                    <td><?= htmlspecialchars((string) $product['id']) ?></td>
-                    <td><?= htmlspecialchars($product['category_name']) ?></td>
-                    <td><?= htmlspecialchars($product['sku']) ?></td>
-                    <td><?= htmlspecialchars($product['name']) ?></td>
-                    <td><?= htmlspecialchars($product['sale_type']) ?></td>
-                    <td><?= htmlspecialchars((string) $product['price']) ?> €</td>
-                    <td><?= htmlspecialchars((string) $product['vat_rate']) ?>%</td>
-                    <td><?= htmlspecialchars((string) $product['stock']) ?></td>
-                    <td><?= $product['is_active'] ? 'Oui' : 'Non' ?></td>
-                    <td>
-                        <a href="/public/index.php?route=/products/edit&id=<?= htmlspecialchars((string) $product['id']) ?>">
-                            Modifier
-                        </a>
-                        <?php if ($product['is_active']): ?>
-                            |
-                            <a href="/public/index.php?route=/products/deactivate&id=<?= htmlspecialchars((string) $product['id']) ?>"
-                               onclick="return confirm('Désactiver ce produit ?');">
-                                Désactiver
-                            </a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+<section class="py-8">
+    <!-- Page heading. -->
+    <div class="mb-8">
+        <p
+            class="
+                mb-2 text-xs font-bold
+                uppercase tracking-[0.16em]
+                text-neutral-500
+            "
+        >
+            Dashboard vendeur
+        </p>
+
+        <h1 class="text-4xl font-black tracking-[-0.05em]">
+            Produits
+        </h1>
+    </div>
+
+    <!-- React products manager. -->
+    <div
+        id="dashboard-products-app"
+        data-products="<?= $productsJson ?>"
+        data-categories="<?= $categoriesJson ?>"
+    ></div>
+</section>
 
 <?php require BACKEND_FOOTER_PATH; ?>

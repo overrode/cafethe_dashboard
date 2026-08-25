@@ -84,7 +84,7 @@ class DashboardSaleController extends Controller
         ) {
             $_SESSION['error'] = 'Mode de paiement invalide.';
 
-            header('Location: /public/index.php?route=/sales/create');
+            header('Location: /public/index.php?route=/dashboard/sales/create');
             exit;
         }
 
@@ -97,7 +97,7 @@ class DashboardSaleController extends Controller
         ) {
             $_SESSION['error'] = 'Mode de livraison invalide.';
 
-            header('Location: /public/index.php?route=/sales/create');
+            header('Location: /public/index.php?route=/dashboard/sales/create');
             exit;
         }
 
@@ -166,11 +166,11 @@ class DashboardSaleController extends Controller
         } catch (Throwable $exception) {
             $_SESSION['error'] = $exception->getMessage();
 
-            header('Location: /public/index.php?route=/sales/create');
+            header('Location: /public/index.php?route=/dashboard/sales/create');
             exit;
         }
 
-        header('Location: /public/index.php?route=/sales');
+        header('Location: /public/index.php?route=/dashboard/sales');
         exit;
     }
 
@@ -191,7 +191,7 @@ class DashboardSaleController extends Controller
         if ($saleId <= 0) {
             $_SESSION['error'] = 'Vente invalide.';
 
-            header('Location: /public/index.php?route=/sales');
+            header('Location: /public/index.php?route=/dashboard/sales');
             exit;
         }
 
@@ -205,7 +205,7 @@ class DashboardSaleController extends Controller
             $_SESSION['error'] = $exception->getMessage();
         }
 
-        header('Location: /public/index.php?route=/sales');
+        header('Location: /public/index.php?route=/dashboard/sales');
         exit;
     }
 
@@ -237,7 +237,7 @@ class DashboardSaleController extends Controller
             $_SESSION['error'] = $exception->getMessage();
         }
 
-        header('Location: /public/index.php?route=/sales');
+        header('Location: /public/index.php?route=/dashboard/sales');
         exit;
     }
 
@@ -265,7 +265,7 @@ class DashboardSaleController extends Controller
             $_SESSION['error'] = $exception->getMessage();
         }
 
-        header('Location: /public/index.php?route=/sales');
+        header('Location: /public/index.php?route=/dashboard/sales');
         exit;
     }
 
@@ -293,7 +293,7 @@ class DashboardSaleController extends Controller
             $_SESSION['error'] = $exception->getMessage();
         }
 
-        header('Location: /public/index.php?route=/sales');
+        header('Location: /public/index.php?route=/dashboard/sales');
         exit;
     }
 }

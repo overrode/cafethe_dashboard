@@ -51,12 +51,14 @@ class Router
         $path = $_GET['route'] ?? '/';
         $method = $_SERVER['REQUEST_METHOD'];
 
+        // Check if the requested route exists.
         if (!isset($this->routes[$method][$path])) {
             http_response_code(404);
             echo '404 - Page not found';
             return;
         }
 
+        // Execute the controller and method associated with the route.
         [$controllerClass, $methodName] = $this->routes[$method][$path];
 
         $controller = new $controllerClass();

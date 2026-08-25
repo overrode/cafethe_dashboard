@@ -1348,7 +1348,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React10 = require_react(), Internals = {
+        var React13 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1366,7 +1366,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2938,7 +2938,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React10.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React13.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18776,14 +18776,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React10 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React13 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21576,7 +21576,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React10.version;
+          var isomorphicReactPackageVersion = React13.version;
           if ("19.2.8" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.8\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21717,7 +21717,7 @@
   });
 
   // resources/js/app.jsx
-  var import_react9 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // resources/js/components/ProductFilter.jsx
@@ -22377,7 +22377,7 @@
       formData.append("address", newClient.address);
       try {
         const response = await fetch(
-          "/public/index.php?route=/clients/store-json",
+          "/public/index.php?route=/dashboard/clients/store-json",
           {
             method: "POST",
             body: formData
@@ -22412,7 +22412,7 @@
     };
     return /* @__PURE__ */ import_react7.default.createElement("form", {
       method: "POST",
-      action: "/public/index.php?route=/sales/store",
+      action: "/public/index.php?route=/dashboard/sales/store",
       className: "space-y-8"
     }, /* @__PURE__ */ import_react7.default.createElement("section", {
       className: "rounded-3xl border border-black/10 bg-white p-6"
@@ -22871,6 +22871,1068 @@
     }, loading ? "Connexion..." : "Se connecter")))));
   }
 
+  // resources/js/components/DashboardUsers.jsx
+  var import_react9 = __toESM(require_react());
+  var emptyUser = {
+    id: null,
+    name: "",
+    email: "",
+    password: "",
+    role: "vendeur",
+    is_active: 1
+  };
+  function DashboardUsers({
+    users,
+    currentUserId
+  }) {
+    const [userList, setUserList] = (0, import_react9.useState)(users);
+    const [modalOpen, setModalOpen] = (0, import_react9.useState)(false);
+    const [editing, setEditing] = (0, import_react9.useState)(false);
+    const [user, setUser] = (0, import_react9.useState)(emptyUser);
+    const [saving, setSaving] = (0, import_react9.useState)(false);
+    const [error, setError] = (0, import_react9.useState)("");
+    const [deactivateUser, setDeactivateUser] = (0, import_react9.useState)(null);
+    const openCreateModal = () => {
+      setUser(emptyUser);
+      setEditing(false);
+      setError("");
+      setModalOpen(true);
+    };
+    const openEditModal = (selectedUser) => {
+      setUser({
+        id: selectedUser.id,
+        name: selectedUser.name ?? "",
+        email: selectedUser.email ?? "",
+        password: "",
+        role: selectedUser.role ?? "vendeur",
+        is_active: Number(selectedUser.is_active)
+      });
+      setEditing(true);
+      setError("");
+      setModalOpen(true);
+    };
+    const updateField = (event) => {
+      const { name, value } = event.target;
+      setUser((currentUser) => ({
+        ...currentUser,
+        [name]: value
+      }));
+    };
+    const saveUser = async () => {
+      if (!user.name.trim() || !user.email.trim() || !editing && !user.password) {
+        setError(
+          "Veuillez remplir les champs obligatoires."
+        );
+        return;
+      }
+      setSaving(true);
+      setError("");
+      const formData = new FormData();
+      if (editing) {
+        formData.append("id", user.id);
+      }
+      formData.append("name", user.name);
+      formData.append("email", user.email);
+      formData.append("password", user.password);
+      formData.append("role", user.role);
+      formData.append(
+        "is_active",
+        String(user.is_active)
+      );
+      const route = editing ? "/dashboard/users/update-json" : "/dashboard/users/store-json";
+      try {
+        const response = await fetch(
+          `/public/index.php?route=${route}`,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible d\u2019enregistrer l\u2019utilisateur."
+          );
+        }
+        if (editing) {
+          setUserList((currentUsers) => currentUsers.map((currentUser) => String(currentUser.id) === String(data.user.id) ? data.user : currentUser));
+        } else {
+          setUserList((currentUsers) => [...currentUsers, data.user].sort(
+            (userA, userB) => userA.name.localeCompare(
+              userB.name,
+              "fr"
+            )
+          ));
+        }
+        setModalOpen(false);
+      } catch (error2) {
+        setError(error2.message);
+      } finally {
+        setSaving(false);
+      }
+    };
+    const confirmDeactivate = async () => {
+      if (!deactivateUser) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append(
+        "id",
+        deactivateUser.id
+      );
+      try {
+        const response = await fetch(
+          "/public/index.php?route=/dashboard/users/deactivate-json",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible de d\xE9sactiver l\u2019utilisateur."
+          );
+        }
+        setUserList((currentUsers) => currentUsers.map((currentUser) => String(currentUser.id) === String(data.id) ? {
+          ...currentUser,
+          is_active: 0
+        } : currentUser));
+        setDeactivateUser(null);
+      } catch (error2) {
+        setError(error2.message);
+        setDeactivateUser(null);
+      }
+    };
+    return /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "mb-6 flex items-center justify-between gap-4"
+    }, /* @__PURE__ */ import_react9.default.createElement("p", {
+      className: "text-neutral-500"
+    }, userList.length, " utilisateur", userList.length > 1 ? "s" : ""), /* @__PURE__ */ import_react9.default.createElement("button", {
+      type: "button",
+      onClick: openCreateModal,
+      className: "\n                        rounded-full bg-black\n                        px-5 py-3\n                        font-bold text-white\n                    "
+    }, "+ Nouvel utilisateur")), /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                    overflow-hidden\n                    rounded-[28px]\n                    border border-white/70\n                    bg-white/40\n                    shadow-[0_18px_45px_rgba(0,0,0,0.12)]\n                    backdrop-blur-2xl\n                "
+    }, /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "overflow-x-auto"
+    }, /* @__PURE__ */ import_react9.default.createElement("table", {
+      className: "w-full text-left"
+    }, /* @__PURE__ */ import_react9.default.createElement("thead", {
+      className: "border-b border-black/10"
+    }, /* @__PURE__ */ import_react9.default.createElement("tr", {
+      className: "\n                                    text-xs uppercase\n                                    tracking-wide\n                                    text-neutral-500\n                                "
+    }, /* @__PURE__ */ import_react9.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Utilisateur"), /* @__PURE__ */ import_react9.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Email"), /* @__PURE__ */ import_react9.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "R\xF4le"), /* @__PURE__ */ import_react9.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Statut"), /* @__PURE__ */ import_react9.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Actions"))), /* @__PURE__ */ import_react9.default.createElement("tbody", {
+      className: "divide-y divide-black/5"
+    }, userList.map((listUser) => {
+      const isCurrentUser = Number(listUser.id) === Number(currentUserId);
+      return /* @__PURE__ */ import_react9.default.createElement("tr", {
+        key: listUser.id,
+        className: "\n                                            transition\n                                            hover:bg-white/40\n                                        "
+      }, /* @__PURE__ */ import_react9.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react9.default.createElement("div", {
+        className: "font-black"
+      }, listUser.name), /* @__PURE__ */ import_react9.default.createElement("div", {
+        className: "mt-1 text-xs text-neutral-400"
+      }, "#", listUser.id, isCurrentUser && /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, " \xB7 ", "Vous"))), /* @__PURE__ */ import_react9.default.createElement("td", {
+        className: "px-5 py-4"
+      }, listUser.email), /* @__PURE__ */ import_react9.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react9.default.createElement("span", {
+        className: "\n                                                    inline-flex\n                                                    rounded-full\n                                                    bg-neutral-100\n                                                    px-3 py-1\n                                                    text-xs font-bold\n                                                "
+      }, listUser.role === "admin" ? "Administrateur" : "Vendeur")), /* @__PURE__ */ import_react9.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react9.default.createElement("span", {
+        className: `
+                                                    inline-flex
+                                                    rounded-full
+                                                    px-3 py-1
+                                                    text-xs font-bold
+                                                    ${Number(listUser.is_active) ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"}
+                                                `
+      }, Number(listUser.is_active) ? "Actif" : "Inactif")), /* @__PURE__ */ import_react9.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react9.default.createElement("div", {
+        className: "flex gap-2"
+      }, /* @__PURE__ */ import_react9.default.createElement("button", {
+        type: "button",
+        onClick: () => openEditModal(listUser),
+        className: "\n                                                        rounded-full\n                                                        border border-black/20\n                                                        px-4 py-2\n                                                        text-sm font-bold\n                                                        hover:bg-black\n                                                        hover:text-white\n                                                    "
+      }, "Modifier"), Number(listUser.is_active) && !isCurrentUser && /* @__PURE__ */ import_react9.default.createElement("button", {
+        type: "button",
+        onClick: () => setDeactivateUser(
+          listUser
+        ),
+        className: "\n                                                            rounded-full\n                                                            border border-red-200\n                                                            px-4 py-2\n                                                            text-sm font-bold\n                                                            text-red-700\n                                                        "
+      }, "D\xE9sactiver"))));
+    }))))), modalOpen && /* @__PURE__ */ import_react9.default.createElement(UserModal, {
+      user,
+      setUser,
+      editing,
+      saving,
+      error,
+      currentUserId,
+      updateField,
+      saveUser,
+      close: () => setModalOpen(false)
+    }), deactivateUser && /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-[110]\n                        flex items-center justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-xl\n                    "
+    }, /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                            w-full max-w-md\n                            rounded-[32px]\n                            bg-white/90\n                            p-7\n                            shadow-2xl\n                            backdrop-blur-3xl\n                        "
+    }, /* @__PURE__ */ import_react9.default.createElement("h2", {
+      className: "text-2xl font-black"
+    }, "D\xE9sactiver l\u2019utilisateur ?"), /* @__PURE__ */ import_react9.default.createElement("p", {
+      className: "mt-3 text-neutral-600"
+    }, deactivateUser.name, " ne pourra plus se connecter au dashboard."), /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "mt-7 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react9.default.createElement("button", {
+      type: "button",
+      onClick: () => setDeactivateUser(null),
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-5 py-3\n                                    font-bold\n                                "
+    }, "Annuler"), /* @__PURE__ */ import_react9.default.createElement("button", {
+      type: "button",
+      onClick: confirmDeactivate,
+      className: "\n                                    rounded-full\n                                    bg-red-600\n                                    px-5 py-3\n                                    font-bold text-white\n                                "
+    }, "D\xE9sactiver")))));
+  }
+  function UserModal({
+    user,
+    setUser,
+    editing,
+    saving,
+    error,
+    currentUserId,
+    updateField,
+    saveUser,
+    close
+  }) {
+    const isCurrentUser = Number(user.id) === Number(currentUserId);
+    return /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                fixed inset-0 z-[100]\n                flex items-center justify-center\n                bg-black/60 p-4\n                backdrop-blur-xl\n            "
+    }, /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                    w-full max-w-xl\n                    rounded-[32px]\n                    border border-white/50\n                    bg-white/80\n                    p-7\n                    shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                    backdrop-blur-3xl\n                "
+    }, /* @__PURE__ */ import_react9.default.createElement("h2", {
+      className: "\n                        text-3xl font-black\n                        tracking-[-0.04em]\n                    "
+    }, editing ? "Modifier l\u2019utilisateur" : "Nouvel utilisateur"), /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "mt-7 space-y-4"
+    }, /* @__PURE__ */ import_react9.default.createElement(Input, {
+      label: "Nom *",
+      name: "name",
+      value: user.name,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react9.default.createElement(Input, {
+      label: "Email *",
+      type: "email",
+      name: "email",
+      value: user.email,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react9.default.createElement(Input, {
+      label: editing ? "Nouveau mot de passe" : "Mot de passe *",
+      type: "password",
+      name: "password",
+      value: user.password,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "R\xF4le"), /* @__PURE__ */ import_react9.default.createElement("select", {
+      name: "role",
+      value: user.role,
+      disabled: isCurrentUser,
+      onChange: updateField,
+      className: "\n                                w-full rounded-2xl\n                                border border-black/10\n                                bg-white/70\n                                px-4 py-3\n                                disabled:opacity-50\n                            "
+    }, /* @__PURE__ */ import_react9.default.createElement("option", {
+      value: "vendeur"
+    }, "Vendeur"), /* @__PURE__ */ import_react9.default.createElement("option", {
+      value: "admin"
+    }, "Administrateur"))), /* @__PURE__ */ import_react9.default.createElement("label", {
+      className: "\n                            flex items-center\n                            justify-between\n                            rounded-2xl\n                            border border-black/10\n                            bg-white/60\n                            px-4 py-3\n                        "
+    }, /* @__PURE__ */ import_react9.default.createElement("span", {
+      className: "font-bold"
+    }, "Utilisateur actif"), /* @__PURE__ */ import_react9.default.createElement("input", {
+      type: "checkbox",
+      checked: Number(user.is_active) === 1,
+      disabled: isCurrentUser,
+      onChange: (event) => setUser((currentUser) => ({
+        ...currentUser,
+        is_active: event.target.checked ? 1 : 0
+      }))
+    })), error && /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "\n                                rounded-2xl\n                                bg-red-50\n                                px-4 py-3\n                                text-sm font-semibold\n                                text-red-700\n                            "
+    }, error)), /* @__PURE__ */ import_react9.default.createElement("div", {
+      className: "mt-7 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react9.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: close,
+      className: "\n                            rounded-full\n                            border border-black/20\n                            px-5 py-3\n                            font-bold\n                        "
+    }, "Annuler"), /* @__PURE__ */ import_react9.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: saveUser,
+      className: "\n                            rounded-full\n                            bg-black\n                            px-5 py-3\n                            font-bold text-white\n                            disabled:opacity-30\n                        "
+    }, saving ? "Enregistrement..." : "Enregistrer"))));
+  }
+  function Input({
+    label,
+    name,
+    type = "text",
+    value,
+    onChange
+  }) {
+    return /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, label), /* @__PURE__ */ import_react9.default.createElement("input", {
+      type,
+      name,
+      value,
+      onChange,
+      className: "\n                    w-full rounded-2xl\n                    border border-black/10\n                    bg-white/70\n                    px-4 py-3\n                    outline-none\n                    focus:border-black/40\n                    focus:bg-white\n                "
+    }));
+  }
+
+  // resources/js/components/DashboardClients.jsx
+  var import_react10 = __toESM(require_react());
+  var emptyClient = {
+    id: null,
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    favorites: "",
+    abandoned_cart: ""
+  };
+  function DashboardClients({
+    clients
+  }) {
+    const [clientList, setClientList] = (0, import_react10.useState)(clients);
+    const [modalOpen, setModalOpen] = (0, import_react10.useState)(false);
+    const [editing, setEditing] = (0, import_react10.useState)(false);
+    const [client, setClient] = (0, import_react10.useState)(emptyClient);
+    const [saving, setSaving] = (0, import_react10.useState)(false);
+    const [error, setError] = (0, import_react10.useState)("");
+    const openCreateModal = () => {
+      setClient(emptyClient);
+      setEditing(false);
+      setError("");
+      setModalOpen(true);
+    };
+    const openEditModal = (selectedClient) => {
+      setClient({
+        id: selectedClient.id,
+        name: selectedClient.name ?? "",
+        email: selectedClient.email ?? "",
+        phone: selectedClient.phone ?? "",
+        address: selectedClient.address ?? "",
+        favorites: selectedClient.favorites ?? "",
+        abandoned_cart: selectedClient.abandoned_cart ?? ""
+      });
+      setEditing(true);
+      setError("");
+      setModalOpen(true);
+    };
+    const updateField = (event) => {
+      const {
+        name,
+        value
+      } = event.target;
+      setClient((currentClient) => ({
+        ...currentClient,
+        [name]: value
+      }));
+    };
+    const saveClient = async () => {
+      if (!client.name.trim()) {
+        setError(
+          "Le nom du client est obligatoire."
+        );
+        return;
+      }
+      setSaving(true);
+      setError("");
+      const formData = new FormData();
+      if (editing) {
+        formData.append("id", client.id);
+      }
+      formData.append("name", client.name);
+      formData.append("email", client.email);
+      formData.append("phone", client.phone);
+      formData.append("address", client.address);
+      formData.append("favorites", client.favorites);
+      formData.append(
+        "abandoned_cart",
+        client.abandoned_cart
+      );
+      const route = editing ? "/dashboard/clients/update-json" : "/dashboard/clients/store-json";
+      try {
+        const response = await fetch(
+          `/public/index.php?route=${route}`,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible d\u2019enregistrer le client."
+          );
+        }
+        if (editing) {
+          setClientList((currentClients) => currentClients.map((currentClient) => String(currentClient.id) === String(data.client.id) ? data.client : currentClient));
+        } else {
+          setClientList((currentClients) => [...currentClients, data.client].sort(
+            (clientA, clientB) => clientA.name.localeCompare(
+              clientB.name,
+              "fr"
+            )
+          ));
+        }
+        setModalOpen(false);
+      } catch (error2) {
+        setError(error2.message);
+      } finally {
+        setSaving(false);
+      }
+    };
+    return /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                    mb-6\n                    flex items-center\n                    justify-between gap-4\n                "
+    }, /* @__PURE__ */ import_react10.default.createElement("p", {
+      className: "text-neutral-500"
+    }, clientList.length, " client", clientList.length > 1 ? "s" : ""), /* @__PURE__ */ import_react10.default.createElement("button", {
+      type: "button",
+      onClick: openCreateModal,
+      className: "\n                        rounded-full\n                        bg-black\n                        px-5 py-3\n                        font-bold text-white\n                        transition\n                        hover:-translate-y-0.5\n                    "
+    }, "+ Nouveau client")), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                    overflow-hidden\n                    rounded-[28px]\n                    border border-white/70\n                    bg-white/40\n                    shadow-[0_18px_45px_rgba(0,0,0,0.12)]\n                    backdrop-blur-2xl\n                "
+    }, clientList.length === 0 ? /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "p-10 text-center"
+    }, /* @__PURE__ */ import_react10.default.createElement("p", {
+      className: "text-neutral-500"
+    }, "Aucun client.")) : /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "overflow-x-auto"
+    }, /* @__PURE__ */ import_react10.default.createElement("table", {
+      className: "w-full text-left"
+    }, /* @__PURE__ */ import_react10.default.createElement("thead", {
+      className: "\n                                    border-b\n                                    border-black/10\n                                "
+    }, /* @__PURE__ */ import_react10.default.createElement("tr", {
+      className: "\n                                        text-xs\n                                        uppercase\n                                        tracking-wide\n                                        text-neutral-500\n                                    "
+    }, /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Client"), /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Contact"), /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Adresse"), /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Favoris"), /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Panier abandonn\xE9"), /* @__PURE__ */ import_react10.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Actions"))), /* @__PURE__ */ import_react10.default.createElement("tbody", {
+      className: "\n                                    divide-y\n                                    divide-black/5\n                                "
+    }, clientList.map((client2) => /* @__PURE__ */ import_react10.default.createElement("tr", {
+      key: client2.id,
+      className: "\n                                            transition\n                                            hover:bg-white/40\n                                        "
+    }, /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "px-5 py-4"
+    }, /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "font-black"
+    }, client2.name), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                                    mt-1\n                                                    text-xs\n                                                    text-neutral-400\n                                                "
+    }, "#", client2.id)), /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "px-5 py-4"
+    }, /* @__PURE__ */ import_react10.default.createElement("div", null, client2.email || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                                    mt-1\n                                                    text-sm\n                                                    text-neutral-500\n                                                "
+    }, client2.phone || "\u2014")), /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "\n                                                max-w-xs\n                                                px-5 py-4\n                                                text-sm\n                                                text-neutral-600\n                                            "
+    }, client2.address || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "px-5 py-4"
+    }, client2.favorites || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "px-5 py-4"
+    }, client2.abandoned_cart || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+      className: "px-5 py-4"
+    }, /* @__PURE__ */ import_react10.default.createElement("button", {
+      type: "button",
+      onClick: () => openEditModal(client2),
+      className: "\n                                                    rounded-full\n                                                    border\n                                                    border-black/20\n                                                    px-4 py-2\n                                                    text-sm\n                                                    font-bold\n                                                    transition\n                                                    hover:bg-black\n                                                    hover:text-white\n                                                "
+    }, "Modifier")))))))), modalOpen && /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-[100]\n                        flex items-center\n                        justify-center\n                        bg-black/60\n                        p-4\n                        backdrop-blur-xl\n                    "
+    }, /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                            w-full max-w-xl\n                            rounded-[32px]\n                            border border-white/50\n                            bg-white/80\n                            p-7\n                            shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                            backdrop-blur-3xl\n                        "
+    }, /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                flex items-start\n                                justify-between gap-4\n                            "
+    }, /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("p", {
+      className: "\n                                        text-xs font-black\n                                        uppercase\n                                        tracking-[0.2em]\n                                        text-neutral-500\n                                    "
+    }, "CafTh\xE9"), /* @__PURE__ */ import_react10.default.createElement("h2", {
+      className: "\n                                        mt-2\n                                        text-3xl font-black\n                                        tracking-[-0.04em]\n                                    "
+    }, editing ? "Modifier le client" : "Nouveau client")), /* @__PURE__ */ import_react10.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: () => setModalOpen(false),
+      className: "\n                                    flex h-10 w-10\n                                    items-center\n                                    justify-center\n                                    rounded-full\n                                    bg-black/5\n                                    text-xl\n                                    hover:bg-black\n                                    hover:text-white\n                                "
+    }, "\xD7")), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "mt-7 space-y-4"
+    }, /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Nom *",
+      name: "name",
+      value: client.name,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Email",
+      name: "email",
+      type: "email",
+      value: client.email,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "T\xE9l\xE9phone",
+      name: "phone",
+      value: client.phone,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", {
+      className: "\n                                        mb-1 block\n                                        text-sm font-bold\n                                    "
+    }, "Adresse"), /* @__PURE__ */ import_react10.default.createElement("textarea", {
+      name: "address",
+      rows: "3",
+      value: client.address,
+      onChange: updateField,
+      className: "\n                                        w-full\n                                        rounded-2xl\n                                        border border-black/10\n                                        bg-white/70\n                                        px-4 py-3\n                                        outline-none\n                                        focus:border-black/40\n                                        focus:bg-white\n                                    "
+    })), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Favoris",
+      name: "favorites",
+      value: client.favorites,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Panier abandonn\xE9",
+      name: "abandoned_cart",
+      value: client.abandoned_cart,
+      onChange: updateField
+    }), error && /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                        rounded-2xl\n                                        bg-red-50\n                                        px-4 py-3\n                                        text-sm\n                                        font-semibold\n                                        text-red-700\n                                    "
+    }, error)), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                mt-7\n                                flex justify-end gap-3\n                            "
+    }, /* @__PURE__ */ import_react10.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: () => setModalOpen(false),
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-5 py-3\n                                    font-bold\n                                "
+    }, "Annuler"), /* @__PURE__ */ import_react10.default.createElement("button", {
+      type: "button",
+      disabled: saving || !client.name.trim(),
+      onClick: saveClient,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-3\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+    }, saving ? "Enregistrement..." : editing ? "Enregistrer" : "Cr\xE9er le client")))));
+  }
+  function Input2({
+    label,
+    name,
+    type = "text",
+    value,
+    onChange
+  }) {
+    return /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", {
+      className: "\n                    mb-1 block\n                    text-sm font-bold\n                "
+    }, label), /* @__PURE__ */ import_react10.default.createElement("input", {
+      type,
+      name,
+      value,
+      onChange,
+      className: "\n                    w-full\n                    rounded-2xl\n                    border border-black/10\n                    bg-white/70\n                    px-4 py-3\n                    outline-none\n                    transition\n                    focus:border-black/40\n                    focus:bg-white\n                "
+    }));
+  }
+
+  // resources/js/components/DashboardProducts.jsx
+  var import_react11 = __toESM(require_react());
+  var emptyProduct = {
+    id: null,
+    category_id: "",
+    sku: "",
+    name: "",
+    description: "",
+    sale_type: "",
+    price: "",
+    vat_rate: "",
+    stock: "",
+    image: "",
+    origin: "",
+    is_active: 1
+  };
+  function DashboardProducts({
+    products,
+    categories
+  }) {
+    const [search, setSearch] = (0, import_react11.useState)("");
+    const [productList, setProductList] = (0, import_react11.useState)(products);
+    const [modalOpen, setModalOpen] = (0, import_react11.useState)(false);
+    const [editing, setEditing] = (0, import_react11.useState)(false);
+    const [product, setProduct] = (0, import_react11.useState)(emptyProduct);
+    const [saving, setSaving] = (0, import_react11.useState)(false);
+    const [error, setError] = (0, import_react11.useState)("");
+    const [statusProduct, setStatusProduct] = (0, import_react11.useState)(null);
+    const openCreateModal = () => {
+      setProduct({
+        ...emptyProduct,
+        category_id: categories[0]?.id ?? ""
+      });
+      setEditing(false);
+      setError("");
+      setModalOpen(true);
+    };
+    const openEditModal = (selectedProduct) => {
+      setProduct({
+        id: selectedProduct.id,
+        category_id: selectedProduct.category_id ?? "",
+        sku: selectedProduct.sku ?? "",
+        name: selectedProduct.name ?? "",
+        description: selectedProduct.description ?? "",
+        sale_type: selectedProduct.sale_type ?? "",
+        price: selectedProduct.price ?? "",
+        vat_rate: selectedProduct.vat_rate ?? "",
+        stock: selectedProduct.stock ?? "",
+        image: selectedProduct.image ?? "",
+        origin: selectedProduct.origin ?? "",
+        is_active: Number(selectedProduct.is_active)
+      });
+      setEditing(true);
+      setError("");
+      setModalOpen(true);
+    };
+    const updateField = (event) => {
+      const { name, value } = event.target;
+      setProduct((currentProduct) => ({
+        ...currentProduct,
+        [name]: value
+      }));
+    };
+    const saveProduct = async () => {
+      if (!product.category_id || !product.sku.trim() || !product.name.trim() || !product.sale_type.trim()) {
+        setError(
+          "Veuillez remplir les champs obligatoires."
+        );
+        return;
+      }
+      setSaving(true);
+      setError("");
+      const formData = new FormData();
+      if (editing) {
+        formData.append("id", product.id);
+      }
+      formData.append(
+        "category_id",
+        product.category_id
+      );
+      formData.append("sku", product.sku);
+      formData.append("name", product.name);
+      formData.append(
+        "description",
+        product.description
+      );
+      formData.append(
+        "sale_type",
+        product.sale_type
+      );
+      formData.append("price", product.price);
+      formData.append(
+        "vat_rate",
+        product.vat_rate
+      );
+      formData.append("stock", product.stock);
+      formData.append("image", product.image);
+      formData.append("origin", product.origin);
+      formData.append(
+        "is_active",
+        String(product.is_active)
+      );
+      const route = editing ? "/dashboard/products/update-json" : "/dashboard/products/store-json";
+      try {
+        const response = await fetch(
+          `/public/index.php?route=${route}`,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible d\u2019enregistrer le produit."
+          );
+        }
+        if (editing) {
+          setProductList((currentProducts) => currentProducts.map((currentProduct) => String(currentProduct.id) === String(data.product.id) ? data.product : currentProduct));
+        } else {
+          setProductList((currentProducts) => [
+            data.product,
+            ...currentProducts
+          ]);
+        }
+        setModalOpen(false);
+      } catch (error2) {
+        setError(error2.message);
+      } finally {
+        setSaving(false);
+      }
+    };
+    const changeProductStatus = async () => {
+      if (!statusProduct) {
+        return;
+      }
+      const newStatus = Number(statusProduct.is_active) ? 0 : 1;
+      const formData = new FormData();
+      formData.append("id", statusProduct.id);
+      formData.append(
+        "is_active",
+        String(newStatus)
+      );
+      try {
+        const response = await fetch(
+          "/public/index.php?route=/dashboard/products/set-active-json",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || "Impossible de modifier le statut."
+          );
+        }
+        setProductList((currentProducts) => currentProducts.map((currentProduct) => String(currentProduct.id) === String(data.id) ? {
+          ...currentProduct,
+          is_active: data.is_active
+        } : currentProduct));
+        setStatusProduct(null);
+      } catch (error2) {
+        setError(error2.message);
+        setStatusProduct(null);
+      }
+    };
+    const getImageUrl = (image) => {
+      if (!image) {
+        return null;
+      }
+      if (image.startsWith("http://") || image.startsWith("https://") || image.startsWith("/")) {
+        return image;
+      }
+      return `/public/assets/images/products/${image}`;
+    };
+    const filteredProducts = productList.filter((product2) => {
+      const query = search.trim().toLowerCase();
+      if (!query) {
+        return true;
+      }
+      return product2.name?.toLowerCase().includes(query) || product2.sku?.toLowerCase().includes(query) || product2.category_name?.toLowerCase().includes(query);
+    });
+    return /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                    mb-6 flex items-center\n                    justify-between gap-4\n                "
+    }, /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "text-neutral-500"
+    }, productList.length, " produit", productList.length !== 1 ? "s" : ""), /* @__PURE__ */ import_react11.default.createElement("input", {
+      type: "search",
+      value: search,
+      onChange: (event) => setSearch(event.target.value),
+      placeholder: "Rechercher un produit...",
+      className: "\n                        w-full max-w-sm\n                        rounded-full\n                        border border-black/10\n                        bg-white/60\n                        px-4 py-3\n                        outline-none\n                        backdrop-blur-xl\n                        focus:border-black/30\n                    "
+    }), /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      onClick: openCreateModal,
+      className: "\n                        rounded-full bg-black\n                        px-5 py-3\n                        font-bold text-white\n                        transition\n                        hover:-translate-y-0.5\n                    "
+    }, "+ Nouveau produit")), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                    overflow-hidden\n                    rounded-[28px]\n                    border border-white/70\n                    bg-white/40\n                    shadow-[0_18px_45px_rgba(0,0,0,0.12)]\n                    backdrop-blur-2xl\n                "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "overflow-x-auto"
+    }, /* @__PURE__ */ import_react11.default.createElement("table", {
+      className: "w-full text-left"
+    }, /* @__PURE__ */ import_react11.default.createElement("thead", {
+      className: "border-b border-black/10"
+    }, /* @__PURE__ */ import_react11.default.createElement("tr", {
+      className: "\n                        text-xs uppercase\n                        tracking-wide\n                        text-neutral-500\n                    "
+    }, /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "ID"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "SKU"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Produit"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Cat\xE9gorie"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Type"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4 text-right"
+    }, "Prix HT"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4 text-right"
+    }, "TVA"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4 text-right"
+    }, "Stock"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Statut"), /* @__PURE__ */ import_react11.default.createElement("th", {
+      className: "px-5 py-4"
+    }, "Actions"))), /* @__PURE__ */ import_react11.default.createElement("tbody", {
+      className: "divide-y divide-black/5"
+    }, filteredProducts.map((listProduct) => {
+      const imageUrl = getImageUrl(
+        listProduct.image
+      );
+      return /* @__PURE__ */ import_react11.default.createElement("tr", {
+        key: listProduct.id,
+        className: "\n                                transition\n                                hover:bg-white/40\n                            "
+      }, /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4 font-bold text-neutral-500"
+      }, "#", listProduct.id), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react11.default.createElement("span", {
+        className: "\n                                        whitespace-nowrap\n                                        rounded-lg\n                                        bg-black/5\n                                        px-2 py-1\n                                        font-mono\n                                        text-xs font-bold\n                                    "
+      }, listProduct.sku)), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react11.default.createElement("div", {
+        className: "flex items-center gap-3"
+      }, /* @__PURE__ */ import_react11.default.createElement("div", {
+        className: "\n                                            flex h-12 w-12\n                                            shrink-0\n                                            items-center\n                                            justify-center\n                                            overflow-hidden\n                                            rounded-2xl\n                                            bg-black/5\n                                            font-black\n                                        "
+      }, imageUrl ? /* @__PURE__ */ import_react11.default.createElement("img", {
+        src: imageUrl,
+        alt: "",
+        className: "\n                                                    h-full w-full\n                                                    object-cover\n                                                "
+      }) : listProduct.name?.charAt(0).toUpperCase()), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("p", {
+        className: "font-black"
+      }, listProduct.name)))), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, listProduct.category_name), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react11.default.createElement("span", {
+        className: "\n                                        inline-flex\n                                        rounded-full\n                                        bg-black/5\n                                        px-3 py-1\n                                        text-xs font-bold\n                                    "
+      }, listProduct.sale_type === "poids" ? "Au poids" : "\xC0 l\u2019unit\xE9")), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4 text-right font-bold"
+      }, Number(
+        listProduct.price
+      ).toFixed(2), " \u20AC"), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4 text-right"
+      }, Number(
+        listProduct.vat_rate
+      ), " %"), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4 text-right"
+      }, /* @__PURE__ */ import_react11.default.createElement("span", {
+        className: `
+                                                inline-flex rounded-full
+                                                px-3 py-1
+                                                text-sm font-black
+                                                ${Number(listProduct.stock) <= 5 ? "bg-red-100 text-red-700" : "bg-black/5 text-black"}
+                                            `
+      }, Number(listProduct.stock))), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react11.default.createElement("span", {
+        className: `
+                                        inline-flex
+                                        rounded-full
+                                        px-3 py-1
+                                        text-xs font-bold
+                                        ${Number(listProduct.is_active) ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"}
+                                    `
+      }, Number(listProduct.is_active) ? "Actif" : "Inactif")), /* @__PURE__ */ import_react11.default.createElement("td", {
+        className: "px-5 py-4"
+      }, /* @__PURE__ */ import_react11.default.createElement("div", {
+        className: "flex gap-2"
+      }, /* @__PURE__ */ import_react11.default.createElement("button", {
+        type: "button",
+        onClick: () => openEditModal(
+          listProduct
+        ),
+        className: "\n                                            rounded-full\n                                            border border-black/20\n                                            px-4 py-2\n                                            text-sm font-bold\n                                            transition\n                                            hover:bg-black\n                                            hover:text-white\n                                        "
+      }, "Modifier"), /* @__PURE__ */ import_react11.default.createElement("button", {
+        type: "button",
+        onClick: () => setStatusProduct(
+          listProduct
+        ),
+        className: `
+                                            rounded-full
+                                            border
+                                            px-4 py-2
+                                            text-sm font-bold
+                                            ${Number(listProduct.is_active) ? "border-red-200 text-red-700" : "border-green-200 text-green-700"}
+                                        `
+      }, Number(listProduct.is_active) ? "D\xE9sactiver" : "Activer"))));
+    }))))), modalOpen && /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-[100]\n                        flex items-center\n                        justify-center\n                        overflow-y-auto\n                        bg-black/60\n                        p-4\n                        backdrop-blur-xl\n                    "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                            my-8 w-full max-w-3xl\n                            rounded-[32px]\n                            border border-white/50\n                            bg-white/85\n                            p-7\n                            shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                            backdrop-blur-3xl\n                        "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                                flex items-start\n                                justify-between gap-4\n                            "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "\n                                        text-xs font-black\n                                        uppercase\n                                        tracking-[0.2em]\n                                        text-neutral-500\n                                    "
+    }, "CafTh\xE9"), /* @__PURE__ */ import_react11.default.createElement("h2", {
+      className: "\n                                        mt-2 text-3xl\n                                        font-black\n                                        tracking-[-0.04em]\n                                    "
+    }, editing ? "Modifier le produit" : "Nouveau produit")), /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: () => setModalOpen(false),
+      className: "\n                                    flex h-10 w-10\n                                    items-center\n                                    justify-center\n                                    rounded-full\n                                    bg-black/5\n                                    text-xl\n                                    hover:bg-black\n                                    hover:text-white\n                                "
+    }, "\xD7")), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                                mt-7 grid gap-4\n                                md:grid-cols-2\n                            "
+    }, /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "Nom *",
+      name: "name",
+      value: product.name,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "SKU *",
+      name: "sku",
+      value: product.sku,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Cat\xE9gorie *"), /* @__PURE__ */ import_react11.default.createElement("select", {
+      name: "category_id",
+      value: product.category_id,
+      onChange: updateField,
+      className: "\n                                        w-full rounded-2xl\n                                        border border-black/10\n                                        bg-white/70\n                                        px-4 py-3\n                                    "
+    }, categories.map((category) => /* @__PURE__ */ import_react11.default.createElement("option", {
+      key: category.id,
+      value: category.id
+    }, category.name)))), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Type de vente *"), /* @__PURE__ */ import_react11.default.createElement("select", {
+      name: "sale_type",
+      value: product.sale_type,
+      onChange: updateField,
+      className: "\n                                        w-full rounded-2xl\n                                        border border-black/10\n                                        bg-white/70\n                                        px-4 py-3\n                                        outline-none\n                                        transition\n                                        focus:border-black/40\n                                        focus:bg-white\n                                    "
+    }, /* @__PURE__ */ import_react11.default.createElement("option", {
+      value: ""
+    }, "Choisir un type"), /* @__PURE__ */ import_react11.default.createElement("option", {
+      value: "poids"
+    }, "Au poids"), /* @__PURE__ */ import_react11.default.createElement("option", {
+      value: "unite"
+    }, "\xC0 l'unit\xE9"))), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "Prix HT *",
+      name: "price",
+      type: "number",
+      step: "0.01",
+      min: "0",
+      value: product.price,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "TVA (%) *",
+      name: "vat_rate",
+      type: "number",
+      step: "0.01",
+      min: "0",
+      max: "100",
+      value: product.vat_rate,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "Stock *",
+      name: "stock",
+      type: "number",
+      step: "0.01",
+      min: "0",
+      value: product.stock,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "Origine",
+      name: "origin",
+      value: product.origin,
+      onChange: updateField
+    }), /* @__PURE__ */ import_react11.default.createElement(Input3, {
+      label: "Image",
+      name: "image",
+      value: product.image,
+      onChange: updateField
+    }), product.image && /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "md:col-span-2"
+    }, /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "mb-2 text-sm font-bold"
+    }, "Aper\xE7u"), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                                            h-40 w-40\n                                            overflow-hidden\n                                            rounded-3xl\n                                            border border-black/10\n                                            bg-black/5\n                                        "
+    }, /* @__PURE__ */ import_react11.default.createElement("img", {
+      src: getImageUrl(product.image),
+      alt: product.name || "Produit",
+      className: "\n                                                h-full w-full\n                                                object-cover\n                                            "
+    })))), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "mt-4"
+    }, /* @__PURE__ */ import_react11.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Description"), /* @__PURE__ */ import_react11.default.createElement("textarea", {
+      name: "description",
+      rows: "4",
+      value: product.description,
+      onChange: updateField,
+      className: "\n                                    w-full rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    focus:border-black/40\n                                    focus:bg-white\n                                "
+    })), /* @__PURE__ */ import_react11.default.createElement("label", {
+      className: "\n                                mt-4 flex items-center\n                                justify-between\n                                rounded-2xl\n                                border border-black/10\n                                bg-white/60\n                                px-4 py-3\n                            "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "font-bold"
+    }, "Produit actif"), /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "text-xs text-neutral-500"
+    }, "Visible et disponible \xE0 la vente.")), /* @__PURE__ */ import_react11.default.createElement("input", {
+      type: "checkbox",
+      checked: Number(product.is_active) === 1,
+      onChange: (event) => setProduct((currentProduct) => ({
+        ...currentProduct,
+        is_active: event.target.checked ? 1 : 0
+      }))
+    })), error && /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                                    mt-5 rounded-2xl\n                                    bg-red-50\n                                    px-4 py-3\n                                    text-sm font-semibold\n                                    text-red-700\n                                "
+    }, error), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "mt-7 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: () => setModalOpen(false),
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-5 py-3\n                                    font-bold\n                                "
+    }, "Annuler"), /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      disabled: saving,
+      onClick: saveProduct,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-3\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+    }, saving ? "Enregistrement..." : editing ? "Enregistrer" : "Cr\xE9er le produit")))), statusProduct && /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                        fixed inset-0 z-[110]\n                        flex items-center\n                        justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-xl\n                    "
+    }, /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "\n                            w-full max-w-md\n                            rounded-[32px]\n                            bg-white/90\n                            p-7\n                            shadow-2xl\n                            backdrop-blur-3xl\n                        "
+    }, /* @__PURE__ */ import_react11.default.createElement("h2", {
+      className: "text-2xl font-black"
+    }, Number(statusProduct.is_active) ? "D\xE9sactiver le produit ?" : "Activer le produit ?"), /* @__PURE__ */ import_react11.default.createElement("p", {
+      className: "mt-3 text-neutral-600"
+    }, statusProduct.name), /* @__PURE__ */ import_react11.default.createElement("div", {
+      className: "mt-7 flex justify-end gap-3"
+    }, /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      onClick: () => setStatusProduct(null),
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-5 py-3\n                                    font-bold\n                                "
+    }, "Annuler"), /* @__PURE__ */ import_react11.default.createElement("button", {
+      type: "button",
+      onClick: changeProductStatus,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-3\n                                    font-bold text-white\n                                "
+    }, "Confirmer")))));
+  }
+  function Input3({
+    label,
+    name,
+    type = "text",
+    value,
+    onChange,
+    ...props
+  }) {
+    return /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, label), /* @__PURE__ */ import_react11.default.createElement("input", {
+      type,
+      name,
+      value,
+      onChange,
+      ...props,
+      className: "\n                    w-full rounded-2xl\n                    border border-black/10\n                    bg-white/70\n                    px-4 py-3\n                    outline-none\n                    transition\n                    focus:border-black/40\n                    focus:bg-white\n                "
+    }));
+  }
+
   // resources/js/app.jsx
   var productsRoot = document.getElementById("products-app");
   if (productsRoot) {
@@ -22878,7 +23940,7 @@
     const categories = JSON.parse(productsRoot.dataset.categories);
     const imagesUrl = productsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productsRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react12.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22890,7 +23952,7 @@
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(productRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(ProductPage, {
+      /* @__PURE__ */ import_react12.default.createElement(ProductPage, {
         product,
         imagesUrl
       })
@@ -22902,7 +23964,7 @@
     const categories = JSON.parse(popularProductsRoot.dataset.categories);
     const imagesUrl = popularProductsRoot.dataset.imagesUrl;
     (0, import_client.createRoot)(popularProductsRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(ProductFilter, {
+      /* @__PURE__ */ import_react12.default.createElement(ProductFilter, {
         products,
         categories,
         imagesUrl
@@ -22912,13 +23974,13 @@
   var cartButtonRoot = document.getElementById("cart-button-app");
   if (cartButtonRoot) {
     (0, import_client.createRoot)(cartButtonRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(CartButton, null)
+      /* @__PURE__ */ import_react12.default.createElement(CartButton, null)
     );
   }
   var cartRoot = document.getElementById("cart-app");
   if (cartRoot) {
     (0, import_client.createRoot)(cartRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(CartPage, {
+      /* @__PURE__ */ import_react12.default.createElement(CartPage, {
         imagesUrl: cartRoot.dataset.imagesUrl
       })
     );
@@ -22928,7 +23990,7 @@
   );
   if (checkoutSuccessRoot) {
     (0, import_client.createRoot)(checkoutSuccessRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(CheckoutSuccess, null)
+      /* @__PURE__ */ import_react12.default.createElement(CheckoutSuccess, null)
     );
   }
   var checkoutOptionsRoot = document.getElementById(
@@ -22936,7 +23998,7 @@
   );
   if (checkoutOptionsRoot) {
     (0, import_client.createRoot)(checkoutOptionsRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(CheckoutOptions, null)
+      /* @__PURE__ */ import_react12.default.createElement(CheckoutOptions, null)
     );
   }
   var dashboardSaleFormRoot = document.getElementById(
@@ -22950,7 +24012,7 @@
       dashboardSaleFormRoot.dataset.products || "[]"
     );
     (0, import_client.createRoot)(dashboardSaleFormRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(DashboardSaleForm, {
+      /* @__PURE__ */ import_react12.default.createElement(DashboardSaleForm, {
         clients,
         products
       })
@@ -22961,7 +24023,54 @@
   );
   if (loginModalRoot) {
     (0, import_client.createRoot)(loginModalRoot).render(
-      /* @__PURE__ */ import_react9.default.createElement(LoginModal, null)
+      /* @__PURE__ */ import_react12.default.createElement(LoginModal, null)
+    );
+  }
+  var dashboardClientsRoot = document.getElementById(
+    "dashboard-clients-app"
+  );
+  if (dashboardClientsRoot) {
+    const clients = JSON.parse(
+      dashboardClientsRoot.dataset.clients || "[]"
+    );
+    (0, import_client.createRoot)(dashboardClientsRoot).render(
+      /* @__PURE__ */ import_react12.default.createElement(DashboardClients, {
+        clients
+      })
+    );
+  }
+  var dashboardUsersRoot = document.getElementById(
+    "dashboard-users-app"
+  );
+  if (dashboardUsersRoot) {
+    const users = JSON.parse(
+      dashboardUsersRoot.dataset.users || "[]"
+    );
+    const currentUserId = Number(
+      dashboardUsersRoot.dataset.currentUserId
+    );
+    (0, import_client.createRoot)(dashboardUsersRoot).render(
+      /* @__PURE__ */ import_react12.default.createElement(DashboardUsers, {
+        users,
+        currentUserId
+      })
+    );
+  }
+  var dashboardProductsRoot = document.getElementById(
+    "dashboard-products-app"
+  );
+  if (dashboardProductsRoot) {
+    const products = JSON.parse(
+      dashboardProductsRoot.dataset.products || "[]"
+    );
+    const categories = JSON.parse(
+      dashboardProductsRoot.dataset.categories || "[]"
+    );
+    (0, import_client.createRoot)(dashboardProductsRoot).render(
+      /* @__PURE__ */ import_react12.default.createElement(DashboardProducts, {
+        products,
+        categories
+      })
     );
   }
 })();

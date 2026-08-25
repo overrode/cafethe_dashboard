@@ -62,33 +62,45 @@ class Product
     }
 
     /**
-     * Inserts a new product into the database with the provided data.
+     * Create a product and return its new ID.
      *
-     * @param array $data An associative array containing the product details, including:
-     *                    - category_id (int): The category ID of the product.
-     *                    - sku (string): The SKU (Stock Keeping Unit) of the product.
-     *                    - name (string): The name of the product.
-     *                    - description (string): The product description.
-     *                    - sale_type (string): The type of sale for the product.
-     *                    - price (float): The price of the product.
-     *                    - vat_rate (float): The VAT rate applied to the product.
-     *                    - stock (int): The stock quantity of the product.
-     *                    - image (string|null): The optional image URL or path for the product.
-     *                    - origin (string|null): The optional origin of the product.
-     *                    - is_active (int|null): The active status of the product (1 or 0).
-     *
-     * @return bool True on successful insertion, false otherwise.
+     * @param array $data
+     * @return int
      */
-    public function create(array $data): bool
+    public function create(array $data): int
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO products 
-            (category_id, sku, name, description, sale_type, price, vat_rate, stock, image, origin, is_active)
-            VALUES 
-            (:category_id, :sku, :name, :description, :sale_type, :price, :vat_rate, :stock, :image, :origin, :is_active)'
+        'INSERT INTO products
+            (
+                category_id,
+                sku,
+                name,
+                description,
+                sale_type,
+                price,
+                vat_rate,
+                stock,
+                image,
+                origin,
+                is_active
+            )
+            VALUES
+            (
+                :category_id,
+                :sku,
+                :name,
+                :description,
+                :sale_type,
+                :price,
+                :vat_rate,
+                :stock,
+                :image,
+                :origin,
+                :is_active
+            )'
         );
 
-        return $stmt->execute([
+        $stmt->execute([
             'category_id' => $data['category_id'],
             'sku' => $data['sku'],
             'name' => $data['name'],
@@ -101,6 +113,8 @@ class Product
             'origin' => $data['origin'] ?? null,
             'is_active' => $data['is_active'] ?? 1,
         ]);
+
+        return (int) $this->db->lastInsertId();
     }
 
     /**
@@ -344,5 +358,76 @@ class Product
         );
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Find a product with its category name.
+     *
+     * @param int $id
+     * @return array|null
+     */
+    public function findWithCategory(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT
+                p.*,
+                c.name AS category_name
+             FROM products p
+             INNER JOIN categories c
+                ON c.id = p.category_id
+             WHERE p.id = :id
+             LIMIT 1'
+        );
+
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        $product = $stmt->fetch();
+
+        return $product ?: null;
+    }
+
+    /**
+     * @param string $sku
+     * @return array|null
+     */
+    public function findBySku(string $sku): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT *
+             FROM products
+             WHERE sku = :sku
+             LIMIT 1'
+        );
+
+        $stmt->execute([
+            'sku' => $sku,
+        ]);
+
+        $product = $stmt->fetch();
+
+        return $product ?: null;
+    }
+
+    /**
+     * @param int $id
+     * @param bool $isActive
+     * @return bool
+     */
+    public function setActive(
+        int $id,
+        bool $isActive
+    ): bool {
+        $stmt = $this->db->prepare(
+            'UPDATE products
+             SET is_active = :is_active
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'is_active' => $isActive ? 1 : 0,
+        ]);
     }
 }

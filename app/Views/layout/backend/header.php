@@ -7,25 +7,55 @@
     <link rel="stylesheet" href="/public/assets/css/tailwind.css">
 </head>
 <body>
-    <header>
-        <h1>CafThé - Dashboard vendeur</h1>
+<header>
+    <h1>CafThé - Dashboard vendeur</h1>
 
-        <nav>
-            <a href="/public/index.php?route=/dashboard">Dashboard</a>
-            <a href="/public/index.php?route=/products">Produits</a>
-            <a href="/public/index.php?route=/clients">Clients</a>
-            <a href="/public/index.php?route=/sales">Ventes</a>
-            <?php if (!empty($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
-                <a href="/public/index.php?route=/users">Utilisateurs</a>
-            <?php endif; ?>
-            <a href="/public/index.php?route=/logout">Déconnexion</a>
-            <?php if (!empty($_SESSION['user'])): ?>
-                <span>
-                    Connecté : <?= htmlspecialchars($_SESSION['user']['name']) ?>
-                    (<?= htmlspecialchars($_SESSION['user']['role']) ?>)
-                </span>
-            <?php endif; ?>
-        </nav>
-    </header>
+    <nav>
+        <a href="/public/index.php?route=/dashboard">
+            Dashboard
+        </a>
 
-    <main>
+        <a href="/public/index.php?route=/dashboard/products">
+            Produits
+        </a>
+
+        <a href="/public/index.php?route=/dashboard/clients">
+            Clients
+        </a>
+
+        <a href="/public/index.php?route=/dashboard/sales">
+            Ventes
+        </a>
+
+        <?php if (
+                !empty($_SESSION['user'])
+                && $_SESSION['user']['role'] === 'admin'
+        ): ?>
+            <a href="/public/index.php?route=/dashboard/users">
+                Utilisateurs
+            </a>
+        <?php endif; ?>
+
+        <a
+            href="/public/index.php?route=/"
+            class="
+                rounded-full
+                border border-black/20
+                px-4 py-2
+                font-semibold
+                transition
+                hover:bg-black
+                hover:text-white
+            "
+        >
+            Voir le site
+        </a>
+        <a href="/public/index.php?route=/logout"
+           class="text-red-500!"
+        >
+            Déconnexion
+        </a>
+    </nav>
+</header>
+
+<main>

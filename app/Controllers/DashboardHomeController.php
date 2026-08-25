@@ -24,11 +24,19 @@ class DashboardHomeController extends Controller
     {
         $dashboardModel = new Dashboard();
 
+        // Dashboard data.
         $stats = $dashboardModel->getStats();
+        $topProducts = $dashboardModel->getTopProducts();
+        $topClients = $dashboardModel->getTopClients();
+        $recentSales = $dashboardModel->getRecentSales();
+
         $lowStockProducts = $dashboardModel->getLowStockProducts(5);
 
         $this->view('backend/dashboard/index', [
             'stats' => $stats,
+            'topProducts' => $topProducts,
+            'topClients' => $topClients,
+            'recentSales' => $recentSales,
             'lowStockProducts' => $lowStockProducts,
         ]);
     }

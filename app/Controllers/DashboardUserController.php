@@ -7,7 +7,7 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\User;
-use JetBrains\PhpStorm\NoReturn;
+use Throwable;
 
 /**
  * User Controller Class
@@ -15,14 +15,21 @@ use JetBrains\PhpStorm\NoReturn;
 class DashboardUserController extends Controller
 {
     /**
+     * @var array<string>
+     */
+    private const ROLES = [
+        'admin',
+        'vendeur',
+    ];
+
+    /**
      * @return void
      */
     private function requireAdmin(): void
     {
         if (!Auth::isAdmin()) {
             http_response_code(403);
-            echo 'Accès refusé';
-            exit;
+            exit('Accès refusé');
         }
     }
 
@@ -44,101 +51,265 @@ class DashboardUserController extends Controller
     /**
      * @return void
      */
-    public function create(): void
+    public function storeJson(): void
     {
-        $this->requireAdmin();
+        header('Content-Type: application/json; charset=UTF-8');
 
-        $this->view('backend/users/create');
-    }
+        // Only admins can manage dashboard users.
+        if (!Auth::isAdmin()) {
+            $this->jsonError('Accès refusé.', 403);
+            return;
+        }
 
-    /**
-     * @return void
-     */
-    #[NoReturn]
-    public function store(): void
-    {
-        $this->requireAdmin();
+        // Read and normalize submitted values.
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $role = $_POST['role'] ?? '';
+        $isActive = ($_POST['is_active'] ?? '1') === '1' ? 1 : 0;
+
+        // Required fields for a new user.
+        if (
+            $name === ''
+            || $email === ''
+            || $password === ''
+        ) {
+            $this->jsonError(
+                'Nom, email et mot de passe obligatoires.',
+                422
+            );
+
+            return;
+        }
+
+        // Validate email format.
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->jsonError('Adresse e-mail invalide.', 422);
+            return;
+        }
+
+        // Allow only known dashboard roles.
+        if (!in_array($role, self::ROLES, true)) {
+            $this->jsonError('Rôle invalide.', 422);
+            return;
+        }
 
         $userModel = new User();
 
-        $userModel->create([
-            'name' => trim($_POST['name']),
-            'email' => trim($_POST['email']),
-            'password' => $_POST['password'],
-            'role' => $_POST['role'],
-            'is_active' => isset($_POST['is_active']) ? 1 : 0,
-        ]);
+        // Prevent duplicate email accounts.
+        if ($userModel->findByEmail($email)) {
+            $this->jsonError(
+                'Un utilisateur avec cette adresse e-mail existe déjà.',
+                409
+            );
 
-        header('Location: /public/index.php?route=/users');
-        exit;
+            return;
+        }
+
+        try {
+            // Create the user in the database.
+            $userId = $userModel->create([
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'is_active' => $isActive,
+            ]);
+
+            // Return the created user to React.
+            echo json_encode([
+                'success' => true,
+                'user' => [
+                    'id' => $userId,
+                    'name' => $name,
+                    'email' => $email,
+                    'role' => $role,
+                    'is_active' => $isActive,
+                ],
+            ]);
+
+        } catch (Throwable $exception) {
+            // Return database/model errors as JSON.
+            $this->jsonError(
+                $exception->getMessage(),
+                500
+            );
+        }
     }
 
     /**
      * @return void
      */
-    public function edit(): void
+    public function updateJson(): void
     {
-        $this->requireAdmin();
+        header('Content-Type: application/json; charset=UTF-8');
 
-        $id = (int) ($_GET['id'] ?? 0);
+        if (!Auth::isAdmin()) {
+            $this->jsonError('Accès refusé.', 403);
+            return;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $role = $_POST['role'] ?? '';
+        $isActive = ($_POST['is_active'] ?? '1') === '1' ? 1 : 0;
+
+        if (
+            $id <= 0
+            || $name === ''
+            || $email === ''
+        ) {
+            $this->jsonError(
+                'Données utilisateur invalides.',
+                422
+            );
+
+            return;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->jsonError('Adresse e-mail invalide.', 422);
+            return;
+        }
+
+        if (!in_array($role, self::ROLES, true)) {
+            $this->jsonError('Rôle invalide.', 422);
+            return;
+        }
 
         $userModel = new User();
         $user = $userModel->find($id);
 
         if (!$user) {
-            echo 'Utilisateur introuvable';
+            $this->jsonError('Utilisateur introuvable.', 404);
             return;
         }
 
-        $this->view('backend/users/edit', [
-            'user' => $user,
-        ]);
+        if (
+            $id === Auth::id()
+            && (
+                !$isActive
+                || $role !== $user['role']
+            )
+        ) {
+            $this->jsonError(
+                'Vous ne pouvez pas désactiver ou modifier votre propre rôle.',
+                422
+            );
+
+            return;
+        }
+
+        $existingUser = $userModel->findByEmail($email);
+
+        if (
+            $existingUser
+            && (int)$existingUser['id'] !== $id
+        ) {
+            $this->jsonError(
+                'Un utilisateur avec cette adresse e-mail existe déjà.',
+                409
+            );
+
+            return;
+        }
+
+        try {
+            $userModel->update($id, [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'is_active' => $isActive,
+            ]);
+
+            echo json_encode([
+                'success' => true,
+                'user' => [
+                    'id' => $id,
+                    'name' => $name,
+                    'email' => $email,
+                    'role' => $role,
+                    'is_active' => $isActive,
+                ],
+            ]);
+
+        } catch (Throwable $exception) {
+            $this->jsonError(
+                $exception->getMessage(),
+                500
+            );
+        }
     }
 
     /**
      * @return void
      */
-    #[NoReturn]
-    public function update(): void
+    public function deactivateJson(): void
     {
-        $this->requireAdmin();
+        header('Content-Type: application/json; charset=UTF-8');
 
-        $id = (int) ($_POST['id'] ?? 0);
+        if (!Auth::isAdmin()) {
+            $this->jsonError('Accès refusé.', 403);
+            return;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id <= 0) {
+            $this->jsonError('Utilisateur invalide.', 422);
+            return;
+        }
+
+        if ($id === Auth::id()) {
+            $this->jsonError(
+                'Vous ne pouvez pas vous désactiver.',
+                422
+            );
+
+            return;
+        }
 
         $userModel = new User();
 
-        $userModel->update($id, [
-            'name' => trim($_POST['name']),
-            'email' => trim($_POST['email']),
-            'password' => $_POST['password'] ?? '',
-            'role' => $_POST['role'],
-            'is_active' => isset($_POST['is_active']) ? 1 : 0,
-        ]);
+        if (!$userModel->find($id)) {
+            $this->jsonError('Utilisateur introuvable.', 404);
+            return;
+        }
 
-        header('Location: /public/index.php?route=/users');
-        exit;
+        try {
+            $userModel->deactivate($id);
+
+            echo json_encode([
+                'success' => true,
+                'id' => $id,
+            ]);
+
+        } catch (Throwable $exception) {
+            $this->jsonError(
+                $exception->getMessage(),
+                500
+            );
+        }
     }
 
     /**
+     * @param string $message
+     * @param int $status
      * @return void
      */
-    #[NoReturn]
-    public function deactivate(): void
+    private function jsonError(
+        string $message,
+        int    $status
+    ): void
     {
-        $this->requireAdmin();
+        http_response_code($status);
 
-        $id = (int) ($_GET['id'] ?? 0);
-
-        if ($id > 0 && $id !== Auth::id()) {
-            $userModel = new User();
-            $userModel->deactivate($id);
-        } else {
-            http_response_code(400);
-            echo 'Utilisateur ne peut pas être désactivé';
-            exit;
-        }
-
-        header('Location: /public/index.php?route=/users');
-        exit;
+        echo json_encode([
+            'success' => false,
+            'error' => $message,
+        ]);
     }
 }

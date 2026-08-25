@@ -227,7 +227,7 @@ export default function DashboardSaleForm({
 
         try {
             const response = await fetch(
-                '/public/index.php?route=/clients/store-json',
+                '/public/index.php?route=/dashboard/clients/store-json',
                 {
                     method: 'POST',
                     body: formData,
@@ -290,7 +290,7 @@ export default function DashboardSaleForm({
     return (
         <form
             method="POST"
-            action="/public/index.php?route=/sales/store"
+            action="/public/index.php?route=/dashboard/sales/store"
             className="space-y-8"
         >
 
