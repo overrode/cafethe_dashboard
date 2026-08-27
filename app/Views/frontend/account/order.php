@@ -431,3 +431,5 @@ $paymentMethodLabels = [
     </div>
 
 </section>
+
+<?php require FRONTEND_FOOTER_PATH; ?>

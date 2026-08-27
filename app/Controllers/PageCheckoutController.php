@@ -21,6 +21,7 @@ class PageCheckoutController extends Controller
      */
     public function index(): void
     {
+        // Read cart items.
         $items = json_decode(
             $_POST['items'] ?? '[]',
             true
@@ -31,12 +32,35 @@ class PageCheckoutController extends Controller
             exit;
         }
 
+        // Rebuild checkout from database data.
         try {
             $checkout = $this->buildCheckout($items);
         } catch (RuntimeException $exception) {
             header('Location: /public/index.php?route=/cart');
             exit;
         }
+
+        // Load the logged-in client when available.
+        $client = null;
+
+        if (isset($_SESSION['client']['id'])) {
+            $clientModel = new Client();
+
+            $client = $clientModel->find(
+                (int) $_SESSION['client']['id']
+            );
+
+            if (
+                !$client
+                || (int) $client['is_active'] !== 1
+            ) {
+                unset($_SESSION['client']);
+                $client = null;
+            }
+        }
+
+        // Client is null for guest checkout.
+        $checkout['client'] = $client;
 
         $this->view(
             'frontend/checkout/index',
@@ -47,41 +71,25 @@ class PageCheckoutController extends Controller
     /**
      * Confirms the checkout process and displays the checkout summary.
      * @return void
+     * @throws Throwable
      */
     public function confirm(): void
     {
-        $firstname = trim($_POST['firstname'] ?? '');
-        $lastname = trim($_POST['lastname'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
+        $paymentMethod = $_POST['payment_method'] ?? '';
+        $deliveryMethod = $_POST['delivery_method'] ?? '';
 
         $address = trim($_POST['address'] ?? '');
         $postalCode = trim($_POST['postal_code'] ?? '');
         $city = trim($_POST['city'] ?? '');
-
-        $paymentMethod = $_POST['payment_method'] ?? '';
-        $deliveryMethod = $_POST['delivery_method'] ?? '';
 
         $items = json_decode(
             $_POST['items'] ?? '[]',
             true
         );
 
-        // Validations
-        if (
-            $firstname === ''
-            || $lastname === ''
-            || $email === ''
-        ) {
-            die('Champs obligatoires manquants.');
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            die('Adresse e-mail invalide.');
-        }
-
+        // Validate cart.
         if (!is_array($items) || empty($items)) {
-            die('Panier invalide.');
+            throw new RuntimeException('Panier invalide.');
         }
 
         $allowedPaymentMethods = [
@@ -96,12 +104,13 @@ class PageCheckoutController extends Controller
             'magasin',
         ];
 
+        // Validate payment and delivery.
         if (!in_array($paymentMethod, $allowedPaymentMethods, true)) {
-            die('Mode de paiement invalide.');
+            throw new RuntimeException('Mode de paiement invalide.');
         }
 
         if (!in_array($deliveryMethod, $allowedDeliveryMethods, true)) {
-            die('Mode de livraison invalide.');
+            throw new RuntimeException('Mode de livraison invalide.');
         }
 
         // A delivery address is required only for home delivery.
@@ -113,15 +122,34 @@ class PageCheckoutController extends Controller
                 || $city === ''
             )
         ) {
-            die('Adresse de livraison incomplète.');
+            throw new RuntimeException(
+                'Adresse de livraison incomplète.'
+            );
         }
 
         // Cash and cheque are available only for store pickup.
         if (
             $deliveryMethod === 'livraison'
-            && in_array($paymentMethod, ['especes', 'cheque'], true)
+            && in_array(
+                $paymentMethod,
+                ['especes', 'cheque'],
+                true
+            )
         ) {
-            die('Ce mode de paiement n’est pas disponible pour la livraison.');
+            throw new RuntimeException(
+                'Ce mode de paiement n’est pas disponible pour la livraison.'
+            );
+        }
+
+        // Build the delivery address snapshot.
+        $deliveryAddress = null;
+
+        if ($deliveryMethod === 'livraison') {
+            $deliveryAddress = [
+                'address' => $address,
+                'postal_code' => $postalCode,
+                'city' => $city,
+            ];
         }
 
         // Rebuild and validate the checkout from trusted database data.
@@ -142,49 +170,82 @@ class PageCheckoutController extends Controller
         }
 
         $clientModel = new Client();
-        $client = $clientModel->findByEmail($email);
+        $clientId = null;
 
-        //TODO Checkout authentication:
-        // - email lookup
-        // - existing client → login
-        // - authenticated client → prefill client data
-        // - new email → guest/new-client checkout
-        $fullAddress = null;
-        if ($deliveryMethod === 'livraison') {
-            $fullAddress = sprintf(
-                '%s, %s %s',
-                $address,
-                $postalCode,
-                $city
+        if (isset($_SESSION['client']['id'])) {
+            $client = $clientModel->find(
+                (int) $_SESSION['client']['id']
             );
-        }
 
-        if ($client) {
+            // Validate authenticated client.
+            if (
+                !$client
+                || (int) $client['is_active'] !== 1
+            ) {
+                unset($_SESSION['client']);
+
+                header(
+                    'Location: /public/index.php?route=/login'
+                );
+                exit;
+            }
+
             $clientId = (int) $client['id'];
+
+            // GUEST CLIENT
         } else {
-            $clientId = $clientModel->create([
-                'name' => $firstname . ' ' . $lastname,
-                'email' => $email,
-                'phone' => $phone,
-                'address' => $fullAddress,
-            ]);
+            $firstname = trim($_POST['firstname'] ?? '');
+            $lastname = trim($_POST['lastname'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+
+            // Validate guest identity.
+            if (
+                $firstname === ''
+                || $lastname === ''
+                || $email === ''
+            ) {
+                throw new RuntimeException(
+                    'Champs obligatoires manquants.'
+                );
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new RuntimeException(
+                    'Adresse e-mail invalide.'
+                );
+            }
+
+            $client = $clientModel->findByEmail($email);
+
+            if ($client) {
+
+                // Existing online account must authenticate.
+                if (!empty($client['password'])) {
+                    throw new RuntimeException(
+                        'Un compte existe déjà avec cette adresse e-mail. '
+                        . 'Veuillez vous connecter.'
+                    );
+                }
+
+                $clientId = (int) $client['id'];
+
+            } else {
+
+                // Create a website client without an account password.
+                $clientId = $clientModel->create([
+                    'name' => $firstname . ' ' . $lastname,
+                    'email' => $email,
+                    'phone' => $phone ?: null,
+                    'address' => $deliveryAddress,
+                    'source' => 'website',
+                    'is_active' => 1,
+                ]);
+            }
         }
 
-
-        /*
-         * Create a WEBSITE order.
-         *
-         * A newly-created website order is not considered paid yet,
-         * regardless of the selected payment method.
-         *
-         * CB / bank transfer:
-         *     payment will be confirmed later.
-         *
-         * Cash / cheque:
-         *     payment will happen when the customer collects the order.
-        */
+        // Create a WEBSITE order.
         $saleModel = new Sale();
-
         try {
             $saleId = $saleModel->create([
                 'user_id' => null,
@@ -193,6 +254,7 @@ class PageCheckoutController extends Controller
                 'items' => $items,
 
                 'delivery_method' => $deliveryMethod,
+                'delivery_address' => $deliveryAddress,
                 'payment_method' => $paymentMethod,
 
                 'source' => 'website',
@@ -200,7 +262,6 @@ class PageCheckoutController extends Controller
                 'status' => 'pending',
                 'payment_status' => 'pending',
                 'delivery_status' => 'pending',
-
             ]);
 
             // Save sale ID in session to validate the success page access.
@@ -208,12 +269,8 @@ class PageCheckoutController extends Controller
             $_SESSION['checkout_sale_id'] = $saleId;
 
         } catch (Throwable $exception) {
-            die(
-                htmlspecialchars(
-                    $exception->getMessage(),
-                    ENT_QUOTES,
-                    'UTF-8'
-                )
+            throw new RuntimeException(
+                $exception->getMessage()
             );
         }
 
@@ -239,12 +296,13 @@ class PageCheckoutController extends Controller
      *
      * @throws RuntimeException If the cart is invalid, has no valid products, or fails strict validation checks.
      */
-    private function buildCheckout(array $items, bool $strict = false): array
+    private function buildCheckout( array $items, bool $strict = false ): array
     {
+    // Collect product IDs.
         $productIds = [];
 
         foreach ($items as $item) {
-            $productId = (int)($item['product_id'] ?? 0);
+            $productId = (int) ($item['product_id'] ?? 0);
 
             if ($productId > 0) {
                 $productIds[] = $productId;
@@ -254,25 +312,39 @@ class PageCheckoutController extends Controller
         $productIds = array_unique($productIds);
 
         if (empty($productIds)) {
-            throw new RuntimeException('Panier invalide.');
+            throw new RuntimeException(
+                'Panier invalide.'
+            );
         }
 
+
+        // Load products in one query.
         $productModel = new Product();
 
-        $products = $productModel->getActiveProductsByIds($productIds);
+        $products = $productModel->getActiveProductsByIds(
+            $productIds
+        );
 
+
+        // Index products by ID.
         $productsById = [];
 
         foreach ($products as $product) {
-            $productsById[(int)$product['id']] = $product;
+            $productsById[(int) $product['id']] = $product;
         }
 
+
+        // Build checkout totals.
         $checkoutItems = [];
-        $checkoutTotal = 0;
+
+        $checkoutTotalHt = 0.0;
+        $checkoutTotalVat = 0.0;
+        $checkoutTotalTtc = 0.0;
+
 
         foreach ($items as $item) {
-            $productId = (int)($item['product_id'] ?? 0);
-            $quantity = (int)($item['quantity'] ?? 0);
+            $productId = (int) ($item['product_id'] ?? 0);
+            $quantity = (float) ($item['quantity'] ?? 0);
 
             if ($productId <= 0 || $quantity <= 0) {
                 if ($strict) {
@@ -284,6 +356,8 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
+
+            // Find trusted product data.
             $product = $productsById[$productId] ?? null;
 
             if (!$product) {
@@ -296,7 +370,25 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-            $stock = (int)$product['stock'];
+
+            // Unit products require whole quantities.
+            if (
+                $product['sale_type'] === 'unite'
+                && floor($quantity) !== $quantity
+            ) {
+                if ($strict) {
+                    throw new RuntimeException(
+                        'Quantité invalide pour le produit : '
+                        . $product['name']
+                    );
+                }
+
+                $quantity = floor($quantity);
+            }
+
+
+            // Check stock.
+            $stock = (float) $product['stock'];
 
             if ($quantity > $stock) {
                 if ($strict) {
@@ -313,26 +405,44 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-            $lineTotal = (float)$product['price'] * $quantity;
 
+            // Calculate HT, VAT and TTC.
+            $unitPrice = (float) $product['price'];
+            $vatRate = (float) $product['vat_rate'];
+
+            $lineTotalHt = $unitPrice * $quantity;
+            $lineTotalVat = $lineTotalHt * ($vatRate / 100);
+            $lineTotalTtc = $lineTotalHt + $lineTotalVat;
+
+
+            // Add checkout item.
             $checkoutItems[] = [
                 'checkout_product' => $product,
                 'checkout_quantity' => $quantity,
-                'checkout_line_total' => $lineTotal,
+                'checkout_line_total_ht' => $lineTotalHt,
+                'checkout_line_total_vat' => $lineTotalVat,
+                'checkout_line_total_ttc' => $lineTotalTtc,
             ];
 
-            $checkoutTotal += $lineTotal;
+            $checkoutTotalHt += $lineTotalHt;
+            $checkoutTotalVat += $lineTotalVat;
+            $checkoutTotalTtc += $lineTotalTtc;
         }
 
+
+        // Require at least one valid item.
         if (empty($checkoutItems)) {
             throw new RuntimeException(
                 'Aucun produit valide dans le panier.'
             );
         }
 
+
         return [
             'checkout_items' => $checkoutItems,
-            'checkout_total' => $checkoutTotal,
+            'checkout_total_ht' => $checkoutTotalHt,
+            'checkout_total_vat' => $checkoutTotalVat,
+            'checkout_total_ttc' => $checkoutTotalTtc,
         ];
     }
 

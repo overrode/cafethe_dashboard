@@ -166,15 +166,20 @@ require FRONTEND_HEADER_PATH;
                 >
             </div>
 
-
+            <!-- Address. -->
             <div class="md:col-span-2">
                 <label class="mb-1 block text-sm font-bold">
                     Adresse
                 </label>
 
-                <textarea
+                <input
+                    type="text"
                     name="address"
-                    rows="4"
+                    value="<?= htmlspecialchars(
+                        $client['address']['address'] ?? '',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
                     class="
                         w-full rounded-2xl
                         border border-black/10
@@ -183,11 +188,55 @@ require FRONTEND_HEADER_PATH;
                         outline-none
                         focus:border-black/40
                     "
-                ><?= htmlspecialchars(
-                    $client['address'] ?? '',
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?></textarea>
+                >
+            </div>
+
+            <div>
+                <label class="mb-1 block text-sm font-bold">
+                    Code postal
+                </label>
+
+                <input
+                    type="text"
+                    name="postal_code"
+                    value="<?= htmlspecialchars(
+                        $client['address']['postal_code'] ?? '',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                    class="
+                        w-full rounded-2xl
+                        border border-black/10
+                        bg-white/70
+                        px-4 py-3
+                        outline-none
+                        focus:border-black/40
+                    "
+                >
+            </div>
+
+            <div>
+                <label class="mb-1 block text-sm font-bold">
+                    Ville
+                </label>
+
+                <input
+                    type="text"
+                    name="city"
+                    value="<?= htmlspecialchars(
+                        $client['address']['city'] ?? '',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                    class="
+                        w-full rounded-2xl
+                        border border-black/10
+                        bg-white/70
+                        px-4 py-3
+                        outline-none
+                        focus:border-black/40
+                    "
+                >
             </div>
 
         </div>
@@ -210,3 +259,5 @@ require FRONTEND_HEADER_PATH;
     </form>
 
 </section>
+
+<?php require FRONTEND_FOOTER_PATH; ?>

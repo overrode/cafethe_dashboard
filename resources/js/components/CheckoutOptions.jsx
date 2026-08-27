@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-export default function CheckoutOptions() {
+export default function CheckoutOptions({initialAddress = null,}) {
     const [deliveryMethod, setDeliveryMethod] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
 
@@ -28,6 +28,19 @@ export default function CheckoutOptions() {
             available: deliveryMethod === 'magasin',
         },
     ];
+
+    // Prefill the saved client address when available.
+    const [address, setAddress] = useState(
+        initialAddress?.address ?? ''
+    );
+
+    const [postalCode, setPostalCode] = useState(
+        initialAddress?.postal_code ?? ''
+    );
+
+    const [city, setCity] = useState(
+        initialAddress?.city ?? ''
+    );
 
     const handleDeliveryChange = (method) => {
         setDeliveryMethod(method);
@@ -124,6 +137,8 @@ export default function CheckoutOptions() {
                             name="address"
                             type="text"
                             required
+                            value={address}
+                            onChange={event => setAddress(event.target.value)}
                             className="
                                 w-full rounded-2xl
                                 border border-black/10
@@ -150,6 +165,8 @@ export default function CheckoutOptions() {
                                 name="postal_code"
                                 type="text"
                                 required
+                                value={postalCode}
+                                onChange={event => setPostalCode(event.target.value)}
                                 className="
                                     w-full rounded-2xl
                                     border border-black/10
@@ -175,6 +192,8 @@ export default function CheckoutOptions() {
                                 name="city"
                                 type="text"
                                 required
+                                value={city}
+                                onChange={event => setCity(event.target.value)}
                                 className="
                                     w-full rounded-2xl
                                     border border-black/10

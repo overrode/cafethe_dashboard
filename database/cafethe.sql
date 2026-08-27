@@ -56,7 +56,7 @@ CREATE TABLE clients (
     email VARCHAR(180) NULL UNIQUE,
     password VARCHAR(255) NULL,
     phone VARCHAR(30) NULL,
-    address TEXT NULL,
+    address JSON NULL,
     favorites TEXT NULL,
     abandoned_cart TEXT NULL,
     source ENUM('dashboard', 'website')
@@ -125,6 +125,8 @@ CREATE TABLE sales (
     total_ttc DECIMAL(10,2) NOT NULL DEFAULT 0,
 
     sale_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    delivery_address JSON NULL,
 
     exported_at DATETIME NULL
 

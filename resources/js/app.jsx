@@ -92,8 +92,13 @@ const checkoutOptionsRoot = document.getElementById(
     'checkout-options-app'
 );
 if (checkoutOptionsRoot) {
+    const initialAddress = JSON.parse(
+        checkoutOptionsRoot.dataset.address || 'null'
+    );
     createRoot(checkoutOptionsRoot).render(
-        <CheckoutOptions />
+        <CheckoutOptions
+            initialAddress={initialAddress}
+        />
     );
 }
 

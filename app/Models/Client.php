@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Database;
+use JsonException;
 use PDO;
 use Throwable;
 
@@ -38,6 +39,7 @@ class Client
     /**
      * @param int $id
      * @return array|null
+     * @throws JsonException
      */
     public function find(int $id): ?array
     {
@@ -48,6 +50,15 @@ class Client
         $stmt->execute(['id' => $id]);
 
         $client = $stmt->fetch();
+
+        if (!$client) {
+            return null;
+        }
+
+        // Decode the stored address.
+        $client['address'] = $this->decodeAddress(
+            $client['address'] ?? null
+        );
 
         return $client ?: null;
     }
@@ -78,7 +89,9 @@ class Client
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?: null,
-            'address' => $data['address'] ?: null,
+            'address' => $this->encodeAddress(
+                $data['address'] ?? null
+            ),
             'favorites' => $data['favorites'] ?? null,
             'abandoned_cart' => $data['abandoned_cart'] ?? null,
             'password' => $password,
@@ -113,7 +126,9 @@ class Client
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?? null,
-            'address' => $data['address'] ?? null,
+            'address' => $this->encodeAddress(
+                $data['address'] ?? null
+            ),
             'favorites' => $data['favorites'] ?? null,
             'abandoned_cart' => $data['abandoned_cart'] ?? null,
         ]);
@@ -135,6 +150,15 @@ class Client
         ]);
 
         $client = $stmt->fetch();
+
+        if (!$client) {
+            return null;
+        }
+
+        // Decode the stored address.
+        $client['address'] = $this->decodeAddress(
+            $client['address'] ?? null
+        );
 
         return $client ?: null;
     }
@@ -192,6 +216,7 @@ class Client
      * @param int $id
      * @param array $data
      * @return bool
+     * @throws JsonException
      */
     public function updateProfile(int $id, array $data): bool
     {
@@ -209,7 +234,68 @@ class Client
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
-            'address' => $data['address'] ?? null,
+            'address' => $this->encodeAddress(
+                $data['address'] ?? null
+            ),
         ]);
+    }
+
+    /**
+     * Convert an address to database JSON.
+     *
+     * @param array|string|null $address
+     * @return string|null
+     * @throws JsonException
+     */
+    private function encodeAddress(array|string|null $address): ?string
+    {
+        if ($address === null || $address === '') {
+            return null;
+        }
+
+        // Keep old callers working for now.
+        if (is_string($address)) {
+            $address = [
+                'address' => $address,
+                'postal_code' => '',
+                'city' => '',
+            ];
+        }
+
+        return json_encode(
+            [
+                'address' => $address['address'] ?? '',
+                'postal_code' => $address['postal_code'] ?? '',
+                'city' => $address['city'] ?? '',
+            ],
+            JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+        );
+    }
+
+    /**
+     * Convert database JSON to a PHP address.
+     *
+     * @param string|null $address
+     * @return array|null
+     * @throws JsonException
+     */
+    private function decodeAddress(?string $address): ?array
+    {
+        if (!$address) {
+            return null;
+        }
+
+        $decoded = json_decode(
+            $address,
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        return [
+            'address' => $decoded['address'] ?? '',
+            'postal_code' => $decoded['postal_code'] ?? '',
+            'city' => $decoded['city'] ?? '',
+        ];
     }
 }

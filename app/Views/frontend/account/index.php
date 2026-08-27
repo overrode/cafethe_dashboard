@@ -118,3 +118,5 @@ require FRONTEND_HEADER_PATH;
         </div>
     </div>
 </section>
+
+<?php require FRONTEND_FOOTER_PATH; ?>

@@ -50,6 +50,14 @@ class DashboardClientController extends Controller
         $favorites = trim($_POST['favorites'] ?? '');
         $abandonedCart = trim($_POST['abandoned_cart'] ?? '');
 
+        // Build the address structure.
+        $address = [
+            'address' => trim($_POST['address'] ?? ''),
+            'postal_code' => trim($_POST['postal_code'] ?? ''),
+            'city' => trim($_POST['city'] ?? ''),
+        ];
+
+        // Validate required data.
         if ($name === '') {
             $this->jsonError(
                 'Le nom du client est obligatoire.',
@@ -73,6 +81,7 @@ class DashboardClientController extends Controller
 
         $clientModel = new Client();
 
+        // Prevent duplicate email.
         if (
             $email !== ''
             && $clientModel->findByEmail($email)
@@ -86,11 +95,12 @@ class DashboardClientController extends Controller
         }
 
         try {
+            // Create the client.
             $clientId = $clientModel->create([
                 'name' => $name,
                 'email' => $email ?: null,
                 'phone' => $phone ?: null,
-                'address' => $address ?: null,
+                'address' => $address,
                 'favorites' => $favorites ?: null,
                 'abandoned_cart' => $abandonedCart ?: null,
             ]);
@@ -136,13 +146,22 @@ class DashboardClientController extends Controller
         }
 
         $id = (int) ($_POST['id'] ?? 0);
+
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $address = trim($_POST['address'] ?? '');
+
         $favorites = trim($_POST['favorites'] ?? '');
         $abandonedCart = trim($_POST['abandoned_cart'] ?? '');
 
+        // Build the address structure.
+        $address = [
+            'address' => trim($_POST['address'] ?? ''),
+            'postal_code' => trim($_POST['postal_code'] ?? ''),
+            'city' => trim($_POST['city'] ?? ''),
+        ];
+
+        // Validate required data.
         if ($id <= 0 || $name === '') {
             $this->jsonError(
                 'Données client invalides.',
@@ -176,6 +195,7 @@ class DashboardClientController extends Controller
             return;
         }
 
+        // Allow the client's own email.
         if ($email !== '') {
             $existingClient = $clientModel->findByEmail($email);
 
@@ -193,11 +213,12 @@ class DashboardClientController extends Controller
         }
 
         try {
+            // Update the client.
             $clientModel->update($id, [
                 'name' => $name,
                 'email' => $email ?: null,
                 'phone' => $phone ?: null,
-                'address' => $address ?: null,
+                'address' => $address,
                 'favorites' => $favorites ?: null,
                 'abandoned_cart' => $abandonedCart ?: null,
             ]);

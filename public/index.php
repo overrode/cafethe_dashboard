@@ -81,6 +81,7 @@ $router->post('/account/deactivate', [PageClientController::class, 'deactivateAc
 $router->get('/login', [DashboardAuthController::class, 'login']);
 $router->post('/login', [DashboardAuthController::class, 'authenticate']);
 $router->get('/logout', [DashboardAuthController::class, 'logout']);
+$router->post('/account/check-email', [PageClientAuthController::class, 'checkEmail']);
 
 // Storefront client account.
 $router->get('/account/logout', [PageClientAuthController::class, 'logout']);
@@ -144,10 +145,16 @@ if (
     exit;
 }
 
+// Public client-account routes.
+$publicAccountRoutes = [
+    '/account/logout',
+    '/account/check-email',
+];
+
 // Protect client account pages.
 if (
     str_starts_with($currentRoute, '/account')
-    && $currentRoute !== '/account/logout'
+    && !in_array($currentRoute, $publicAccountRoutes, true)
     && !isset($_SESSION['client'])
 ) {
     header('Location: /public/index.php?route=/');

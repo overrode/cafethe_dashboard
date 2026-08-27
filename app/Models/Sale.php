@@ -394,6 +394,13 @@ class Sale
                 ? date('Y-m-d H:i:s')
                 : null;
 
+            // Serialize the delivery address for MySQL JSON.
+            $deliveryAddress = isset($data['delivery_address'])
+                ? json_encode(
+                    $data['delivery_address'],
+                    JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+                )
+                : null;
 
             /*
              * Create the parent sales record.
@@ -412,6 +419,7 @@ class Sale
                     payment_method,
                     delivery_method,
                     delivery_status,
+                    delivery_address,
                     source,
                     total_ht,
                     total_vat,
@@ -427,6 +435,7 @@ class Sale
                     :payment_method,
                     :delivery_method,
                     :delivery_status,
+                    :delivery_address,
                     :source,
                     :total_ht,
                     :total_vat,
@@ -445,6 +454,7 @@ class Sale
                 'payment_method' => $paymentMethod,
                 'delivery_method' => $deliveryMethod,
                 'delivery_status' => $deliveryStatus,
+                'delivery_address' => $deliveryAddress,
                 'source' => $source,
 
                 'total_ht' => $totalHt,

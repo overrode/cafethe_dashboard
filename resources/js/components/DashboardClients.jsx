@@ -1,14 +1,78 @@
 import React, {useState} from 'react';
 
+const emptyAddress = {
+    address: '',
+    postal_code: '',
+    city: '',
+};
+
 const emptyClient = {
     id: null,
     name: '',
     email: '',
     phone: '',
-    address: '',
+    address: emptyAddress,
     favorites: '',
     abandoned_cart: '',
 };
+
+
+// Normalize old and new address formats.
+const normalizeAddress = value => {
+    if (!value) {
+        return {...emptyAddress};
+    }
+
+    if (typeof value === 'object') {
+        return {
+            address: value.address ?? '',
+            postal_code: value.postal_code ?? '',
+            city: value.city ?? '',
+        };
+    }
+
+    if (typeof value === 'string') {
+        try {
+            const parsed = JSON.parse(value);
+
+            if (parsed && typeof parsed === 'object') {
+                return {
+                    address: parsed.address ?? '',
+                    postal_code: parsed.postal_code ?? '',
+                    city: parsed.city ?? '',
+                };
+            }
+        } catch {
+            return {
+                ...emptyAddress,
+                address: value,
+            };
+        }
+    }
+
+    return {...emptyAddress};
+};
+
+
+// Display the address nicely in the table.
+const formatAddress = value => {
+    const address = normalizeAddress(value);
+
+    const cityLine = [
+        address.postal_code,
+        address.city,
+    ]
+        .filter(Boolean)
+        .join(' ');
+
+    return [
+        address.address,
+        cityLine,
+    ]
+        .filter(Boolean)
+        .join(', ');
+};
+
 
 export default function DashboardClients({
     clients,
@@ -18,27 +82,38 @@ export default function DashboardClients({
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(false);
 
-    const [client, setClient] = useState(emptyClient);
+    const [client, setClient] = useState({
+        ...emptyClient,
+        address: {...emptyAddress},
+    });
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
 
+    // Open creation modal.
     const openCreateModal = () => {
-        setClient(emptyClient);
+        setClient({
+            ...emptyClient,
+            address: {...emptyAddress},
+        });
+
         setEditing(false);
         setError('');
         setModalOpen(true);
     };
 
 
+    // Open selected client.
     const openEditModal = selectedClient => {
         setClient({
             id: selectedClient.id,
             name: selectedClient.name ?? '',
             email: selectedClient.email ?? '',
             phone: selectedClient.phone ?? '',
-            address: selectedClient.address ?? '',
+            address: normalizeAddress(
+                selectedClient.address
+            ),
             favorites: selectedClient.favorites ?? '',
             abandoned_cart:
                 selectedClient.abandoned_cart ?? '',
@@ -50,6 +125,7 @@ export default function DashboardClients({
     };
 
 
+    // Update normal fields.
     const updateField = event => {
         const {
             name,
@@ -63,6 +139,24 @@ export default function DashboardClients({
     };
 
 
+    // Update address fields.
+    const updateAddressField = event => {
+        const {
+            name,
+            value,
+        } = event.target;
+
+        setClient(currentClient => ({
+            ...currentClient,
+            address: {
+                ...currentClient.address,
+                [name]: value,
+            },
+        }));
+    };
+
+
+    // Create or update client.
     const saveClient = async () => {
         if (!client.name.trim()) {
             setError(
@@ -84,8 +178,28 @@ export default function DashboardClients({
         formData.append('name', client.name);
         formData.append('email', client.email);
         formData.append('phone', client.phone);
-        formData.append('address', client.address);
-        formData.append('favorites', client.favorites);
+
+        // Send address fields separately.
+        formData.append(
+            'address',
+            client.address.address
+        );
+
+        formData.append(
+            'postal_code',
+            client.address.postal_code
+        );
+
+        formData.append(
+            'city',
+            client.address.city
+        );
+
+        formData.append(
+            'favorites',
+            client.favorites
+        );
+
         formData.append(
             'abandoned_cart',
             client.abandoned_cart
@@ -113,19 +227,30 @@ export default function DashboardClients({
                 );
             }
 
+            // Normalize returned address.
+            const savedClient = {
+                ...data.client,
+                address: normalizeAddress(
+                    data.client.address
+                ),
+            };
+
             if (editing) {
                 setClientList(currentClients => (
                     currentClients.map(currentClient => (
                         String(currentClient.id)
-                        === String(data.client.id)
-                            ? data.client
+                        === String(savedClient.id)
+                            ? savedClient
                             : currentClient
                     ))
                 ));
 
             } else {
                 setClientList(currentClients => (
-                    [...currentClients, data.client].sort(
+                    [
+                        ...currentClients,
+                        savedClient,
+                    ].sort(
                         (clientA, clientB) => (
                             clientA.name.localeCompare(
                                 clientB.name,
@@ -149,6 +274,7 @@ export default function DashboardClients({
 
     return (
         <>
+            {/* Page actions. */}
             <div
                 className="
                     mb-6
@@ -178,6 +304,7 @@ export default function DashboardClients({
             </div>
 
 
+            {/* Clients table. */}
             <div
                 className="
                     overflow-hidden
@@ -243,9 +370,9 @@ export default function DashboardClients({
                                     divide-black/5
                                 "
                             >
-                                {clientList.map(client => (
+                                {clientList.map(listClient => (
                                     <tr
-                                        key={client.id}
+                                        key={listClient.id}
                                         className="
                                             transition
                                             hover:bg-white/40
@@ -253,7 +380,7 @@ export default function DashboardClients({
                                     >
                                         <td className="px-5 py-4">
                                             <div className="font-black">
-                                                {client.name}
+                                                {listClient.name}
                                             </div>
 
                                             <div
@@ -263,14 +390,14 @@ export default function DashboardClients({
                                                     text-neutral-400
                                                 "
                                             >
-                                                #{client.id}
+                                                #{listClient.id}
                                             </div>
                                         </td>
 
 
                                         <td className="px-5 py-4">
                                             <div>
-                                                {client.email || '—'}
+                                                {listClient.email || '—'}
                                             </div>
 
                                             <div
@@ -280,7 +407,7 @@ export default function DashboardClients({
                                                     text-neutral-500
                                                 "
                                             >
-                                                {client.phone || '—'}
+                                                {listClient.phone || '—'}
                                             </div>
                                         </td>
 
@@ -293,17 +420,19 @@ export default function DashboardClients({
                                                 text-neutral-600
                                             "
                                         >
-                                            {client.address || '—'}
+                                            {formatAddress(
+                                                listClient.address
+                                            ) || '—'}
                                         </td>
 
 
                                         <td className="px-5 py-4">
-                                            {client.favorites || '—'}
+                                            {listClient.favorites || '—'}
                                         </td>
 
 
                                         <td className="px-5 py-4">
-                                            {client.abandoned_cart || '—'}
+                                            {listClient.abandoned_cart || '—'}
                                         </td>
 
 
@@ -311,7 +440,9 @@ export default function DashboardClients({
                                             <button
                                                 type="button"
                                                 onClick={() => (
-                                                    openEditModal(client)
+                                                    openEditModal(
+                                                        listClient
+                                                    )
                                                 )}
                                                 className="
                                                     rounded-full
@@ -337,12 +468,14 @@ export default function DashboardClients({
             </div>
 
 
+            {/* Create / edit modal. */}
             {modalOpen && (
                 <div
                     className="
                         fixed inset-0 z-[100]
                         flex items-center
                         justify-center
+                        overflow-y-auto
                         bg-black/60
                         p-4
                         backdrop-blur-xl
@@ -350,6 +483,7 @@ export default function DashboardClients({
                 >
                     <div
                         className="
+                            my-8
                             w-full max-w-xl
                             rounded-[32px]
                             border border-white/50
@@ -359,6 +493,7 @@ export default function DashboardClients({
                             backdrop-blur-3xl
                         "
                     >
+                        {/* Modal heading. */}
                         <div
                             className="
                                 flex items-start
@@ -411,6 +546,7 @@ export default function DashboardClients({
                         </div>
 
 
+                        {/* Client fields. */}
                         <div className="mt-7 space-y-4">
                             <Input
                                 label="Nom *"
@@ -434,33 +570,64 @@ export default function DashboardClients({
                                 onChange={updateField}
                             />
 
-                            <div>
-                                <label
-                                    className="
-                                        mb-1 block
-                                        text-sm font-bold
-                                    "
-                                >
-                                    Adresse
-                                </label>
 
-                                <textarea
-                                    name="address"
-                                    rows="3"
-                                    value={client.address}
-                                    onChange={updateField}
-                                    className="
-                                        w-full
-                                        rounded-2xl
-                                        border border-black/10
-                                        bg-white/70
-                                        px-4 py-3
-                                        outline-none
-                                        focus:border-black/40
-                                        focus:bg-white
-                                    "
-                                />
+                            {/* Address. */}
+                            <div
+                                className="
+                                    rounded-3xl
+                                    border border-black/10
+                                    bg-white/40
+                                    p-4
+                                "
+                            >
+                                <p className="mb-4 font-black">
+                                    Adresse
+                                </p>
+
+                                <div className="space-y-4">
+                                    <Input
+                                        label="Adresse"
+                                        name="address"
+                                        value={
+                                            client.address.address
+                                        }
+                                        onChange={
+                                            updateAddressField
+                                        }
+                                    />
+
+                                    <div
+                                        className="
+                                            grid gap-4
+                                            md:grid-cols-2
+                                        "
+                                    >
+                                        <Input
+                                            label="Code postal"
+                                            name="postal_code"
+                                            value={
+                                                client.address
+                                                    .postal_code
+                                            }
+                                            onChange={
+                                                updateAddressField
+                                            }
+                                        />
+
+                                        <Input
+                                            label="Ville"
+                                            name="city"
+                                            value={
+                                                client.address.city
+                                            }
+                                            onChange={
+                                                updateAddressField
+                                            }
+                                        />
+                                    </div>
+                                </div>
                             </div>
+
 
                             <Input
                                 label="Favoris"
@@ -477,6 +644,7 @@ export default function DashboardClients({
                             />
 
 
+                            {/* API error. */}
                             {error && (
                                 <div
                                     className="
@@ -494,6 +662,7 @@ export default function DashboardClients({
                         </div>
 
 
+                        {/* Modal actions. */}
                         <div
                             className="
                                 mt-7
@@ -545,6 +714,7 @@ export default function DashboardClients({
 }
 
 
+// Reusable form input.
 function Input({
     label,
     name,

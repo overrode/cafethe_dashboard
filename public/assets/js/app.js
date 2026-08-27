@@ -22106,7 +22106,7 @@
 
   // resources/js/components/CheckoutOptions.jsx
   var import_react6 = __toESM(require_react());
-  function CheckoutOptions() {
+  function CheckoutOptions({ initialAddress = null }) {
     const [deliveryMethod, setDeliveryMethod] = (0, import_react6.useState)("");
     const [paymentMethod, setPaymentMethod] = (0, import_react6.useState)("");
     const needsAddress = deliveryMethod === "livraison";
@@ -22132,6 +22132,15 @@
         available: deliveryMethod === "magasin"
       }
     ];
+    const [address, setAddress] = (0, import_react6.useState)(
+      initialAddress?.address ?? ""
+    );
+    const [postalCode, setPostalCode] = (0, import_react6.useState)(
+      initialAddress?.postal_code ?? ""
+    );
+    const [city, setCity] = (0, import_react6.useState)(
+      initialAddress?.city ?? ""
+    );
     const handleDeliveryChange = (method) => {
       setDeliveryMethod(method);
       if (method === "livraison" && ["especes", "cheque"].includes(paymentMethod)) {
@@ -22185,6 +22194,8 @@
       name: "address",
       type: "text",
       required: true,
+      value: address,
+      onChange: (event) => setAddress(event.target.value),
       className: "\n                                w-full rounded-2xl\n                                border border-black/10\n                                bg-white/70\n                                px-4 py-3\n                                outline-none\n                                transition\n                                focus:border-black\n                            "
     })), /* @__PURE__ */ import_react6.default.createElement("div", {
       className: "mt-5 grid gap-5 md:grid-cols-2"
@@ -22196,6 +22207,8 @@
       name: "postal_code",
       type: "text",
       required: true,
+      value: postalCode,
+      onChange: (event) => setPostalCode(event.target.value),
       className: "\n                                    w-full rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black\n                                "
     })), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("label", {
       htmlFor: "city",
@@ -22205,6 +22218,8 @@
       name: "city",
       type: "text",
       required: true,
+      value: city,
+      onChange: (event) => setCity(event.target.value),
       className: "\n                                    w-full rounded-2xl\n                                    border border-black/10\n                                    bg-white/70\n                                    px-4 py-3\n                                    outline-none\n                                    transition\n                                    focus:border-black\n                                "
     })))), deliveryMethod && /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement("h2", {
       className: "mt-10 text-2xl font-black"
@@ -23203,14 +23218,60 @@
 
   // resources/js/components/DashboardClients.jsx
   var import_react10 = __toESM(require_react());
+  var emptyAddress = {
+    address: "",
+    postal_code: "",
+    city: ""
+  };
   var emptyClient = {
     id: null,
     name: "",
     email: "",
     phone: "",
-    address: "",
+    address: emptyAddress,
     favorites: "",
     abandoned_cart: ""
+  };
+  var normalizeAddress = (value) => {
+    if (!value) {
+      return { ...emptyAddress };
+    }
+    if (typeof value === "object") {
+      return {
+        address: value.address ?? "",
+        postal_code: value.postal_code ?? "",
+        city: value.city ?? ""
+      };
+    }
+    if (typeof value === "string") {
+      try {
+        const parsed = JSON.parse(value);
+        if (parsed && typeof parsed === "object") {
+          return {
+            address: parsed.address ?? "",
+            postal_code: parsed.postal_code ?? "",
+            city: parsed.city ?? ""
+          };
+        }
+      } catch {
+        return {
+          ...emptyAddress,
+          address: value
+        };
+      }
+    }
+    return { ...emptyAddress };
+  };
+  var formatAddress = (value) => {
+    const address = normalizeAddress(value);
+    const cityLine = [
+      address.postal_code,
+      address.city
+    ].filter(Boolean).join(" ");
+    return [
+      address.address,
+      cityLine
+    ].filter(Boolean).join(", ");
   };
   function DashboardClients({
     clients
@@ -23218,11 +23279,17 @@
     const [clientList, setClientList] = (0, import_react10.useState)(clients);
     const [modalOpen, setModalOpen] = (0, import_react10.useState)(false);
     const [editing, setEditing] = (0, import_react10.useState)(false);
-    const [client, setClient] = (0, import_react10.useState)(emptyClient);
+    const [client, setClient] = (0, import_react10.useState)({
+      ...emptyClient,
+      address: { ...emptyAddress }
+    });
     const [saving, setSaving] = (0, import_react10.useState)(false);
     const [error, setError] = (0, import_react10.useState)("");
     const openCreateModal = () => {
-      setClient(emptyClient);
+      setClient({
+        ...emptyClient,
+        address: { ...emptyAddress }
+      });
       setEditing(false);
       setError("");
       setModalOpen(true);
@@ -23233,7 +23300,9 @@
         name: selectedClient.name ?? "",
         email: selectedClient.email ?? "",
         phone: selectedClient.phone ?? "",
-        address: selectedClient.address ?? "",
+        address: normalizeAddress(
+          selectedClient.address
+        ),
         favorites: selectedClient.favorites ?? "",
         abandoned_cart: selectedClient.abandoned_cart ?? ""
       });
@@ -23249,6 +23318,19 @@
       setClient((currentClient) => ({
         ...currentClient,
         [name]: value
+      }));
+    };
+    const updateAddressField = (event) => {
+      const {
+        name,
+        value
+      } = event.target;
+      setClient((currentClient) => ({
+        ...currentClient,
+        address: {
+          ...currentClient.address,
+          [name]: value
+        }
       }));
     };
     const saveClient = async () => {
@@ -23267,8 +23349,22 @@
       formData.append("name", client.name);
       formData.append("email", client.email);
       formData.append("phone", client.phone);
-      formData.append("address", client.address);
-      formData.append("favorites", client.favorites);
+      formData.append(
+        "address",
+        client.address.address
+      );
+      formData.append(
+        "postal_code",
+        client.address.postal_code
+      );
+      formData.append(
+        "city",
+        client.address.city
+      );
+      formData.append(
+        "favorites",
+        client.favorites
+      );
       formData.append(
         "abandoned_cart",
         client.abandoned_cart
@@ -23288,10 +23384,19 @@
             data.error || "Impossible d\u2019enregistrer le client."
           );
         }
+        const savedClient = {
+          ...data.client,
+          address: normalizeAddress(
+            data.client.address
+          )
+        };
         if (editing) {
-          setClientList((currentClients) => currentClients.map((currentClient) => String(currentClient.id) === String(data.client.id) ? data.client : currentClient));
+          setClientList((currentClients) => currentClients.map((currentClient) => String(currentClient.id) === String(savedClient.id) ? savedClient : currentClient));
         } else {
-          setClientList((currentClients) => [...currentClients, data.client].sort(
+          setClientList((currentClients) => [
+            ...currentClients,
+            savedClient
+          ].sort(
             (clientA, clientB) => clientA.name.localeCompare(
               clientB.name,
               "fr"
@@ -23341,35 +23446,39 @@
       className: "px-5 py-4"
     }, "Actions"))), /* @__PURE__ */ import_react10.default.createElement("tbody", {
       className: "\n                                    divide-y\n                                    divide-black/5\n                                "
-    }, clientList.map((client2) => /* @__PURE__ */ import_react10.default.createElement("tr", {
-      key: client2.id,
+    }, clientList.map((listClient) => /* @__PURE__ */ import_react10.default.createElement("tr", {
+      key: listClient.id,
       className: "\n                                            transition\n                                            hover:bg-white/40\n                                        "
     }, /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "px-5 py-4"
     }, /* @__PURE__ */ import_react10.default.createElement("div", {
       className: "font-black"
-    }, client2.name), /* @__PURE__ */ import_react10.default.createElement("div", {
+    }, listClient.name), /* @__PURE__ */ import_react10.default.createElement("div", {
       className: "\n                                                    mt-1\n                                                    text-xs\n                                                    text-neutral-400\n                                                "
-    }, "#", client2.id)), /* @__PURE__ */ import_react10.default.createElement("td", {
+    }, "#", listClient.id)), /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "px-5 py-4"
-    }, /* @__PURE__ */ import_react10.default.createElement("div", null, client2.email || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("div", {
+    }, /* @__PURE__ */ import_react10.default.createElement("div", null, listClient.email || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("div", {
       className: "\n                                                    mt-1\n                                                    text-sm\n                                                    text-neutral-500\n                                                "
-    }, client2.phone || "\u2014")), /* @__PURE__ */ import_react10.default.createElement("td", {
+    }, listClient.phone || "\u2014")), /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "\n                                                max-w-xs\n                                                px-5 py-4\n                                                text-sm\n                                                text-neutral-600\n                                            "
-    }, client2.address || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+    }, formatAddress(
+      listClient.address
+    ) || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "px-5 py-4"
-    }, client2.favorites || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+    }, listClient.favorites || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "px-5 py-4"
-    }, client2.abandoned_cart || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
+    }, listClient.abandoned_cart || "\u2014"), /* @__PURE__ */ import_react10.default.createElement("td", {
       className: "px-5 py-4"
     }, /* @__PURE__ */ import_react10.default.createElement("button", {
       type: "button",
-      onClick: () => openEditModal(client2),
+      onClick: () => openEditModal(
+        listClient
+      ),
       className: "\n                                                    rounded-full\n                                                    border\n                                                    border-black/20\n                                                    px-4 py-2\n                                                    text-sm\n                                                    font-bold\n                                                    transition\n                                                    hover:bg-black\n                                                    hover:text-white\n                                                "
     }, "Modifier")))))))), modalOpen && /* @__PURE__ */ import_react10.default.createElement("div", {
-      className: "\n                        fixed inset-0 z-[100]\n                        flex items-center\n                        justify-center\n                        bg-black/60\n                        p-4\n                        backdrop-blur-xl\n                    "
+      className: "\n                        fixed inset-0 z-[100]\n                        flex items-center\n                        justify-center\n                        overflow-y-auto\n                        bg-black/60\n                        p-4\n                        backdrop-blur-xl\n                    "
     }, /* @__PURE__ */ import_react10.default.createElement("div", {
-      className: "\n                            w-full max-w-xl\n                            rounded-[32px]\n                            border border-white/50\n                            bg-white/80\n                            p-7\n                            shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                            backdrop-blur-3xl\n                        "
+      className: "\n                            my-8\n                            w-full max-w-xl\n                            rounded-[32px]\n                            border border-white/50\n                            bg-white/80\n                            p-7\n                            shadow-[0_30px_100px_rgba(0,0,0,0.35)]\n                            backdrop-blur-3xl\n                        "
     }, /* @__PURE__ */ import_react10.default.createElement("div", {
       className: "\n                                flex items-start\n                                justify-between gap-4\n                            "
     }, /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("p", {
@@ -23399,15 +23508,30 @@
       name: "phone",
       value: client.phone,
       onChange: updateField
-    }), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", {
-      className: "\n                                        mb-1 block\n                                        text-sm font-bold\n                                    "
-    }, "Adresse"), /* @__PURE__ */ import_react10.default.createElement("textarea", {
+    }), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                    rounded-3xl\n                                    border border-black/10\n                                    bg-white/40\n                                    p-4\n                                "
+    }, /* @__PURE__ */ import_react10.default.createElement("p", {
+      className: "mb-4 font-black"
+    }, "Adresse"), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "space-y-4"
+    }, /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Adresse",
       name: "address",
-      rows: "3",
-      value: client.address,
-      onChange: updateField,
-      className: "\n                                        w-full\n                                        rounded-2xl\n                                        border border-black/10\n                                        bg-white/70\n                                        px-4 py-3\n                                        outline-none\n                                        focus:border-black/40\n                                        focus:bg-white\n                                    "
-    })), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      value: client.address.address,
+      onChange: updateAddressField
+    }), /* @__PURE__ */ import_react10.default.createElement("div", {
+      className: "\n                                            grid gap-4\n                                            md:grid-cols-2\n                                        "
+    }, /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Code postal",
+      name: "postal_code",
+      value: client.address.postal_code,
+      onChange: updateAddressField
+    }), /* @__PURE__ */ import_react10.default.createElement(Input2, {
+      label: "Ville",
+      name: "city",
+      value: client.address.city,
+      onChange: updateAddressField
+    })))), /* @__PURE__ */ import_react10.default.createElement(Input2, {
       label: "Favoris",
       name: "favorites",
       value: client.favorites,
@@ -23997,8 +24121,13 @@
     "checkout-options-app"
   );
   if (checkoutOptionsRoot) {
+    const initialAddress = JSON.parse(
+      checkoutOptionsRoot.dataset.address || "null"
+    );
     (0, import_client.createRoot)(checkoutOptionsRoot).render(
-      /* @__PURE__ */ import_react12.default.createElement(CheckoutOptions, null)
+      /* @__PURE__ */ import_react12.default.createElement(CheckoutOptions, {
+        initialAddress
+      })
     );
   }
   var dashboardSaleFormRoot = document.getElementById(

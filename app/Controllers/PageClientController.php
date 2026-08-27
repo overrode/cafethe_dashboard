@@ -83,6 +83,8 @@ class PageClientController extends Controller
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $address = trim($_POST['address'] ?? '');
+        $postalCode = trim($_POST['postal_code'] ?? '');
+        $city = trim($_POST['city'] ?? '');
 
         // Validate required fields.
         if (
@@ -118,7 +120,11 @@ class PageClientController extends Controller
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone ?: null,
-                'address' => $address ?: null,
+                'address' => [
+                    'address' => $address,
+                    'postal_code' => $postalCode,
+                    'city' => $city,
+                ],
             ]
         );
 
