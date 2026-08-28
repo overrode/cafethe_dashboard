@@ -21811,13 +21811,39 @@
     return cart ? JSON.parse(cart) : [];
   }
   function saveCart(cart) {
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    window.dispatchEvent(new Event("cartUpdated"));
+    localStorage.setItem(
+      CART_KEY,
+      JSON.stringify(cart)
+    );
+    window.dispatchEvent(
+      new Event("cartUpdated")
+    );
   }
   function getCartCount() {
     return getCart().reduce(
-      (total, item) => total + Number(item.quantity),
+      (total, item) => {
+        if (item.sale_type === "poids") {
+          return total + 1;
+        }
+        return total + Number(item.quantity);
+      },
       0
+    );
+  }
+  function normalizeQuantity(product, quantity) {
+    const stock = Number(product.stock);
+    let normalizedQuantity = Number(quantity);
+    if (!Number.isFinite(normalizedQuantity) || normalizedQuantity <= 0) {
+      return 0;
+    }
+    if (product.sale_type === "unite") {
+      normalizedQuantity = Math.floor(
+        normalizedQuantity
+      );
+    }
+    return Math.min(
+      stock,
+      normalizedQuantity
     );
   }
   function addToCart(product, quantity) {
@@ -21825,16 +21851,34 @@
     const existingItem = cart.find(
       (item) => Number(item.id) === Number(product.id)
     );
+    const requestedQuantity = Number(quantity);
     if (existingItem) {
-      existingItem.quantity += Number(quantity);
+      const totalQuantity = Number(existingItem.quantity) + requestedQuantity;
+      existingItem.stock = Number(product.stock);
+      existingItem.price = product.price;
+      existingItem.vat_rate = product.vat_rate;
+      existingItem.sale_type = product.sale_type;
+      existingItem.quantity = normalizeQuantity(
+        existingItem,
+        totalQuantity
+      );
     } else {
+      const normalizedQuantity = normalizeQuantity(
+        product,
+        requestedQuantity
+      );
+      if (normalizedQuantity <= 0) {
+        return cart;
+      }
       cart.push({
         id: product.id,
         name: product.name,
         price: product.price,
+        vat_rate: product.vat_rate,
         image: product.image,
-        stock: product.stock,
-        quantity: Number(quantity)
+        stock: Number(product.stock),
+        sale_type: product.sale_type,
+        quantity: normalizedQuantity
       });
     }
     saveCart(cart);
@@ -21848,10 +21892,14 @@
     if (!item) {
       return;
     }
-    item.quantity = Math.max(
-      1,
-      Math.min(Number(item.stock), Number(quantity))
+    item.quantity = normalizeQuantity(
+      item,
+      quantity
     );
+    if (item.quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
     saveCart(cart);
   }
   function removeFromCart(productId) {
@@ -21865,20 +21913,35 @@
   }
 
   // resources/js/components/ProductPage.jsx
-  function ProductPage({ product, imagesUrl }) {
+  function ProductPage({ product, imagesUrl, weightStep }) {
     const images = product.image ? product.image.split(";").filter(Boolean) : [];
     const [activeImage, setActiveImage] = (0, import_react2.useState)(
       images[0] ?? "placeholder.jpg"
     );
-    const [quantity, setQuantity] = (0, import_react2.useState)(1);
+    const isWeighted = product.sale_type === "poids";
+    const quantityStep = isWeighted ? weightStep : 1;
+    const minimumQuantity = isWeighted ? weightStep : 1;
+    const [quantity, setQuantity] = (0, import_react2.useState)(minimumQuantity);
+    const vatRate = Number(product.vat_rate);
+    const priceHt = Number(product.price);
+    const priceTtc = priceHt * (1 + vatRate / 100);
+    const quantityForPrice = isWeighted ? quantity / 1e3 : quantity;
+    const totalTtc = priceTtc * quantityForPrice;
     const decreaseQuantity = () => {
-      setQuantity((current) => Math.max(1, current - 1));
+      setQuantity(
+        (current) => Math.max(
+          minimumQuantity,
+          current - quantityStep
+        )
+      );
     };
     const increaseQuantity = () => {
-      setQuantity((current) => Math.min(
-        Number(product.stock),
-        current + 1
-      ));
+      setQuantity(
+        (current) => Math.min(
+          Number(product.stock),
+          current + quantityStep
+        )
+      );
     };
     const [added, setAdded] = (0, import_react2.useState)(false);
     const handleAddToCart = () => {
@@ -21928,15 +21991,19 @@
       className: "mt-8"
     }, /* @__PURE__ */ import_react2.default.createElement("strong", {
       className: "text-3xl font-black"
-    }, Number(product.price).toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react2.default.createElement("p", {
+    }, priceTtc.toFixed(2).replace(".", ","), " \u20AC", isWeighted ? " / kg TTC" : " TTC"), /* @__PURE__ */ import_react2.default.createElement("p", {
+      className: "mt-1 text-sm text-neutral-500"
+    }, "TVA ", vatRate.toFixed(1).replace(".", ","), " %")), /* @__PURE__ */ import_react2.default.createElement("p", {
       className: "mt-4 text-sm font-semibold text-neutral-500"
-    }, "Stock : ", Number(product.stock)), /* @__PURE__ */ import_react2.default.createElement("div", {
+    }, "Stock : ", Number(product.stock), isWeighted ? " g" : " unit\xE9s"), /* @__PURE__ */ import_react2.default.createElement("div", {
       className: "mt-auto pt-10"
     }, /* @__PURE__ */ import_react2.default.createElement("div", {
       className: "mt-8"
     }, /* @__PURE__ */ import_react2.default.createElement("p", {
       className: "mb-3 font-semibold"
-    }, "Quantit\xE9"), /* @__PURE__ */ import_react2.default.createElement("div", {
+    }, product.sale_type === "poids" ? "Poids" : "Quantit\xE9"), /* @__PURE__ */ import_react2.default.createElement("p", {
+      className: "mb-3 font-semibold"
+    }, "Total : ", totalTtc.toFixed(2).replace(".", ","), " \u20AC TTC"), /* @__PURE__ */ import_react2.default.createElement("div", {
       className: "\n                                inline-flex items-center gap-5\n                                rounded-full\n                                border border-white/70\n                                bg-white/40\n                                px-3 py-2\n                                shadow-md\n                                backdrop-blur-xl\n                            "
     }, /* @__PURE__ */ import_react2.default.createElement("button", {
       type: "button",
@@ -21945,7 +22012,7 @@
       className: "\n                                    flex h-10 w-10 items-center justify-center\n                                    rounded-full bg-black\n                                    text-xl font-bold text-white\n                                    transition\n                                    disabled:cursor-not-allowed\n                                    disabled:opacity-30\n                                "
     }, "\u2212"), /* @__PURE__ */ import_react2.default.createElement("span", {
       className: "min-w-8 text-center text-xl font-bold"
-    }, quantity), /* @__PURE__ */ import_react2.default.createElement("button", {
+    }, quantity, isWeighted ? " g" : ""), /* @__PURE__ */ import_react2.default.createElement("button", {
       type: "button",
       onClick: increaseQuantity,
       disabled: quantity >= Number(product.stock),
@@ -21981,8 +22048,17 @@
 
   // resources/js/components/CartPage.jsx
   var import_react4 = __toESM(require_react());
-  function CartPage({ imagesUrl }) {
+  function CartPage({ imagesUrl, weightStep }) {
     const [cart, setCart] = (0, import_react4.useState)(getCart());
+    const getTtcPrice = (item) => {
+      const priceHt = Number(item.price);
+      const vatRate = Number(item.vat_rate ?? 0);
+      return priceHt * (1 + vatRate / 100);
+    };
+    const totalTtc = cart.reduce(
+      (sum, item) => sum + getTtcPrice(item) * Number(item.quantity),
+      0
+    );
     (0, import_react4.useEffect)(() => {
       const updateCart = () => {
         setCart(getCart());
@@ -21992,21 +22068,50 @@
         window.removeEventListener("cartUpdated", updateCart);
       };
     }, []);
+    const getItemTotals = (item) => {
+      const priceHt = Number(item.price);
+      const vatRate = Number(item.vat_rate ?? 0);
+      const quantity = Number(item.quantity);
+      const quantityForPrice = item.sale_type === "poids" ? quantity / 1e3 : quantity;
+      const unitVat = priceHt * (vatRate / 100);
+      const unitTtc = priceHt + unitVat;
+      const lineHt = priceHt * quantityForPrice;
+      const lineVat = lineHt * (vatRate / 100);
+      const lineTtc = lineHt + lineVat;
+      return {
+        unitTtc,
+        lineHt,
+        lineVat,
+        lineTtc
+      };
+    };
     const decreaseQuantity = (item) => {
+      const step = item.sale_type === "poids" ? weightStep : 1;
       updateCartQuantity(
         item.id,
-        Number(item.quantity) - 1
+        Number(item.quantity) - step
       );
     };
     const increaseQuantity = (item) => {
+      const step = item.sale_type === "poids" ? weightStep : 1;
       updateCartQuantity(
         item.id,
-        Number(item.quantity) + 1
+        Number(item.quantity) + step
       );
     };
-    const total = cart.reduce(
-      (sum, item) => sum + Number(item.price) * Number(item.quantity),
-      0
+    const totals = cart.reduce(
+      (result, item) => {
+        const itemTotals = getItemTotals(item);
+        result.ht += itemTotals.lineHt;
+        result.vat += itemTotals.lineVat;
+        result.ttc += itemTotals.lineTtc;
+        return result;
+      },
+      {
+        ht: 0,
+        vat: 0,
+        ttc: 0
+      }
     );
     if (cart.length === 0) {
       return /* @__PURE__ */ import_react4.default.createElement("div", {
@@ -22026,29 +22131,40 @@
       className: "space-y-4"
     }, cart.map((item) => {
       const mainImage = item.image ? item.image.split(";")[0] : "placeholder.jpg";
+      const itemTotals = getItemTotals(item);
       return /* @__PURE__ */ import_react4.default.createElement("article", {
         key: item.id,
         className: "\n                                flex flex-col gap-5\n                                rounded-[28px]\n                                border border-white/70\n                                bg-white/40\n                                p-5\n                                shadow-md\n                                backdrop-blur-2xl\n                                sm:flex-row\n                                sm:items-center\n                            "
+      }, /* @__PURE__ */ import_react4.default.createElement("a", {
+        href: `/public/index.php?route=/product&id=${item.id}`,
+        className: "shrink-0"
       }, /* @__PURE__ */ import_react4.default.createElement("img", {
         src: `${imagesUrl}/${mainImage}`,
         alt: item.name,
-        className: "\n                                    h-28 w-full\n                                    rounded-2xl\n                                    object-cover\n                                    sm:w-28\n                                "
-      }), /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "\n                                        h-28 w-full\n                                        rounded-2xl\n                                        object-cover\n                                        transition\n                                        hover:opacity-80\n                                        sm:w-28\n                                    "
+      })), /* @__PURE__ */ import_react4.default.createElement("div", {
         className: "min-w-0 flex-1"
       }, /* @__PURE__ */ import_react4.default.createElement("h2", {
         className: "text-xl font-bold"
-      }, item.name), /* @__PURE__ */ import_react4.default.createElement("p", {
-        className: "mt-1 font-semibold text-neutral-600"
-      }, Number(item.price).toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("div", {
+      }, /* @__PURE__ */ import_react4.default.createElement("a", {
+        href: `/public/index.php?route=/product&id=${item.id}`,
+        className: "hover:underline"
+      }, item.name)), /* @__PURE__ */ import_react4.default.createElement("div", {
+        className: "mt-1"
+      }, /* @__PURE__ */ import_react4.default.createElement("p", {
+        className: "font-semibold text-neutral-700"
+      }, itemTotals.unitTtc.toFixed(2).replace(".", ","), " \u20AC", item.sale_type === "poids" ? " / kg TTC" : " TTC"), /* @__PURE__ */ import_react4.default.createElement("p", {
+        className: "text-sm text-neutral-500"
+      }, "TVA ", Number(item.vat_rate).toFixed(1).replace(".", ","), " %", " : ", itemTotals.lineVat.toFixed(2).replace(".", ","), " \u20AC"))), /* @__PURE__ */ import_react4.default.createElement("div", {
         className: "\n                                    inline-flex items-center gap-3\n                                    rounded-full\n                                    border border-white/70\n                                    bg-white/50\n                                    px-2 py-2\n                                "
       }, /* @__PURE__ */ import_react4.default.createElement("button", {
         type: "button",
         onClick: () => decreaseQuantity(item),
-        disabled: Number(item.quantity) <= 1,
+        disabled: Number(item.quantity) <= (item.sale_type === "poids" ? weightStep : 1),
         className: "\n                                        flex h-9 w-9\n                                        items-center justify-center\n                                        rounded-full\n                                        bg-black\n                                        font-bold text-white\n                                        disabled:opacity-30\n                                    "
       }, "\u2212"), /* @__PURE__ */ import_react4.default.createElement("span", {
         className: "min-w-8 text-center font-bold"
-      }, item.quantity), /* @__PURE__ */ import_react4.default.createElement("button", {
+      }, item.quantity, item.sale_type === "poids" ? " g" : ""), /* @__PURE__ */ import_react4.default.createElement("button", {
         type: "button",
         onClick: () => increaseQuantity(item),
         disabled: Number(item.quantity) >= Number(item.stock),
@@ -22057,7 +22173,7 @@
         className: "min-w-24 text-right"
       }, /* @__PURE__ */ import_react4.default.createElement("strong", {
         className: "text-lg"
-      }, (Number(item.price) * Number(item.quantity)).toFixed(2).replace(".", ","), " \u20AC"), /* @__PURE__ */ import_react4.default.createElement("button", {
+      }, itemTotals.lineTtc.toFixed(2).replace(".", ","), " \u20AC"), /* @__PURE__ */ import_react4.default.createElement("button", {
         type: "button",
         onClick: () => removeFromCart(item.id),
         className: "\n                                        mt-2 block w-full\n                                        text-sm font-semibold\n                                        text-neutral-500\n                                        hover:text-black\n                                    "
@@ -22068,12 +22184,21 @@
       className: "text-2xl font-black"
     }, "R\xE9capitulatif"), /* @__PURE__ */ import_react4.default.createElement("div", {
       className: "mt-6 flex justify-between"
-    }, /* @__PURE__ */ import_react4.default.createElement("span", null, "Articles"), /* @__PURE__ */ import_react4.default.createElement("strong", null, cart.reduce(
-      (sum, item) => sum + Number(item.quantity),
-      0
-    ))), /* @__PURE__ */ import_react4.default.createElement("div", {
-      className: "\n                        mt-5 flex justify-between\n                        border-t border-black/10\n                        pt-5\n                        text-xl\n                    "
-    }, /* @__PURE__ */ import_react4.default.createElement("span", null, "Total"), /* @__PURE__ */ import_react4.default.createElement("strong", null, total.toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("form", {
+    }, /* @__PURE__ */ import_react4.default.createElement("span", null, "Articles"), /* @__PURE__ */ import_react4.default.createElement("strong", null, cart.length)), /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "mt-5 space-y-3 border-t border-black/10 pt-5"
+    }, /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "flex justify-between"
+    }, /* @__PURE__ */ import_react4.default.createElement("span", {
+      className: "text-neutral-500"
+    }, "Total HT"), /* @__PURE__ */ import_react4.default.createElement("strong", null, totals.ht.toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "flex justify-between"
+    }, /* @__PURE__ */ import_react4.default.createElement("span", {
+      className: "text-neutral-500"
+    }, "TVA"), /* @__PURE__ */ import_react4.default.createElement("strong", null, totals.vat.toFixed(2).replace(".", ","), " \u20AC")), /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: "\n                            flex justify-between\n                            border-t border-black/10\n                            pt-4 text-xl\n                        "
+    }, /* @__PURE__ */ import_react4.default.createElement("span", {
+      className: "font-bold"
+    }, "Total TTC"), /* @__PURE__ */ import_react4.default.createElement("strong", null, totals.ttc.toFixed(2).replace(".", ","), " \u20AC"))), /* @__PURE__ */ import_react4.default.createElement("form", {
       method: "POST",
       action: "/public/index.php?route=/checkout"
     }, /* @__PURE__ */ import_react4.default.createElement("input", {
@@ -22248,7 +22373,9 @@
   var import_react7 = __toESM(require_react());
   function DashboardSaleForm({
     clients,
-    products
+    products,
+    weightStep,
+    gramsPerKilogram
   }) {
     const [clientOptions, setClientOptions] = (0, import_react7.useState)(clients);
     const [clientId, setClientId] = (0, import_react7.useState)("");
@@ -22259,7 +22386,9 @@
       name: "",
       email: "",
       phone: "",
-      address: ""
+      address: "",
+      postal_code: "",
+      city: ""
     });
     const [items, setItems] = (0, import_react7.useState)([]);
     const [productModalOpen, setProductModalOpen] = (0, import_react7.useState)(false);
@@ -22269,6 +22398,14 @@
     const [paymentReceived, setPaymentReceived] = (0, import_react7.useState)(true);
     const [deliveryMethod, setDeliveryMethod] = (0, import_react7.useState)("magasin");
     const [immediateHandover, setImmediateHandover] = (0, import_react7.useState)(true);
+    const weightStepValue = Number(weightStep);
+    const gramsPerKilogramValue = Number(gramsPerKilogram);
+    const isWeighted = (product) => product.sale_type === "poids";
+    const getQuantityStep = (product) => isWeighted(product) ? weightStepValue : 1;
+    const getMinimumQuantity = (product) => getQuantityStep(product);
+    const selectedProduct = products.find(
+      (product) => String(product.id) === String(selectedProductId)
+    ) ?? null;
     const paymentMethods = [
       {
         value: "cb",
@@ -22293,40 +22430,40 @@
       (method) => deliveryMethod === "magasin" || !method.pickupOnly
     );
     const addProduct = () => {
-      const product = products.find(
-        (product2) => String(product2.id) === String(selectedProductId)
-      );
-      const quantity = Number(selectedQuantity);
-      if (!product || quantity <= 0) {
+      if (!selectedProduct) {
         return;
       }
-      const stock = Number(product.stock);
+      const quantity = Number(selectedQuantity);
+      const stock = Number(selectedProduct.stock);
+      const step = getQuantityStep(selectedProduct);
+      const minimum = getMinimumQuantity(selectedProduct);
+      if (!Number.isFinite(quantity) || quantity < minimum || quantity > stock || quantity % step !== 0) {
+        return;
+      }
       setItems((currentItems) => {
         const existingItem = currentItems.find(
-          (item) => String(item.product_id) === String(product.id)
+          (item) => String(item.product_id) === String(selectedProduct.id)
         );
         if (existingItem) {
-          const newQuantity = existingItem.quantity + quantity;
+          const newQuantity = Number(existingItem.quantity) + quantity;
           if (newQuantity > stock) {
             return currentItems;
           }
-          return currentItems.map((item) => String(item.product_id) === String(product.id) ? {
+          return currentItems.map((item) => String(item.product_id) === String(selectedProduct.id) ? {
             ...item,
             quantity: newQuantity
           } : item);
         }
-        if (quantity > stock) {
-          return currentItems;
-        }
         return [
           ...currentItems,
           {
-            product_id: product.id,
-            name: product.name,
+            product_id: selectedProduct.id,
+            name: selectedProduct.name,
             quantity,
-            price: Number(product.price),
-            vat_rate: Number(product.vat_rate),
-            stock
+            price: Number(selectedProduct.price),
+            vat_rate: Number(selectedProduct.vat_rate),
+            stock,
+            sale_type: selectedProduct.sale_type
           }
         ];
       });
@@ -22336,16 +22473,19 @@
     };
     const updateQuantity = (productId, quantity) => {
       const newQuantity = Number(quantity);
-      if (newQuantity <= 0) {
-        return;
-      }
-      setItems((currentItems) => currentItems.map((item) => String(item.product_id) === String(productId) ? {
-        ...item,
-        quantity: Math.min(
-          newQuantity,
-          item.stock
-        )
-      } : item));
+      setItems((currentItems) => currentItems.map((item) => {
+        if (String(item.product_id) !== String(productId)) {
+          return item;
+        }
+        const step = item.sale_type === "poids" ? weightStepValue : 1;
+        if (!Number.isFinite(newQuantity) || newQuantity < step || newQuantity > Number(item.stock) || newQuantity % step !== 0) {
+          return item;
+        }
+        return {
+          ...item,
+          quantity: newQuantity
+        };
+      }));
     };
     const removeItem = (productId) => {
       setItems((currentItems) => currentItems.filter(
@@ -22354,13 +22494,15 @@
     };
     const totals = (0, import_react7.useMemo)(() => {
       return items.reduce(
-        (totals2, item) => {
-          const lineHt = item.price * item.quantity;
-          const lineVat = lineHt * (item.vat_rate / 100);
-          totals2.ht += lineHt;
-          totals2.vat += lineVat;
-          totals2.ttc += lineHt + lineVat;
-          return totals2;
+        (result, item) => {
+          const quantityForPrice = item.sale_type === "poids" ? Number(item.quantity) / gramsPerKilogramValue : Number(item.quantity);
+          const lineHt = Number(item.price) * quantityForPrice;
+          const lineVat = lineHt * (Number(item.vat_rate) / 100);
+          const lineTtc = lineHt + lineVat;
+          result.ht += lineHt;
+          result.vat += lineVat;
+          result.ttc += lineTtc;
+          return result;
         },
         {
           ht: 0,
@@ -22368,7 +22510,7 @@
           ttc: 0
         }
       );
-    }, [items]);
+    }, [items, gramsPerKilogramValue]);
     const changeDeliveryMethod = (method) => {
       setDeliveryMethod(method);
       if (method === "livraison" && ["especes", "cheque"].includes(paymentMethod)) {
@@ -22380,7 +22522,9 @@
     };
     const createClient = async () => {
       if (!newClient.name.trim()) {
-        setClientError("Le nom du client est obligatoire.");
+        setClientError(
+          "Le nom du client est obligatoire."
+        );
         return;
       }
       setClientSaving(true);
@@ -22390,6 +22534,8 @@
       formData.append("email", newClient.email);
       formData.append("phone", newClient.phone);
       formData.append("address", newClient.address);
+      formData.append("postal_code", newClient.postal_code);
+      formData.append("city", newClient.city);
       try {
         const response = await fetch(
           "/public/index.php?route=/dashboard/clients/store-json",
@@ -22416,7 +22562,9 @@
           name: "",
           email: "",
           phone: "",
-          address: ""
+          address: "",
+          postal_code: "",
+          city: ""
         });
         setClientModalOpen(false);
       } catch (error) {
@@ -22437,7 +22585,7 @@
       name: "client_id",
       value: clientId,
       onChange: (event) => setClientId(event.target.value),
-      className: "mt-4 w-full rounded-xl border border-black/20 px-4 py-3"
+      className: "\n                        mt-4 w-full\n                        rounded-xl\n                        border border-black/20\n                        px-4 py-3\n                    "
     }, /* @__PURE__ */ import_react7.default.createElement("option", {
       value: ""
     }, "Client non renseign\xE9"), clientOptions.map((client) => /* @__PURE__ */ import_react7.default.createElement("option", {
@@ -22461,51 +22609,64 @@
     }, "Produits"), /* @__PURE__ */ import_react7.default.createElement("button", {
       type: "button",
       onClick: () => setProductModalOpen(true),
-      className: "rounded-full bg-black px-4 py-2 font-bold text-white"
+      className: "\n                            rounded-full\n                            bg-black\n                            px-4 py-2\n                            font-bold text-white\n                        "
     }, "+ Ajouter un produit")), items.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("p", {
       className: "mt-6 text-neutral-500"
     }, "Aucun produit ajout\xE9.") : /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "mt-6 space-y-3"
-    }, items.map((item, index) => /* @__PURE__ */ import_react7.default.createElement("div", {
-      key: item.product_id,
-      className: "\n                                    flex flex-wrap items-center\n                                    justify-between gap-4\n                                    rounded-2xl\n                                    bg-neutral-100\n                                    p-4\n                                "
-    }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "font-bold"
-    }, item.name), /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "text-sm text-neutral-500"
-    }, item.price.toFixed(2), " \u20AC HT", " \xB7 ", "TVA ", item.vat_rate, " %")), /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "flex items-center gap-3"
-    }, /* @__PURE__ */ import_react7.default.createElement("input", {
-      type: "number",
-      min: "0.01",
-      max: item.stock,
-      step: "0.01",
-      value: item.quantity,
-      onChange: (event) => updateQuantity(
-        item.product_id,
-        event.target.value
-      ),
-      className: "w-24 rounded-xl border border-black/20 px-3 py-2"
-    }), /* @__PURE__ */ import_react7.default.createElement("button", {
-      type: "button",
-      onClick: () => removeItem(item.product_id),
-      className: "font-bold text-red-600"
-    }, "Supprimer")), /* @__PURE__ */ import_react7.default.createElement("input", {
-      type: "hidden",
-      name: `items[${index}][product_id]`,
-      value: item.product_id
-    }), /* @__PURE__ */ import_react7.default.createElement("input", {
-      type: "hidden",
-      name: `items[${index}][quantity]`,
-      value: item.quantity
-    })))), /* @__PURE__ */ import_react7.default.createElement("div", {
+    }, items.map((item, index) => {
+      const quantityForPrice = item.sale_type === "poids" ? Number(item.quantity) / gramsPerKilogramValue : Number(item.quantity);
+      const lineHt = Number(item.price) * quantityForPrice;
+      const lineVat = lineHt * (Number(item.vat_rate) / 100);
+      const lineTtc = lineHt + lineVat;
+      const quantityStep = item.sale_type === "poids" ? weightStepValue : 1;
+      return /* @__PURE__ */ import_react7.default.createElement("div", {
+        key: item.product_id,
+        className: "\n                                        rounded-2xl\n                                        bg-green-100\n                                        p-4\n                                    "
+      }, /* @__PURE__ */ import_react7.default.createElement("div", {
+        className: "\n                                            flex flex-wrap\n                                            items-center\n                                            justify-between\n                                            gap-4\n                                        "
+      }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("div", {
+        className: "font-bold"
+      }, item.name), /* @__PURE__ */ import_react7.default.createElement("div", {
+        className: "\n                                                    mt-1\n                                                    text-sm\n                                                    text-neutral-500\n                                                "
+      }, item.price.toFixed(2), " \u20AC HT", item.sale_type === "poids" ? " / kg" : " / unit\xE9", " \xB7 TVA ", item.vat_rate, " %"), /* @__PURE__ */ import_react7.default.createElement("div", {
+        className: "\n                                                    mt-1\n                                                    text-sm\n                                                    text-neutral-600\n                                                "
+      }, item.quantity, item.sale_type === "poids" ? " g" : " unit\xE9(s)", " \xB7 HT ", lineHt.toFixed(2), " \u20AC", " \xB7 TVA ", lineVat.toFixed(2), " \u20AC", " \xB7 TTC ", lineTtc.toFixed(2), " \u20AC")), /* @__PURE__ */ import_react7.default.createElement("div", {
+        className: "flex items-center gap-3"
+      }, /* @__PURE__ */ import_react7.default.createElement("input", {
+        type: "number",
+        min: quantityStep,
+        max: item.stock,
+        step: quantityStep,
+        value: item.quantity,
+        onChange: (event) => updateQuantity(
+          item.product_id,
+          event.target.value
+        ),
+        className: "\n                                                    w-28\n                                                    rounded-xl\n                                                    border border-black/20\n                                                    px-3 py-2\n                                                "
+      }), /* @__PURE__ */ import_react7.default.createElement("span", {
+        className: "\n                                                    text-sm\n                                                    font-semibold\n                                                    text-neutral-500\n                                                "
+      }, item.sale_type === "poids" ? "g" : "u."), /* @__PURE__ */ import_react7.default.createElement("button", {
+        type: "button",
+        onClick: () => removeItem(item.product_id),
+        className: "\n                                                    font-bold\n                                                    text-red-600\n                                                "
+      }, "Supprimer"))), /* @__PURE__ */ import_react7.default.createElement("input", {
+        type: "hidden",
+        name: `items[${index}][product_id]`,
+        value: item.product_id
+      }), /* @__PURE__ */ import_react7.default.createElement("input", {
+        type: "hidden",
+        name: `items[${index}][quantity]`,
+        value: item.quantity
+      }));
+    })), /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "mt-8 border-t border-black/10 pt-6"
     }, /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "flex justify-between"
     }, /* @__PURE__ */ import_react7.default.createElement("span", null, "Total HT"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.ht.toFixed(2), " \u20AC")), /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "mt-2 flex justify-between"
     }, /* @__PURE__ */ import_react7.default.createElement("span", null, "TVA"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.vat.toFixed(2), " \u20AC")), /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "mt-4 flex justify-between text-xl"
+      className: "\n                            mt-4 flex\n                            justify-between\n                            border-t border-black/10\n                            pt-4\n                            text-xl\n                        "
     }, /* @__PURE__ */ import_react7.default.createElement("span", {
       className: "font-black"
     }, "Total TTC"), /* @__PURE__ */ import_react7.default.createElement("strong", null, totals.ttc.toFixed(2), " \u20AC")))), /* @__PURE__ */ import_react7.default.createElement("section", {
@@ -22519,8 +22680,10 @@
     }, availablePaymentMethods.map((method) => /* @__PURE__ */ import_react7.default.createElement("label", {
       key: method.value,
       className: `
-                                cursor-pointer rounded-full
-                                border px-4 py-2
+                                cursor-pointer
+                                rounded-full
+                                border
+                                px-4 py-2
                                 font-semibold
                                 ${paymentMethod === method.value ? "border-black bg-black text-white" : "border-black/20"}
                             `
@@ -22537,8 +22700,11 @@
       className: "mt-3 flex gap-3"
     }, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                            cursor-pointer rounded-full
-                            border px-5 py-2 font-bold
+                            cursor-pointer
+                            rounded-full
+                            border
+                            px-5 py-2
+                            font-bold
                             ${paymentReceived ? "border-black bg-black text-white" : "border-black/20"}
                         `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22550,8 +22716,11 @@
       className: "sr-only"
     }), "Oui"), /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                            cursor-pointer rounded-full
-                            border px-5 py-2 font-bold
+                            cursor-pointer
+                            rounded-full
+                            border
+                            px-5 py-2
+                            font-bold
                             ${!paymentReceived ? "border-black bg-black text-white" : "border-black/20"}
                         `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22569,8 +22738,11 @@
       className: "mt-5 flex flex-wrap gap-3"
     }, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                            cursor-pointer rounded-full
-                            border px-5 py-3 font-bold
+                            cursor-pointer
+                            rounded-full
+                            border
+                            px-5 py-3
+                            font-bold
                             ${deliveryMethod === "magasin" ? "border-black bg-black text-white" : "border-black/20"}
                         `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22582,8 +22754,11 @@
       className: "sr-only"
     }), "Retrait magasin"), /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                            cursor-pointer rounded-full
-                            border px-5 py-3 font-bold
+                            cursor-pointer
+                            rounded-full
+                            border
+                            px-5 py-3
+                            font-bold
                             ${deliveryMethod === "livraison" ? "border-black bg-black text-white" : "border-black/20"}
                         `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22599,8 +22774,11 @@
       className: "mt-3 flex gap-3"
     }, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                                    cursor-pointer rounded-full
-                                    border px-5 py-2 font-bold
+                                    cursor-pointer
+                                    rounded-full
+                                    border
+                                    px-5 py-2
+                                    font-bold
                                     ${immediateHandover ? "border-black bg-black text-white" : "border-black/20"}
                                 `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22612,8 +22790,11 @@
       className: "sr-only"
     }), "Oui"), /* @__PURE__ */ import_react7.default.createElement("label", {
       className: `
-                                    cursor-pointer rounded-full
-                                    border px-5 py-2 font-bold
+                                    cursor-pointer
+                                    rounded-full
+                                    border
+                                    px-5 py-2
+                                    font-bold
                                     ${!immediateHandover ? "border-black bg-black text-white" : "border-black/20"}
                                 `
     }, /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22626,45 +22807,63 @@
     }), "Non, retrait plus tard")))), /* @__PURE__ */ import_react7.default.createElement("button", {
       type: "submit",
       disabled: items.length === 0,
-      className: "\n                    w-full rounded-full\n                    bg-black\n                    px-6 py-4\n                    text-lg font-black text-white\n                    disabled:opacity-30\n                "
+      className: "\n                    w-full\n                    rounded-full\n                    bg-black\n                    px-6 py-4\n                    text-lg\n                    font-black\n                    text-white\n                    disabled:opacity-30\n                "
     }, "Enregistrer la vente"), productModalOpen && /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "\n                        fixed inset-0 z-50\n                        flex items-center justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-sm\n                    "
+      className: "\n                        fixed inset-0 z-50\n                        flex items-center\n                        justify-center\n                        bg-black/60\n                        p-4\n                        backdrop-blur-sm\n                    "
     }, /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "w-full max-w-lg rounded-3xl bg-white p-6"
+      className: "\n                            w-full max-w-lg\n                            rounded-3xl\n                            bg-white\n                            p-6\n                        "
     }, /* @__PURE__ */ import_react7.default.createElement("h2", {
       className: "text-xl font-black"
     }, "Ajouter un produit"), /* @__PURE__ */ import_react7.default.createElement("select", {
       value: selectedProductId,
-      onChange: (event) => setSelectedProductId(event.target.value),
-      className: "mt-5 w-full rounded-xl border border-black/20 px-4 py-3"
+      onChange: (event) => {
+        const productId = event.target.value;
+        setSelectedProductId(productId);
+        const product = products.find(
+          (product2) => String(product2.id) === String(productId)
+        );
+        setSelectedQuantity(
+          product ? getMinimumQuantity(product) : 1
+        );
+      },
+      className: "\n                                mt-5 w-full\n                                rounded-xl\n                                border border-black/20\n                                px-4 py-3\n                            "
     }, /* @__PURE__ */ import_react7.default.createElement("option", {
       value: ""
     }, "Choisir un produit"), products.map((product) => /* @__PURE__ */ import_react7.default.createElement("option", {
       key: product.id,
       value: product.id
-    }, product.name, " \u2014 ", Number(product.stock), " en stock"))), /* @__PURE__ */ import_react7.default.createElement("input", {
+    }, product.name, " \u2014 ", Number(product.stock), product.sale_type === "poids" ? " g" : " unit\xE9s", " en stock"))), /* @__PURE__ */ import_react7.default.createElement("input", {
       type: "number",
-      min: "0.01",
-      step: "0.01",
+      min: selectedProduct ? getMinimumQuantity(selectedProduct) : 1,
+      max: selectedProduct ? Number(selectedProduct.stock) : void 0,
+      step: selectedProduct ? getQuantityStep(selectedProduct) : 1,
       value: selectedQuantity,
-      onChange: (event) => setSelectedQuantity(event.target.value),
-      className: "mt-4 w-full rounded-xl border border-black/20 px-4 py-3",
-      placeholder: "Quantit\xE9"
-    }), /* @__PURE__ */ import_react7.default.createElement("div", {
+      onChange: (event) => setSelectedQuantity(
+        event.target.value
+      ),
+      className: "\n                                mt-4 w-full\n                                rounded-xl\n                                border border-black/20\n                                px-4 py-3\n                            ",
+      placeholder: selectedProduct?.sale_type === "poids" ? "Poids en grammes" : "Quantit\xE9"
+    }), selectedProduct && /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "mt-2 text-sm text-neutral-500"
+    }, selectedProduct.sale_type === "poids" ? `Pas de ${weightStepValue} g` : "Vente \xE0 l\u2019unit\xE9"), /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "mt-6 flex justify-end gap-3"
     }, /* @__PURE__ */ import_react7.default.createElement("button", {
       type: "button",
-      onClick: () => setProductModalOpen(false),
-      className: "rounded-full border border-black/20 px-4 py-2 font-bold"
+      onClick: () => {
+        setProductModalOpen(false);
+        setSelectedProductId("");
+        setSelectedQuantity(1);
+      },
+      className: "\n                                    rounded-full\n                                    border border-black/20\n                                    px-4 py-2\n                                    font-bold\n                                "
     }, "Annuler"), /* @__PURE__ */ import_react7.default.createElement("button", {
       type: "button",
       onClick: addProduct,
-      disabled: !selectedProductId,
-      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-4 py-2\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+      disabled: !selectedProduct,
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-4 py-2\n                                    font-bold\n                                    text-white\n                                    disabled:opacity-30\n                                "
     }, "Ajouter")))), clientModalOpen && /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "\n                        fixed inset-0 z-50\n                        flex items-center justify-center\n                        bg-black/60 p-4\n                        backdrop-blur-sm\n                    "
+      className: "\n                        fixed inset-0 z-50\n                        flex items-center\n                        justify-center\n                        bg-black/60\n                        p-4\n                        backdrop-blur-sm\n                    "
     }, /* @__PURE__ */ import_react7.default.createElement("div", {
-      className: "w-full max-w-lg rounded-3xl bg-white p-6"
+      className: "\n                            w-full max-w-lg\n                            rounded-3xl\n                            bg-white\n                            p-6\n                        "
     }, /* @__PURE__ */ import_react7.default.createElement("h2", {
       className: "text-xl font-black"
     }, "Nouveau client"), /* @__PURE__ */ import_react7.default.createElement("div", {
@@ -22678,7 +22877,7 @@
         ...newClient,
         name: event.target.value
       }),
-      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+      className: "\n                                        w-full\n                                        rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
     })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: "mb-1 block text-sm font-bold"
     }, "Email"), /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22688,7 +22887,7 @@
         ...newClient,
         email: event.target.value
       }),
-      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+      className: "\n                                        w-full\n                                        rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
     })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: "mb-1 block text-sm font-bold"
     }, "T\xE9l\xE9phone"), /* @__PURE__ */ import_react7.default.createElement("input", {
@@ -22698,18 +22897,40 @@
         ...newClient,
         phone: event.target.value
       }),
-      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+      className: "\n                                        w-full\n                                        rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
     })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
       className: "mb-1 block text-sm font-bold"
-    }, "Adresse"), /* @__PURE__ */ import_react7.default.createElement("textarea", {
-      rows: "3",
+    }, "Adresse"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "text",
       value: newClient.address,
       onChange: (event) => setNewClient({
         ...newClient,
         address: event.target.value
       }),
-      className: "\n                                        w-full rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
-    })), clientError && /* @__PURE__ */ import_react7.default.createElement("p", {
+      className: "\n                                        w-full\n                                        rounded-xl\n                                        border border-black/20\n                                        px-4 py-3\n                                    "
+    })), /* @__PURE__ */ import_react7.default.createElement("div", {
+      className: "grid gap-4 sm:grid-cols-2"
+    }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Code postal"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "text",
+      value: newClient.postal_code,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        postal_code: event.target.value
+      }),
+      className: "\n                                            w-full\n                                            rounded-xl\n                                            border border-black/20\n                                            px-4 py-3\n                                        "
+    })), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("label", {
+      className: "mb-1 block text-sm font-bold"
+    }, "Ville"), /* @__PURE__ */ import_react7.default.createElement("input", {
+      type: "text",
+      value: newClient.city,
+      onChange: (event) => setNewClient({
+        ...newClient,
+        city: event.target.value
+      }),
+      className: "\n                                            w-full\n                                            rounded-xl\n                                            border border-black/20\n                                            px-4 py-3\n                                        "
+    }))), clientError && /* @__PURE__ */ import_react7.default.createElement("p", {
       className: "text-sm font-semibold text-red-600"
     }, clientError)), /* @__PURE__ */ import_react7.default.createElement("div", {
       className: "mt-6 flex justify-end gap-3"
@@ -22722,7 +22943,7 @@
       type: "button",
       disabled: clientSaving || !newClient.name.trim(),
       onClick: createClient,
-      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-2\n                                    font-bold text-white\n                                    disabled:opacity-30\n                                "
+      className: "\n                                    rounded-full\n                                    bg-black\n                                    px-5 py-2\n                                    font-bold\n                                    text-white\n                                    disabled:opacity-30\n                                "
     }, clientSaving ? "Enregistrement..." : "Cr\xE9er le client")))));
   }
 
@@ -24075,10 +24296,12 @@
   if (productRoot) {
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
+    const weightStep = Number(productRoot.dataset.weightStep);
     (0, import_client.createRoot)(productRoot).render(
       /* @__PURE__ */ import_react12.default.createElement(ProductPage, {
         product,
-        imagesUrl
+        imagesUrl,
+        weightStep
       })
     );
   }
@@ -24103,9 +24326,11 @@
   }
   var cartRoot = document.getElementById("cart-app");
   if (cartRoot) {
+    const weightStep = Number(cartRoot.dataset.weightStep);
     (0, import_client.createRoot)(cartRoot).render(
       /* @__PURE__ */ import_react12.default.createElement(CartPage, {
-        imagesUrl: cartRoot.dataset.imagesUrl
+        imagesUrl: cartRoot.dataset.imagesUrl,
+        weightStep
       })
     );
   }
@@ -24140,10 +24365,18 @@
     const products = JSON.parse(
       dashboardSaleFormRoot.dataset.products || "[]"
     );
+    const weightStep = Number(
+      dashboardSaleFormRoot.dataset.weightStep
+    );
+    const gramsPerKilogram = Number(
+      dashboardSaleFormRoot.dataset.gramsPerKilogram
+    );
     (0, import_client.createRoot)(dashboardSaleFormRoot).render(
       /* @__PURE__ */ import_react12.default.createElement(DashboardSaleForm, {
         clients,
-        products
+        products,
+        weightStep,
+        gramsPerKilogram
       })
     );
   }

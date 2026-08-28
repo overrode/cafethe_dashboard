@@ -18,6 +18,7 @@
             ENT_QUOTES,
             'UTF-8'
         ) ?>"
+        data-weight-step="<?= PRODUCT_WEIGHT_STEP_GRAMS ?>"
     ></div>
 </section>
 

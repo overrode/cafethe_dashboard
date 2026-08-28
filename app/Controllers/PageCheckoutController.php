@@ -333,7 +333,6 @@ class PageCheckoutController extends Controller
             $productsById[(int) $product['id']] = $product;
         }
 
-
         // Build checkout totals.
         $checkoutItems = [];
 
@@ -356,7 +355,6 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-
             // Find trusted product data.
             $product = $productsById[$productId] ?? null;
 
@@ -370,22 +368,25 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-
             // Unit products require whole quantities.
             if (
-                $product['sale_type'] === 'unite'
-                && floor($quantity) !== $quantity
+                $product['sale_type'] === 'poids'
+                && fmod(
+                    $quantity,
+                    (float) PRODUCT_WEIGHT_STEP_GRAMS
+                ) !== 0.0
             ) {
                 if ($strict) {
                     throw new RuntimeException(
-                        'Quantité invalide pour le produit : '
+                        'Poids invalide pour le produit : '
                         . $product['name']
                     );
                 }
 
-                $quantity = floor($quantity);
+                $quantity =
+                    floor($quantity / PRODUCT_WEIGHT_STEP_GRAMS)
+                    * PRODUCT_WEIGHT_STEP_GRAMS;
             }
-
 
             // Check stock.
             $stock = (float) $product['stock'];
@@ -405,15 +406,15 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-
             // Calculate HT, VAT and TTC.
             $unitPrice = (float) $product['price'];
             $vatRate = (float) $product['vat_rate'];
 
-            $lineTotalHt = $unitPrice * $quantity;
+            $quantityForPrice = $product['sale_type'] === 'poids' ? $quantity / GRAMS_PER_KILOGRAM : $quantity;
+
+            $lineTotalHt = $unitPrice * $quantityForPrice;
             $lineTotalVat = $lineTotalHt * ($vatRate / 100);
             $lineTotalTtc = $lineTotalHt + $lineTotalVat;
-
 
             // Add checkout item.
             $checkoutItems[] = [
@@ -429,14 +430,12 @@ class PageCheckoutController extends Controller
             $checkoutTotalTtc += $lineTotalTtc;
         }
 
-
         // Require at least one valid item.
         if (empty($checkoutItems)) {
             throw new RuntimeException(
                 'Aucun produit valide dans le panier.'
             );
         }
-
 
         return [
             'checkout_items' => $checkoutItems,

@@ -7,8 +7,25 @@ import {
     clearCart
 } from '../cart.js';
 
-export default function CartPage({imagesUrl}) {
+export default function CartPage({imagesUrl, weightStep}) {
     const [cart, setCart] = useState(getCart());
+
+    // Calculate TTC price.
+    const getTtcPrice = item => {
+        const priceHt = Number(item.price);
+        const vatRate = Number(item.vat_rate ?? 0);
+
+        return priceHt * (1 + vatRate / 100);
+    };
+
+    // Calculate cart TTC total.
+    const totalTtc = cart.reduce(
+        (sum, item) => (
+            sum
+            + getTtcPrice(item) * Number(item.quantity)
+        ),
+        0
+    );
 
     useEffect(() => {
         const updateCart = () => {
@@ -22,24 +39,66 @@ export default function CartPage({imagesUrl}) {
         };
     }, []);
 
+    // Calculate trusted display totals for one cart line.
+    const getItemTotals = item => {
+        const priceHt = Number(item.price);
+        const vatRate = Number(item.vat_rate ?? 0);
+        const quantity = Number(item.quantity);
+
+        const quantityForPrice =
+            item.sale_type === 'poids'
+                ? quantity / 1000
+                : quantity;
+
+        const unitVat = priceHt * (vatRate / 100);
+        const unitTtc = priceHt + unitVat;
+
+        const lineHt = priceHt * quantityForPrice;
+        const lineVat = lineHt * (vatRate / 100);
+        const lineTtc = lineHt + lineVat;
+
+        return {
+            unitTtc,
+            lineHt,
+            lineVat,
+            lineTtc,
+        };
+    };
+
     const decreaseQuantity = (item) => {
+        const step = item.sale_type === 'poids' ? weightStep : 1;
+
         updateCartQuantity(
             item.id,
-            Number(item.quantity) - 1
+            Number(item.quantity) - step
         );
     };
 
     const increaseQuantity = (item) => {
+        const step = item.sale_type === 'poids' ? weightStep : 1;
+
         updateCartQuantity(
             item.id,
-            Number(item.quantity) + 1
+            Number(item.quantity) + step
         );
     };
 
-    const total = cart.reduce(
-        (sum, item) =>
-            sum + Number(item.price) * Number(item.quantity),
-        0
+    // Calculate complete cart totals.
+    const totals = cart.reduce(
+        (result, item) => {
+            const itemTotals = getItemTotals(item);
+
+            result.ht += itemTotals.lineHt;
+            result.vat += itemTotals.lineVat;
+            result.ttc += itemTotals.lineTtc;
+
+            return result;
+        },
+        {
+            ht: 0,
+            vat: 0,
+            ttc: 0,
+        }
     );
 
     if (cart.length === 0) {
@@ -87,6 +146,8 @@ export default function CartPage({imagesUrl}) {
                         ? item.image.split(';')[0]
                         : 'placeholder.jpg';
 
+                    const itemTotals = getItemTotals(item);
+
                     return (
                         <article
                             key={item.id}
@@ -102,27 +163,56 @@ export default function CartPage({imagesUrl}) {
                                 sm:items-center
                             "
                         >
-                            <img
-                                src={`${imagesUrl}/${mainImage}`}
-                                alt={item.name}
-                                className="
-                                    h-28 w-full
-                                    rounded-2xl
-                                    object-cover
-                                    sm:w-28
-                                "
-                            />
+                            <a
+                                href={`/public/index.php?route=/product&id=${item.id}`}
+                                className="shrink-0"
+                            >
+                                <img
+                                    src={`${imagesUrl}/${mainImage}`}
+                                    alt={item.name}
+                                    className="
+                                        h-28 w-full
+                                        rounded-2xl
+                                        object-cover
+                                        transition
+                                        hover:opacity-80
+                                        sm:w-28
+                                    "
+                                />
+                            </a>
 
                             <div className="min-w-0 flex-1">
                                 <h2 className="text-xl font-bold">
-                                    {item.name}
+                                    <a
+                                        href={`/public/index.php?route=/product&id=${item.id}`}
+                                        className="hover:underline"
+                                    >
+                                        {item.name}
+                                    </a>
                                 </h2>
 
-                                <p className="mt-1 font-semibold text-neutral-600">
-                                    {Number(item.price)
-                                        .toFixed(2)
-                                        .replace('.', ',')} €
-                                </p>
+                                <div className="mt-1">
+                                    <p className="font-semibold text-neutral-700">
+                                        {itemTotals.unitTtc
+                                            .toFixed(2)
+                                            .replace('.', ',')} €
+                                        {item.sale_type === 'poids'
+                                            ? ' / kg TTC'
+                                            : ' TTC'}
+                                    </p>
+
+                                    <p className="text-sm text-neutral-500">
+                                        TVA {Number(item.vat_rate)
+                                            .toFixed(1)
+                                            .replace('.', ',')
+                                            } %
+                                        {' : '}
+                                        {itemTotals.lineVat
+                                            .toFixed(2)
+                                            .replace('.', ',')
+                                        } €
+                                    </p>
+                                </div>
                             </div>
 
                             <div
@@ -137,7 +227,9 @@ export default function CartPage({imagesUrl}) {
                                 <button
                                     type="button"
                                     onClick={() => decreaseQuantity(item)}
-                                    disabled={Number(item.quantity) <= 1}
+                                    disabled={
+                                        Number(item.quantity) <= (item.sale_type === 'poids' ? weightStep : 1)
+                                    }
                                     className="
                                         flex h-9 w-9
                                         items-center justify-center
@@ -152,6 +244,7 @@ export default function CartPage({imagesUrl}) {
 
                                 <span className="min-w-8 text-center font-bold">
                                     {item.quantity}
+                                    {item.sale_type === 'poids' ? ' g' : ''}
                                 </span>
 
                                 <button
@@ -176,12 +269,10 @@ export default function CartPage({imagesUrl}) {
 
                             <div className="min-w-24 text-right">
                                 <strong className="text-lg">
-                                    {(
-                                        Number(item.price) *
-                                        Number(item.quantity)
-                                    )
+                                    {itemTotals.lineTtc
                                         .toFixed(2)
-                                        .replace('.', ',')} €
+                                        .replace('.', ',')
+                                    } €
                                 </strong>
 
                                 <button
@@ -221,27 +312,52 @@ export default function CartPage({imagesUrl}) {
                     <span>Articles</span>
 
                     <strong>
-                        {cart.reduce(
-                            (sum, item) =>
-                                sum + Number(item.quantity),
-                            0
-                        )}
+                        {cart.length}
                     </strong>
                 </div>
 
-                <div
-                    className="
-                        mt-5 flex justify-between
-                        border-t border-black/10
-                        pt-5
-                        text-xl
-                    "
-                >
-                    <span>Total</span>
+                <div className="mt-5 space-y-3 border-t border-black/10 pt-5">
+                    <div className="flex justify-between">
+                        <span className="text-neutral-500">
+                            Total HT
+                        </span>
 
-                    <strong>
-                        {total.toFixed(2).replace('.', ',')} €
-                    </strong>
+                        <strong>
+                            {totals.ht
+                                .toFixed(2)
+                                .replace('.', ',')} €
+                        </strong>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-neutral-500">
+                            TVA
+                        </span>
+
+                        <strong>
+                            {totals.vat
+                                .toFixed(2)
+                                .replace('.', ',')} €
+                        </strong>
+                    </div>
+
+                    <div
+                        className="
+                            flex justify-between
+                            border-t border-black/10
+                            pt-4 text-xl
+                        "
+                    >
+                        <span className="font-bold">
+                            Total TTC
+                        </span>
+
+                        <strong>
+                            {totals.ttc
+                                .toFixed(2)
+                                .replace('.', ',')} €
+                        </strong>
+                    </div>
                 </div>
 
                 <form

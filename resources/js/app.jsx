@@ -34,11 +34,13 @@ const productRoot = document.getElementById('product-app');
 if (productRoot) {
     const product = JSON.parse(productRoot.dataset.product);
     const imagesUrl = productRoot.dataset.imagesUrl;
+    const weightStep = Number(productRoot.dataset.weightStep);
 
     createRoot(productRoot).render(
         <ProductPage
             product={product}
             imagesUrl={imagesUrl}
+            weightStep={weightStep}
         />
     );
 }
@@ -70,9 +72,11 @@ if (cartButtonRoot) {
 
 const cartRoot = document.getElementById('cart-app');
 if (cartRoot) {
+    const weightStep = Number(cartRoot.dataset.weightStep);
     createRoot(cartRoot).render(
         <CartPage
             imagesUrl={cartRoot.dataset.imagesUrl}
+            weightStep={weightStep}
         />
     );
 }
@@ -115,10 +119,19 @@ if (dashboardSaleFormRoot) {
         dashboardSaleFormRoot.dataset.products || '[]'
     );
 
+    const weightStep = Number(
+        dashboardSaleFormRoot.dataset.weightStep
+    );
+
+    const gramsPerKilogram = Number(
+        dashboardSaleFormRoot.dataset.gramsPerKilogram
+    );
     createRoot(dashboardSaleFormRoot).render(
         <DashboardSaleForm
             clients={clients}
             products={products}
+            weightStep={weightStep}
+            gramsPerKilogram={gramsPerKilogram}
         />
     );
 }

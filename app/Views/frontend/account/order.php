@@ -5,6 +5,8 @@ use App\Models\Sale;
 require FRONTEND_HEADER_PATH;
 
 /** @var sale $sale */
+/** @var array $items */
+
 
 $orderLabels = [
     'pending' => 'En attente',
@@ -222,7 +224,7 @@ $paymentMethodLabels = [
                         </th>
 
                         <th class="px-5 py-4 text-right">
-                            Quantité
+                            Quantité / Poids
                         </th>
 
                         <th class="px-5 py-4 text-right">
@@ -319,21 +321,34 @@ $paymentMethodLabels = [
                         </td>
 
                         <td class="px-5 py-4 text-right font-bold">
-                            <?= number_format(
-                                (float) $item['quantity'],
-                                $item['sale_type'] === 'poids' ? 2 : 0,
-                                ',',
-                                ' '
-                            ) ?>
+                            <?php if ($item['sale_type'] === 'poids'): ?>
+                                <?= number_format(
+                                    (float) $item['quantity'],
+                                    0,
+                                    ',',
+                                    ' '
+                                ) ?> g
+                            <?php else: ?>
+                                <?= number_format(
+                                    (float) $item['quantity'],
+                                    0,
+                                    ',',
+                                    ' '
+                                ) ?>
+                            <?php endif; ?>
                         </td>
 
                         <td class="px-5 py-4 text-right">
-                            <?= number_format(
+                             <?= number_format(
                                 (float) $item['unit_price'],
                                 2,
                                 ',',
                                 ' '
                             ) ?> €
+
+                            <?= $item['sale_type'] === 'poids'
+                                ? '/ kg'
+                                : '/ unité' ?>
                         </td>
 
                         <td class="px-5 py-4 text-right">

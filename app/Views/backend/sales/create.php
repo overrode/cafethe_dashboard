@@ -50,6 +50,8 @@ $productsJson = htmlspecialchars(
             id="dashboard-sale-form-app"
             data-clients="<?= $clientsJson ?>"
             data-products="<?= $productsJson ?>"
+            data-weight-step="<?= PRODUCT_WEIGHT_STEP_GRAMS ?>"
+            data-grams-per-kilogram="<?= GRAMS_PER_KILOGRAM ?>"
         ></div>
     </section>
 

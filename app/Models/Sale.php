@@ -306,6 +306,29 @@ class Sale
                     );
                 }
 
+                // Validate quantity according to sale type.
+                if (
+                    $product['sale_type'] === 'unite'
+                    && floor($quantity) !== $quantity
+                ) {
+                    throw new Exception(
+                        'Quantité invalide pour le produit : '
+                        . $product['name']
+                    );
+                }
+
+                if (
+                    $product['sale_type'] === 'poids'
+                    && fmod(
+                        $quantity,
+                        (float) PRODUCT_WEIGHT_STEP_GRAMS
+                    ) !== 0.0
+                ) {
+                    throw new Exception(
+                        'Poids invalide pour le produit : '
+                        . $product['name']
+                    );
+                }
 
                 /*
                  * Check current stock availability.
@@ -356,7 +379,9 @@ class Sale
                 /*
                  * Calculate HT, VAT and TTC for this sale line.
                  */
-                $itemTotalHt = $unitPrice * $quantity;
+                $quantityForPrice =  $product['sale_type'] === 'poids' ? $quantity / GRAMS_PER_KILOGRAM : $quantity;
+
+                $itemTotalHt = $unitPrice * $quantityForPrice;
                 $itemTotalVat = $itemTotalHt * ($vatRate / 100);
                 $itemTotalTtc = $itemTotalHt + $itemTotalVat;
 

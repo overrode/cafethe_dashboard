@@ -29,3 +29,5 @@ define(
     'PRODUCT_IMAGES_URL',
     '/public/assets/images/products'
 );
+define('PRODUCT_WEIGHT_STEP_GRAMS', 10);
+define('GRAMS_PER_KILOGRAM', 1000);

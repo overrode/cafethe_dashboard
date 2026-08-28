@@ -36,6 +36,7 @@ require FRONTEND_HEADER_PATH; ?>
         ENT_QUOTES,
         'UTF-8'
     ) ?>"
+    data-weight-step="<?= PRODUCT_WEIGHT_STEP_GRAMS ?>"
 ></div>
 
 <?php require FRONTEND_FOOTER_PATH; ?>

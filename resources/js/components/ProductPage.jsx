@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {addToCart} from '../cart.js';
 
-export default function ProductPage({product, imagesUrl}) {
+export default function ProductPage({product, imagesUrl, weightStep}) {
     const images = product.image
         ? product.image.split(';').filter(Boolean)
         : [];
@@ -10,17 +10,36 @@ export default function ProductPage({product, imagesUrl}) {
         images[0] ?? 'placeholder.jpg'
     );
 
-    const [quantity, setQuantity] = useState(1);
+    const isWeighted = product.sale_type === 'poids';
+    const quantityStep = isWeighted ? weightStep : 1;
+    const minimumQuantity = isWeighted ? weightStep : 1;
+    const [quantity, setQuantity] = useState(minimumQuantity);
+    const vatRate = Number(product.vat_rate);
+    const priceHt = Number(product.price);
+    const priceTtc = priceHt * (1 + vatRate / 100);
+    // Weighted quantity is stored in grams,
+    // but the product price is per kilogram.
+    const quantityForPrice = isWeighted
+        ? quantity / 1000
+        : quantity;
+    const totalTtc = priceTtc * quantityForPrice;
 
     const decreaseQuantity = () => {
-        setQuantity(current => Math.max(1, current - 1));
+        setQuantity(current =>
+            Math.max(
+                minimumQuantity,
+                current - quantityStep
+            )
+        );
     };
 
     const increaseQuantity = () => {
-        setQuantity(current => Math.min(
-            Number(product.stock),
-            current + 1
-        ));
+        setQuantity(current =>
+            Math.min(
+                Number(product.stock),
+                current + quantityStep
+            )
+        );
     };
 
     const [added, setAdded] = useState(false);
@@ -114,20 +133,37 @@ export default function ProductPage({product, imagesUrl}) {
 
                 <div className="mt-8">
                     <strong className="text-3xl font-black">
-                        {Number(product.price)
+                        {priceTtc
                             .toFixed(2)
                             .replace('.', ',')} €
+                        {isWeighted ? ' / kg TTC' : ' TTC'}
                     </strong>
+
+                    <p className="mt-1 text-sm text-neutral-500">
+                        TVA {vatRate
+                        .toFixed(1)
+                        .replace('.', ',')} %
+                    </p>
                 </div>
 
                 <p className="mt-4 text-sm font-semibold text-neutral-500">
                     Stock : {Number(product.stock)}
+                    {isWeighted ? ' g' : ' unités'}
+
                 </p>
 
                 <div className="mt-auto pt-10">
                     <div className="mt-8">
                         <p className="mb-3 font-semibold">
-                            Quantité
+                            {product.sale_type === 'poids'
+                                ? 'Poids'
+                                : 'Quantité'}
+                        </p>
+
+                        <p className="mb-3 font-semibold">
+                            Total : {totalTtc
+                                .toFixed(2)
+                                .replace('.', ',')} € TTC
                         </p>
 
                         <div
@@ -159,6 +195,7 @@ export default function ProductPage({product, imagesUrl}) {
 
                             <span className="min-w-8 text-center text-xl font-bold">
                                 {quantity}
+                                {isWeighted ? ' g' : ''}
                             </span>
 
                             <button

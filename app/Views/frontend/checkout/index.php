@@ -48,15 +48,17 @@ require FRONTEND_HEADER_PATH;
                     </strong>
 
                     <p class="text-neutral-500">
-                        Quantité :
+                        <?php
+                            $isWeighted = $checkout_item['checkout_product']['sale_type'] === 'poids';
+                        ?>
+                        <?= $isWeighted ? 'Poids' : 'Quantité' ?> :
                         <?= number_format(
-                            (float) $checkout_item['checkout_quantity'],
-                            $checkout_item['checkout_product']['sale_type'] === 'poids'
-                                ? 2
-                                : 0,
-                            ',',
-                            ' '
-                        ) ?>
+                                (float) $checkout_item['checkout_quantity'],
+                                0,
+                                ',',
+                                ' '
+                            ) ?>
+                            <?= $isWeighted ? ' g' : '' ?>
                     </p>
                 </div>
 
