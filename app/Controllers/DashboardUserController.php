@@ -8,6 +8,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\User;
 use Throwable;
+use App\Core\Logger;
 
 /**
  * User Controller Class
@@ -23,14 +24,30 @@ class DashboardUserController extends Controller
     ];
 
     /**
+     * Require administrator access.
+     *
      * @return void
      */
     private function requireAdmin(): void
     {
-        if (!Auth::isAdmin()) {
-            http_response_code(403);
-            exit('Accès refusé');
+        if (Auth::isAdmin()) {
+            return;
         }
+
+        Logger::warning(
+            'Accès administrateur refusé.',
+            [
+                'controller' => self::class,
+                'user_id' => Auth::id(),
+                'route' => $_GET['route'] ?? null,
+            ]
+        );
+
+        http_response_code(403);
+
+        require ROOT_PATH . '/app/Views/errors/403.php';
+
+        exit;
     }
 
     /**
@@ -129,10 +146,9 @@ class DashboardUserController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            // Return database/model errors as JSON.
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -237,9 +253,9 @@ class DashboardUserController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -288,9 +304,9 @@ class DashboardUserController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -307,9 +323,38 @@ class DashboardUserController extends Controller
     {
         http_response_code($status);
 
-        echo json_encode([
+        echo json_encode(
+            [
             'success' => false,
             'error' => $message,
-        ]);
+            ],
+            JSON_UNESCAPED_UNICODE
+        );
+    }
+
+    /**
+     * Handle unexpected JSON errors.
+     *
+     * @param Throwable $exception
+     * @param string $action
+     * @return void
+     */
+    private function jsonException(Throwable $exception, string $action): void
+    {
+        Logger::exception(
+            $exception,
+            [
+                'controller' => self::class,
+                'action' => $action,
+                'user_id' => Auth::id(),
+            ]
+        );
+
+        $this->jsonError(
+            IS_DEVELOPMENT
+                ? $exception->getMessage()
+                : 'Une erreur est survenue.',
+            500
+        );
     }
 }

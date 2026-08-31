@@ -8,6 +8,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\Client;
 use Throwable;
+use App\Core\Logger;
 
 /**
  * Class DashboardClientController
@@ -29,6 +30,7 @@ class DashboardClientController extends Controller
 
     /**
      * @return void
+     * @throws Throwable
      */
     public function storeJson(): void
     {
@@ -46,7 +48,6 @@ class DashboardClientController extends Controller
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $address = trim($_POST['address'] ?? '');
         $favorites = trim($_POST['favorites'] ?? '');
         $abandonedCart = trim($_POST['abandoned_cart'] ?? '');
 
@@ -122,8 +123,20 @@ class DashboardClientController extends Controller
             );
 
         } catch (Throwable $exception) {
+            // Log the real server error.
+            Logger::exception(
+                $exception,
+                [
+                    'controller' => self::class,
+                    'action' => __FUNCTION__,
+                    'user_id' => Auth::id(),
+                ]
+            );
+
             $this->jsonError(
-                $exception->getMessage(),
+                IS_DEVELOPMENT
+                    ? $exception->getMessage()
+                    : 'Une erreur est survenue.',
                 500
             );
         }
@@ -131,6 +144,7 @@ class DashboardClientController extends Controller
 
     /**
      * @return void
+     * @throws Throwable
      */
     public function updateJson(): void
     {
@@ -240,8 +254,20 @@ class DashboardClientController extends Controller
             );
 
         } catch (Throwable $exception) {
+            // Log the real server error.
+            Logger::exception(
+                $exception,
+                [
+                    'controller' => self::class,
+                    'action' => __FUNCTION__,
+                    'user_id' => Auth::id(),
+                ]
+            );
+
             $this->jsonError(
-                $exception->getMessage(),
+                IS_DEVELOPMENT
+                    ? $exception->getMessage()
+                    : 'Une erreur est survenue.',
                 500
             );
         }
@@ -258,9 +284,12 @@ class DashboardClientController extends Controller
     ): void {
         http_response_code($status);
 
-        echo json_encode([
+        echo json_encode(
+            [
             'success' => false,
             'error' => $message,
-        ]);
+            ],
+        JSON_UNESCAPED_UNICODE
+        );
     }
 }

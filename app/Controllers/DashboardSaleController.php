@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Logger;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\Sale;
@@ -104,12 +105,7 @@ class DashboardSaleController extends Controller
      */
     public function store(): void
     {
-        $userId = Auth::id();
-
-        if (!$userId) {
-            header('Location: /public/index.php?route=/login');
-            exit;
-        }
+        $userId = $this->requireUser();
 
         $paymentMethod = $_POST['payment_method'] ?? '';
         $paymentReceived = ($_POST['payment_received'] ?? '') === '1';
@@ -198,9 +194,11 @@ class DashboardSaleController extends Controller
         $saleModel = new Sale();
 
         try {
+            $clientId = (int) ($_POST['client_id'] ?? 0);
+
             $saleModel->create([
                 'user_id' => $userId,
-                'client_id' => $_POST['client_id'] ?? null,
+                'client_id' => $clientId > 0 ? $clientId : null,
 
                 'status' => $status,
                 'payment_status' => $paymentStatus,
@@ -217,8 +215,10 @@ class DashboardSaleController extends Controller
             $_SESSION['success'] = 'Vente enregistrée.';
 
         } catch (Throwable $exception) {
-            $_SESSION['error'] = $exception->getMessage();
-
+            $this->handleException(
+                $exception,
+                __FUNCTION__
+            );
             header('Location: /public/index.php?route=/dashboard/sales/create');
             exit;
         }
@@ -232,12 +232,7 @@ class DashboardSaleController extends Controller
      */
     public function setPaid(): void
     {
-        $userId = Auth::id();
-
-        if (!$userId) {
-            header('Location: /public/index.php?route=/login');
-            exit;
-        }
+        $this->requireUser();
 
         $saleId = (int) ($_POST['sale_id'] ?? 0);
 
@@ -255,7 +250,10 @@ class DashboardSaleController extends Controller
 
             $_SESSION['success'] = 'Paiement confirmé.';
         } catch (Throwable $exception) {
-            $_SESSION['error'] = $exception->getMessage();
+            $this->handleException(
+                $exception,
+                __FUNCTION__
+            );
         }
 
         header('Location: /public/index.php?route=/dashboard/sales');
@@ -267,15 +265,19 @@ class DashboardSaleController extends Controller
      */
     public function setDeliveryStatus(): void
     {
-        $userId = Auth::id();
-
-        if (!$userId) {
-            header('Location: /public/index.php?route=/login');
-            exit;
-        }
+        $this->requireUser();
 
         $saleId = (int) ($_POST['sale_id'] ?? 0);
         $deliveryStatus = $_POST['delivery_status'] ?? '';
+
+        if ($saleId <= 0) {
+            $_SESSION['error'] = 'Vente invalide.';
+
+            header(
+                'Location: /public/index.php?route=/dashboard/sales'
+            );
+            exit;
+        }
 
         $saleModel = new Sale();
 
@@ -287,7 +289,10 @@ class DashboardSaleController extends Controller
 
             $_SESSION['success'] = 'Statut de livraison mis à jour.';
         } catch (Throwable $exception) {
-            $_SESSION['error'] = $exception->getMessage();
+            $this->handleException(
+                $exception,
+                __FUNCTION__
+            );
         }
 
         header('Location: /public/index.php?route=/dashboard/sales');
@@ -299,14 +304,18 @@ class DashboardSaleController extends Controller
      */
     public function setCompleted(): void
     {
-        $userId = Auth::id();
-
-        if (!$userId) {
-            header('Location: /public/index.php?route=/login');
-            exit;
-        }
+        $this->requireUser();
 
         $saleId = (int) ($_POST['sale_id'] ?? 0);
+
+        if ($saleId <= 0) {
+            $_SESSION['error'] = 'Vente invalide.';
+
+            header(
+                'Location: /public/index.php?route=/dashboard/sales'
+            );
+            exit;
+        }
 
         $saleModel = new Sale();
 
@@ -315,7 +324,10 @@ class DashboardSaleController extends Controller
 
             $_SESSION['success'] = 'Vente terminée.';
         } catch (Throwable $exception) {
-            $_SESSION['error'] = $exception->getMessage();
+            $this->handleException(
+                $exception,
+                __FUNCTION__
+            );
         }
 
         header('Location: /public/index.php?route=/dashboard/sales');
@@ -327,14 +339,18 @@ class DashboardSaleController extends Controller
      */
     public function setCancelled(): void
     {
-        $userId = Auth::id();
-
-        if (!$userId) {
-            header('Location: /public/index.php?route=/login');
-            exit;
-        }
+        $this->requireUser();
 
         $saleId = (int) ($_POST['sale_id'] ?? 0);
+
+        if ($saleId <= 0) {
+            $_SESSION['error'] = 'Vente invalide.';
+
+            header(
+                'Location: /public/index.php?route=/dashboard/sales'
+            );
+            exit;
+        }
 
         $saleModel = new Sale();
 
@@ -343,10 +359,55 @@ class DashboardSaleController extends Controller
 
             $_SESSION['success'] = 'Vente annulée.';
         } catch (Throwable $exception) {
-            $_SESSION['error'] = $exception->getMessage();
+            $this->handleException(
+                $exception,
+                __FUNCTION__
+            );
         }
 
         header('Location: /public/index.php?route=/dashboard/sales');
         exit;
+    }
+
+    /**
+     * Handle sale action errors.
+     *
+     * @param Throwable $exception
+     * @param string $action
+     * @return void
+     */
+    private function handleException( Throwable $exception, string $action): void
+    {
+        Logger::exception(
+            $exception,
+            [
+                'controller' => self::class,
+                'action' => $action,
+                'user_id' => Auth::id(),
+            ]
+        );
+
+        $_SESSION['error'] = IS_DEVELOPMENT
+            ? $exception->getMessage()
+            : 'Une erreur est survenue.';
+    }
+
+    /**
+     * Require a dashboard user.
+     *
+     * @return int
+     */
+    private function requireUser(): int
+    {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            header(
+                'Location: /public/index.php?route=/login'
+            );
+            exit;
+        }
+
+        return $userId;
     }
 }

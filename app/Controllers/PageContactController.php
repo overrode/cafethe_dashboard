@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Logger;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+use Throwable;
 
 /**
  * Class PageContactController
@@ -56,6 +58,7 @@ class PageContactController extends Controller
             $errors[] = 'Le message est obligatoire.';
         }
 
+        // Redisplay invalid form.
         if (!empty($errors)) {
             $this->view('frontend/contact/index', [
                 'title' => 'Contact - CafThe',
@@ -67,51 +70,106 @@ class PageContactController extends Controller
             return;
         }
 
-        $config = require __DIR__ . '/../../config/database.php';
-
-        $mail = new PHPMailer(true);
-
         try {
+            $config = require __DIR__ . '/../../config/database.php';
+            $mail = new PHPMailer(true);
+
+            // Configure SMTP.
             $mail->isSMTP();
             $mail->SMTPAuth = true;
             $mail->Host = $config['mail_host'];
             $mail->Username = $config['mail_username'];
             $mail->Password = $config['mail_password'];
             $mail->Port = $config['mail_port'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure =
+                PHPMailer::ENCRYPTION_STARTTLS;
 
             $mail->CharSet = 'UTF-8';
             $mail->Encoding = 'base64';
+            $mail->Timeout = 10;
 
-            $mail->setFrom($config['mail_from'], $config['mail_from_name']);
-            $mail->addAddress($config['mail_to']);
-            $mail->addReplyTo($contactEmail, $contactName);
 
+            // Configure sender and recipient.
+            $mail->setFrom(
+                $config['mail_from'],
+                $config['mail_from_name']
+            );
+
+            $mail->addAddress(
+                $config['mail_to']
+            );
+
+            $mail->addReplyTo(
+                $contactEmail,
+                $contactName
+            );
+
+
+            // Escape visitor content.
+            $safeName = htmlspecialchars(
+                $contactName,
+                ENT_QUOTES,
+                'UTF-8'
+            );
+
+            $safeEmail = htmlspecialchars(
+                $contactEmail,
+                ENT_QUOTES,
+                'UTF-8'
+            );
+
+            $safeMessage = nl2br(
+                htmlspecialchars(
+                    $contactMessage,
+                    ENT_QUOTES,
+                    'UTF-8'
+                )
+            );
+
+
+            // Build the email.
             $mail->isHTML(true);
-            $mail->Subject = 'Nouveau message depuis CafThe';
 
-            $mail->Body ="
-                Nom: {$contactName}<br>
-                Email: {$contactEmail}<br>
-                Message: {$contactMessage}
+            $mail->Subject =
+                'Nouveau message depuis CafThé';
+
+            $mail->Body = "
+                <p><strong>Nom :</strong> {$safeName}</p>
+                <p><strong>Email :</strong> {$safeEmail}</p>
+                <p><strong>Message :</strong><br>{$safeMessage}</p>
             ";
 
-            // Debugging settings
-            $mail->SMTPDebug = SMTP::DEBUG_OFF;
-            $mail->Debugoutput = 'html';
-            $mail->Timeout = 10;
+            $mail->AltBody =
+                "Nom : {$contactName}\n"
+                . "Email : {$contactEmail}\n\n"
+                . "Message :\n{$contactMessage}";
+
 
             $mail->send();
 
-            $_SESSION['contact_success'] = 'Votre message a été envoyé avec succès. Merci de nous avoir contactés.';
 
-            header('Location: /public/index.php?route=/contact');
-            exit;
-        } catch (Exception $e) {
-            $_SESSION['contact_error'] = 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer plus tard.';
+            $_SESSION['contact_success'] =
+                'Votre message a été envoyé avec succès. '
+                . 'Merci de nous avoir contactés.';
+        } catch (Throwable $exception) {
+             // Log the real mail error.
+            Logger::exception(
+                $exception,
+                [
+                    'controller' => self::class,
+                    'action' => __FUNCTION__,
+                    'contact_email' => $contactEmail,
+                ]
+            );
 
-            header('Location: /public/index.php?route=/contact');
-            exit;
+            $_SESSION['contact_error'] =
+                'Une erreur est survenue lors de l\'envoi du message. '
+                . 'Veuillez réessayer plus tard.';
         }
+        header(
+            'Location: /public/index.php?route=/contact'
+        );
+
+        exit;
     }
 }

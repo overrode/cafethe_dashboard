@@ -3,7 +3,34 @@
 declare(strict_types=1);
 
 session_start();
+// Constants/config first.
+require_once dirname(__DIR__) . '/config/defines.php';
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+// Your autoloader must be registered BEFORE using ErrorHandler.
+spl_autoload_register(function (string $class): void {
+    $prefix = 'App\\';
+    $baseDir = dirname(__DIR__) . '/app/';
+
+    if (!str_starts_with($class, $prefix)) {
+        return;
+    }
+
+    $relativeClass = substr(
+        $class,
+        strlen($prefix)
+    );
+
+    $file = $baseDir
+        . str_replace('\\', '/', $relativeClass)
+        . '.php';
+
+    if (file_exists($file)) {
+        require_once $file;
+    }
+});
+
+
 require_once __DIR__ . '/../config/defines.php';
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Core/Router.php';
@@ -44,7 +71,21 @@ use App\Controllers\PageCartController;
 use App\Controllers\PageCheckoutController;
 use App\Controllers\PageClientAuthController;
 use App\Controllers\PageClientController;
+use App\Core\ErrorHandler;
 
+// PHP error display.
+if (IS_DEVELOPMENT) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '0');
+}
+
+// Register global error handling.
+ErrorHandler::register();
+
+// Router/controllers
 $router = new Router();
 
 /*

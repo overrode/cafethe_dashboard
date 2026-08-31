@@ -31,3 +31,16 @@ define(
 );
 define('PRODUCT_WEIGHT_STEP_GRAMS', 10);
 define('GRAMS_PER_KILOGRAM', 1000);
+define('APP_MODE_DEVELOPMENT', 'development');
+define('APP_MODE_PRODUCTION', 'production');
+
+define('APP_MODE', APP_MODE_DEVELOPMENT);
+define(
+    'IS_DEVELOPMENT',
+    APP_MODE === APP_MODE_DEVELOPMENT
+);
+
+define(
+    'IS_PRODUCTION',
+    APP_MODE === APP_MODE_PRODUCTION
+);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -6,6 +7,7 @@ use App\Core\Controller;
 use App\Models\Product;
 use App\Models\Client;
 use App\Models\Sale;
+use JsonException;
 use RuntimeException;
 use Throwable;
 
@@ -14,10 +16,22 @@ use Throwable;
  */
 class PageCheckoutController extends Controller
 {
+    private const PAYMENT_METHODS = [
+        'cb',
+        'virement',
+        'especes',
+        'cheque',
+    ];
+
+    private const DELIVERY_METHODS = [
+        'livraison',
+        'magasin',
+    ];
 
     /**
      * Displays the checkout page.
      * @return void
+     * @throws JsonException
      */
     public function index(): void
     {
@@ -28,19 +42,24 @@ class PageCheckoutController extends Controller
         );
 
         if (!is_array($items) || empty($items)) {
-            header('Location: /public/index.php?route=/cart');
+            header(
+                'Location: /public/index.php?route=/cart'
+            );
             exit;
         }
 
         // Rebuild checkout from database data.
         try {
             $checkout = $this->buildCheckout($items);
-        } catch (RuntimeException $exception) {
-            header('Location: /public/index.php?route=/cart');
+        } catch (RuntimeException) {
+            header(
+                'Location: /public/index.php?route=/cart'
+            );
             exit;
         }
 
-        // Load the logged-in client when available.
+
+        // Load logged-in client.
         $client = null;
 
         if (isset($_SESSION['client']['id'])) {
@@ -55,11 +74,13 @@ class PageCheckoutController extends Controller
                 || (int) $client['is_active'] !== 1
             ) {
                 unset($_SESSION['client']);
+
                 $client = null;
             }
         }
 
-        // Client is null for guest checkout.
+
+        // Null means guest checkout.
         $checkout['client'] = $client;
 
         $this->view(
@@ -70,50 +91,70 @@ class PageCheckoutController extends Controller
 
     /**
      * Confirms the checkout process and displays the checkout summary.
+     *
      * @return void
      * @throws Throwable
      */
     public function confirm(): void
     {
-        $paymentMethod = $_POST['payment_method'] ?? '';
-        $deliveryMethod = $_POST['delivery_method'] ?? '';
+        $paymentMethod =
+            $_POST['payment_method'] ?? '';
 
-        $address = trim($_POST['address'] ?? '');
-        $postalCode = trim($_POST['postal_code'] ?? '');
-        $city = trim($_POST['city'] ?? '');
+        $deliveryMethod =
+            $_POST['delivery_method'] ?? '';
+
+        $address =
+            trim($_POST['address'] ?? '');
+
+        $postalCode =
+            trim($_POST['postal_code'] ?? '');
+
+        $city =
+            trim($_POST['city'] ?? '');
 
         $items = json_decode(
             $_POST['items'] ?? '[]',
             true
         );
 
+
         // Validate cart.
         if (!is_array($items) || empty($items)) {
-            throw new RuntimeException('Panier invalide.');
+            throw new RuntimeException(
+                'Panier invalide.'
+            );
         }
 
-        $allowedPaymentMethods = [
-            'cb',
-            'virement',
-            'especes',
-            'cheque',
-        ];
 
-        $allowedDeliveryMethods = [
-            'livraison',
-            'magasin',
-        ];
-
-        // Validate payment and delivery.
-        if (!in_array($paymentMethod, $allowedPaymentMethods, true)) {
-            throw new RuntimeException('Mode de paiement invalide.');
+        // Validate payment method.
+        if (
+            !in_array(
+                $paymentMethod,
+                self::PAYMENT_METHODS,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Mode de paiement invalide.'
+            );
         }
 
-        if (!in_array($deliveryMethod, $allowedDeliveryMethods, true)) {
-            throw new RuntimeException('Mode de livraison invalide.');
+
+        // Validate delivery method.
+        if (
+            !in_array(
+                $deliveryMethod,
+                self::DELIVERY_METHODS,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Mode de livraison invalide.'
+            );
         }
 
-        // A delivery address is required only for home delivery.
+
+        // Delivery requires an address.
         if (
             $deliveryMethod === 'livraison'
             && (
@@ -127,7 +168,8 @@ class PageCheckoutController extends Controller
             );
         }
 
-        // Cash and cheque are available only for store pickup.
+
+        // Cash and cheque require store pickup.
         if (
             $deliveryMethod === 'livraison'
             && in_array(
@@ -141,7 +183,8 @@ class PageCheckoutController extends Controller
             );
         }
 
-        // Build the delivery address snapshot.
+
+        // Build delivery snapshot.
         $deliveryAddress = null;
 
         if ($deliveryMethod === 'livraison') {
@@ -152,23 +195,15 @@ class PageCheckoutController extends Controller
             ];
         }
 
-        // Rebuild and validate the checkout from trusted database data.
-        // Product data it's loaded again from MySQL.
-        try {
-            $checkout = $this->buildCheckout(
-                $items,
-                strict: true
-            );
-        } catch (\RuntimeException $exception) {
-            die(
-            htmlspecialchars(
-                $exception->getMessage(),
-                ENT_QUOTES,
-                'UTF-8'
-            )
-            );
-        }
 
+        // Validate trusted product data again.
+        $this->buildCheckout(
+            $items,
+            strict: true
+        );
+
+
+        // Resolve the client.
         $clientModel = new Client();
         $clientId = null;
 
@@ -177,7 +212,6 @@ class PageCheckoutController extends Controller
                 (int) $_SESSION['client']['id']
             );
 
-            // Validate authenticated client.
             if (
                 !$client
                 || (int) $client['is_active'] !== 1
@@ -192,12 +226,19 @@ class PageCheckoutController extends Controller
 
             $clientId = (int) $client['id'];
 
-            // GUEST CLIENT
         } else {
-            $firstname = trim($_POST['firstname'] ?? '');
-            $lastname = trim($_POST['lastname'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
+            $firstname =
+                trim($_POST['firstname'] ?? '');
+
+            $lastname =
+                trim($_POST['lastname'] ?? '');
+
+            $email =
+                trim($_POST['email'] ?? '');
+
+            $phone =
+                trim($_POST['phone'] ?? '');
+
 
             // Validate guest identity.
             if (
@@ -210,17 +251,25 @@ class PageCheckoutController extends Controller
                 );
             }
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (
+                !filter_var(
+                    $email,
+                    FILTER_VALIDATE_EMAIL
+                )
+            ) {
                 throw new RuntimeException(
                     'Adresse e-mail invalide.'
                 );
             }
 
-            $client = $clientModel->findByEmail($email);
 
+            $client = $clientModel->findByEmail(
+                $email
+            );
+
+
+            // Existing account must authenticate.
             if ($client) {
-
-                // Existing online account must authenticate.
                 if (!empty($client['password'])) {
                     throw new RuntimeException(
                         'Un compte existe déjà avec cette adresse e-mail. '
@@ -228,11 +277,10 @@ class PageCheckoutController extends Controller
                     );
                 }
 
-                $clientId = (int) $client['id'];
+                $clientId = (int)$client['id'];
 
             } else {
-
-                // Create a website client without an account password.
+                // Create guest website client.
                 $clientId = $clientModel->create([
                     'name' => $firstname . ' ' . $lastname,
                     'email' => $email,
@@ -244,38 +292,31 @@ class PageCheckoutController extends Controller
             }
         }
 
-        // Create a WEBSITE order.
+        // Create website order.
         $saleModel = new Sale();
-        try {
-            $saleId = $saleModel->create([
-                'user_id' => null,
-                'client_id' => $clientId,
 
-                'items' => $items,
+        $saleId = $saleModel->create([
+            'user_id' => null,
+            'client_id' => $clientId,
 
-                'delivery_method' => $deliveryMethod,
-                'delivery_address' => $deliveryAddress,
-                'payment_method' => $paymentMethod,
+            'items' => $items,
 
-                'source' => 'website',
+            'delivery_method' => $deliveryMethod,
+            'delivery_address' => $deliveryAddress,
+            'payment_method' => $paymentMethod,
 
-                'status' => 'pending',
-                'payment_status' => 'pending',
-                'delivery_status' => 'pending',
-            ]);
+            'source' => 'website',
 
-            // Save sale ID in session to validate the success page access.
-            // The success page uses this to prevent somebody from simply changing the sale_id in the URL.
-            $_SESSION['checkout_sale_id'] = $saleId;
+            'status' => 'pending',
+            'payment_status' => 'pending',
+            'delivery_status' => 'pending',
+        ]);
 
-        } catch (Throwable $exception) {
-            throw new RuntimeException(
-                $exception->getMessage()
-            );
-        }
 
-        // Redirect only after the sale transaction was successfully committed.
-        // The React success component will clear localStorage afterwards.
+        // Protect success page access.
+        $_SESSION['checkout_sale_id'] = $saleId;
+
+
         header(
             'Location: /public/index.php?route=/checkout/success&sale_id='
             . $saleId
@@ -285,31 +326,30 @@ class PageCheckoutController extends Controller
     }
 
     /**
-     * Processes a list of items to build a checkout summary, including item details and total cost.
-     *
-     * @param array $items The list of items to process. Each item should include a 'product_id' and 'quantity'.
-     * @param bool $strict Whether to enforce strict validation for product availability and stock.
-     *
-     * @return array An array containing:
-     *               - 'checkout_items' (array): A list of valid items including product details, quantities, and line totals.
-     *               - 'checkout_total' (float): The total cost of the items in the checkout.
-     *
-     * @throws RuntimeException If the cart is invalid, has no valid products, or fails strict validation checks.
+     * @param array $items
+     * @param bool $strict
+     * @return array
      */
     private function buildCheckout( array $items, bool $strict = false ): array
     {
-    // Collect product IDs.
         $productIds = [];
 
+
+        // Collect product IDs.
         foreach ($items as $item) {
-            $productId = (int) ($item['product_id'] ?? 0);
+            $productId =
+                (int) ($item['product_id'] ?? 0);
 
             if ($productId > 0) {
                 $productIds[] = $productId;
             }
         }
 
-        $productIds = array_unique($productIds);
+
+        // Remove duplicates and reset keys.
+        $productIds = array_values(
+            array_unique($productIds)
+        );
 
         if (empty($productIds)) {
             throw new RuntimeException(
@@ -321,19 +361,22 @@ class PageCheckoutController extends Controller
         // Load products in one query.
         $productModel = new Product();
 
-        $products = $productModel->getActiveProductsByIds(
-            $productIds
-        );
+        $products =
+            $productModel->getActiveProductsByIds(
+                $productIds
+            );
 
 
         // Index products by ID.
         $productsById = [];
 
         foreach ($products as $product) {
-            $productsById[(int) $product['id']] = $product;
+            $productsById[
+                (int) $product['id']
+            ] = $product;
         }
 
-        // Build checkout totals.
+
         $checkoutItems = [];
 
         $checkoutTotalHt = 0.0;
@@ -342,10 +385,18 @@ class PageCheckoutController extends Controller
 
 
         foreach ($items as $item) {
-            $productId = (int) ($item['product_id'] ?? 0);
-            $quantity = (float) ($item['quantity'] ?? 0);
+            $productId =
+                (int) ($item['product_id'] ?? 0);
 
-            if ($productId <= 0 || $quantity <= 0) {
+            $quantity =
+                (float) ($item['quantity'] ?? 0);
+
+
+            // Validate basic item data.
+            if (
+                $productId <= 0
+                || $quantity <= 0
+            ) {
                 if ($strict) {
                     throw new RuntimeException(
                         'Produit ou quantité invalide.'
@@ -355,8 +406,11 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-            // Find trusted product data.
-            $product = $productsById[$productId] ?? null;
+
+            // Use trusted product data.
+            $product =
+                $productsById[$productId]
+                ?? null;
 
             if (!$product) {
                 if ($strict) {
@@ -368,7 +422,24 @@ class PageCheckoutController extends Controller
                 continue;
             }
 
-            // Unit products require whole quantities.
+
+            // Unit products require integers.
+            if (
+                $product['sale_type'] === 'unite'
+                && floor($quantity) !== $quantity
+            ) {
+                if ($strict) {
+                    throw new RuntimeException(
+                        'Quantité invalide pour le produit : '
+                        . $product['name']
+                    );
+                }
+
+                $quantity = floor($quantity);
+            }
+
+
+            // Weighted products use configured steps.
             if (
                 $product['sale_type'] === 'poids'
                 && fmod(
@@ -384,12 +455,17 @@ class PageCheckoutController extends Controller
                 }
 
                 $quantity =
-                    floor($quantity / PRODUCT_WEIGHT_STEP_GRAMS)
+                    floor(
+                        $quantity
+                        / PRODUCT_WEIGHT_STEP_GRAMS
+                    )
                     * PRODUCT_WEIGHT_STEP_GRAMS;
             }
 
-            // Check stock.
-            $stock = (float) $product['stock'];
+
+            // Check current stock.
+            $stock =
+                (float) $product['stock'];
 
             if ($quantity > $stock) {
                 if ($strict) {
@@ -399,24 +475,51 @@ class PageCheckoutController extends Controller
                     );
                 }
 
-                $quantity = $stock;
+                if (
+                    $product['sale_type']
+                    === 'poids'
+                ) {
+                    $quantity =
+                        floor(
+                            $stock
+                            / PRODUCT_WEIGHT_STEP_GRAMS
+                        )
+                        * PRODUCT_WEIGHT_STEP_GRAMS;
+                } else {
+                    $quantity = floor($stock);
+                }
             }
 
             if ($quantity <= 0) {
                 continue;
             }
 
+
             // Calculate HT, VAT and TTC.
-            $unitPrice = (float) $product['price'];
-            $vatRate = (float) $product['vat_rate'];
+            $unitPrice =
+                (float) $product['price'];
 
-            $quantityForPrice = $product['sale_type'] === 'poids' ? $quantity / GRAMS_PER_KILOGRAM : $quantity;
+            $vatRate =
+                (float) $product['vat_rate'];
 
-            $lineTotalHt = $unitPrice * $quantityForPrice;
-            $lineTotalVat = $lineTotalHt * ($vatRate / 100);
-            $lineTotalTtc = $lineTotalHt + $lineTotalVat;
+            $quantityForPrice =
+                $product['sale_type'] === 'poids'
+                    ? $quantity / GRAMS_PER_KILOGRAM
+                    : $quantity;
 
-            // Add checkout item.
+            $lineTotalHt =
+                $unitPrice * $quantityForPrice;
+
+            $lineTotalVat =
+                $lineTotalHt
+                * ($vatRate / 100);
+
+            $lineTotalTtc =
+                $lineTotalHt
+                + $lineTotalVat;
+
+
+            // Add checkout line.
             $checkoutItems[] = [
                 'checkout_product' => $product,
                 'checkout_quantity' => $quantity,
@@ -430,12 +533,13 @@ class PageCheckoutController extends Controller
             $checkoutTotalTtc += $lineTotalTtc;
         }
 
-        // Require at least one valid item.
+
         if (empty($checkoutItems)) {
             throw new RuntimeException(
                 'Aucun produit valide dans le panier.'
             );
         }
+
 
         return [
             'checkout_items' => $checkoutItems,
@@ -450,29 +554,43 @@ class PageCheckoutController extends Controller
      */
     public function success(): void
     {
-        $saleId = (int)($_GET['sale_id'] ?? 0);
-        $sessionSaleId = (int)($_SESSION['checkout_sale_id'] ?? 0);
+        $saleId = (int) ($_GET['sale_id'] ?? 0);
 
+        $sessionSaleId = (int) ($_SESSION['checkout_sale_id'] ?? 0 );
+
+
+        // Validate success page access.
         if (
             $saleId <= 0
             || $sessionSaleId <= 0
             || $saleId !== $sessionSaleId
         ) {
-            header('Location: /public/index.php?route=/products');
+            header(
+                'Location: /public/index.php?route=/products'
+            );
             exit;
         }
+
 
         $saleModel = new Sale();
 
-        $sale = $saleModel->findById($saleId);
+        $sale = $saleModel->findById(
+            $saleId
+        );
 
         if (!$sale) {
-            header('Location: /public/index.php?route=/products');
+            header(
+                'Location: /public/index.php?route=/products'
+            );
             exit;
         }
 
-        $this->view('frontend/checkout/success', [
-            'sale_id' => $saleId,
-        ]);
+
+        $this->view(
+            'frontend/checkout/success',
+            [
+                'sale_id' => $saleId,
+            ]
+        );
     }
 }

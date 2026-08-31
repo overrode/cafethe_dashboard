@@ -1229,6 +1229,9 @@
   .whitespace-nowrap {
     white-space: nowrap;
   }
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
+  }
   .\!text-white {
     color: var(--color-white) !important;
   }

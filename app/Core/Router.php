@@ -54,7 +54,7 @@ class Router
         // Check if the requested route exists.
         if (!isset($this->routes[$method][$path])) {
             http_response_code(404);
-            echo '404 - Page not found';
+            require ROOT_PATH . '/app/Views/errors/404.php';
             return;
         }
 

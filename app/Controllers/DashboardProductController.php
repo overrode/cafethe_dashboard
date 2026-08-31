@@ -6,10 +6,9 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\Product;
-use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 use App\Core\Auth;
-
+use App\Core\Logger;
 /**
  * Handles product-related operations such as displaying products,
  * rendering creation forms, and storing new product data.
@@ -39,114 +38,6 @@ class DashboardProductController extends Controller
             'products' => $products,
             'categories' => $categories
         ]);
-    }
-
-    /**
-     * @return void
-     */
-    public function create(): void
-    {
-        $productModel = new Product();
-        $categories = $productModel->getCategories();
-
-        $this->view('backend/products/create', [
-            'categories' => $categories,
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    #[NoReturn]
-    public function store(): void
-    {
-        $productModel = new Product();
-
-        $productModel->create([
-            'category_id' => $_POST['category_id'],
-            'sku' => trim($_POST['sku']),
-            'name' => trim($_POST['name']),
-            'description' => trim($_POST['description']),
-            'sale_type' => $_POST['sale_type'],
-            'price' => $_POST['price'],
-            'vat_rate' => $_POST['vat_rate'],
-            'stock' => $_POST['stock'],
-            'image' => trim($_POST['image'] ?? ''),
-            'origin' => trim($_POST['origin'] ?? ''),
-            'is_active' => isset($_POST['is_active']) ? 1 : 0,
-        ]);
-
-        header('Location: /public/index.php?route=/products');
-        exit;
-    }
-
-    /**
-     * @return void
-     */
-    public function edit(): void
-    {
-        $id = (int)($_GET['id'] ?? 0);
-
-        $productModel = new Product();
-        $product = $productModel->find($id);
-        $categories = $productModel->getCategories();
-
-        if (!$product) {
-            echo 'Produit introuvable';
-            return;
-        }
-
-        $this->view('backend/products/edit', [
-            'product' => $product,
-            'categories' => $categories,
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    #[NoReturn]
-    public function update(): void
-    {
-        $id = (int)($_POST['id'] ?? 0);
-
-        $productModel = new Product();
-
-        $productModel->update($id, [
-            'category_id' => $_POST['category_id'],
-            'sku' => trim($_POST['sku']),
-            'name' => trim($_POST['name']),
-            'description' => trim($_POST['description']),
-            'sale_type' => $_POST['sale_type'],
-            'price' => $_POST['price'],
-            'vat_rate' => $_POST['vat_rate'],
-            'stock' => $_POST['stock'],
-            'image' => trim($_POST['image'] ?? ''),
-            'origin' => trim($_POST['origin'] ?? ''),
-            'is_active' => isset($_POST['is_active']) ? 1 : 0,
-        ]);
-
-        header('Location: /public/index.php?route=/products');
-        exit;
-    }
-
-    /**
-     * Marks a product as inactive based on the provided ID and redirects to the products page.
-     *
-     * @return void
-     */
-    #[NoReturn]
-    public function deactivate(): void
-    {
-        $id = (int)($_GET['id'] ?? 0);
-
-        if ($id > 0) {
-            $productModel = new Product();
-            $productModel->deactivate($id);
-        }
-
-        header('Location: /public/index.php?route=/products');
-        exit;
     }
 
     /**
@@ -259,9 +150,9 @@ class DashboardProductController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -389,9 +280,9 @@ class DashboardProductController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -448,9 +339,9 @@ class DashboardProductController extends Controller
             ]);
 
         } catch (Throwable $exception) {
-            $this->jsonError(
-                $exception->getMessage(),
-                500
+            $this->jsonException(
+                $exception,
+                __FUNCTION__
             );
         }
     }
@@ -469,9 +360,62 @@ class DashboardProductController extends Controller
     {
         http_response_code($status);
 
-        echo json_encode([
+        echo json_encode(
+            [
             'success' => false,
             'error' => $message,
-        ]);
+            ],
+            JSON_UNESCAPED_UNICODE
+        );
+    }
+
+    /**
+     * Log unexpected JSON errors.
+     *
+     * @param Throwable $exception
+     * @param string $action
+     * @return void
+     */
+    private function jsonException(
+        Throwable $exception,
+        string $action
+    ): void {
+        Logger::exception(
+            $exception,
+            [
+                'controller' => self::class,
+                'action' => $action,
+                'user_id' => Auth::id(),
+            ]
+        );
+
+        $this->jsonError(
+            IS_DEVELOPMENT
+                ? $exception->getMessage()
+                : 'Une erreur est survenue.',
+            500
+        );
+    }
+
+    /**
+     * Read product form values.
+     *
+     * @return array
+     */
+    private function getProductData(): array
+    {
+        return [
+            'category_id' => (int) ($_POST['category_id'] ?? 0),
+            'sku' => trim($_POST['sku'] ?? ''),
+            'name' => trim($_POST['name'] ?? ''),
+            'description' => trim($_POST['description'] ?? ''),
+            'sale_type' => trim($_POST['sale_type'] ?? ''),
+            'price' => $_POST['price'] ?? '',
+            'vat_rate' => $_POST['vat_rate'] ?? '',
+            'stock' => $_POST['stock'] ?? '',
+            'image' => trim($_POST['image'] ?? ''),
+            'origin' => trim($_POST['origin'] ?? ''),
+            'is_active' => ($_POST['is_active'] ?? '1') === '1',
+        ];
     }
 }

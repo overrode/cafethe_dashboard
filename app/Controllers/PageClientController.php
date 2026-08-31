@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\Client;
 use JetBrains\PhpStorm\NoReturn;
+use JsonException;
 use Throwable;
 use App\Models\Sale;
 
@@ -20,6 +21,7 @@ class PageClientController extends Controller
      * Display the client dashboard.
      *
      * @return void
+     * @throws JsonException
      */
     public function index(): void
     {
@@ -35,6 +37,7 @@ class PageClientController extends Controller
      * Show client personal information.
      *
      * @return void
+     * @throws JsonException
      */
     public function profile(): void
     {
@@ -50,20 +53,39 @@ class PageClientController extends Controller
      * Load the authenticated client.
      *
      * @return array
+     * @throws JsonException
      */
     private function getCurrentClient(): array
     {
-        $clientId = (int) $_SESSION['client']['id'];
+        $clientId = (int) (
+            $_SESSION['client']['id']
+            ?? 0
+        );
+
+        if ($clientId <= 0) {
+            $this->redirect('/');
+        }
+
 
         $clientModel = new Client();
-        $client = $clientModel->find($clientId);
 
-        if (!$client) {
+        $client = $clientModel->find(
+            $clientId
+        );
+
+
+        // Remove invalid or inactive sessions.
+        if (
+            !$client
+            || (int) $client['is_active'] !== 1
+        ) {
             unset($_SESSION['client']);
 
-            header('Location: /public/index.php?route=/');
-            exit;
+            session_regenerate_id(true);
+
+            $this->redirect('/');
         }
+
 
         return $client;
     }
@@ -82,36 +104,44 @@ class PageClientController extends Controller
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
+
         $address = trim($_POST['address'] ?? '');
         $postalCode = trim($_POST['postal_code'] ?? '');
         $city = trim($_POST['city'] ?? '');
 
-        // Validate required fields.
+
+        // Validate profile data.
         if (
             $name === ''
             || $email === ''
-            || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || !filter_var(
+                $email,
+                FILTER_VALIDATE_EMAIL
+            )
         ) {
-            header(
-                'Location: /public/index.php?route=/account/profile&error=1'
+            $this->redirect(
+                '/account/profile&error=1'
             );
-            exit;
         }
+
 
         $clientModel = new Client();
 
-        // Prevent duplicate email addresses.
-        $existingClient = $clientModel->findByEmail($email);
+        $existingClient =
+            $clientModel->findByEmail($email);
 
+
+        // Prevent duplicate emails.
         if (
             $existingClient
-            && (int) $existingClient['id'] !== (int) $client['id']
+            && (int) $existingClient['id']
+                !== (int) $client['id']
         ) {
-            header(
-                'Location: /public/index.php?route=/account/profile&email_exists=1'
+            $this->redirect(
+                '/account/profile&email_exists=1'
             );
-            exit;
         }
+
 
         // Update profile.
         $clientModel->updateProfile(
@@ -128,20 +158,21 @@ class PageClientController extends Controller
             ]
         );
 
-        // Keep session data synchronized.
+
+        // Keep the session synchronized.
         $_SESSION['client']['name'] = $name;
         $_SESSION['client']['email'] = $email;
 
-        header(
-            'Location: /public/index.php?route=/account/profile&updated=1'
+        $this->redirect(
+            '/account/profile&updated=1'
         );
-        exit;
     }
 
     /**
      * Show client orders.
      *
      * @return void
+     * @throws JsonException
      */
     public function showOrders(): void
     {
@@ -153,28 +184,36 @@ class PageClientController extends Controller
             (int) $client['id']
         );
 
-        $this->view('frontend/account/orders', [
-            'client' => $client,
-            'sales' => $sales,
-        ]);
+        $this->view(
+            'frontend/account/orders',
+            [
+                'client' => $client,
+                'sales' => $sales,
+            ]
+        );
     }
 
     /**
      * Show a specific order.
      *
      * @return void
+     * @throws JsonException
      */
     public function showOrder(): void
     {
         $client = $this->getCurrentClient();
+
         $saleId = (int) ($_GET['id'] ?? 0);
 
         if ($saleId <= 0) {
-            header('Location: /public/index.php?route=/account/orders');
-            exit;
+            $this->redirect(
+                '/account/orders'
+            );
         }
 
+
         $saleModel = new Sale();
+
 
         // Load only an order owned by this client.
         $sale = $saleModel->findByIdAndClientId(
@@ -183,24 +222,31 @@ class PageClientController extends Controller
         );
 
         if (!$sale) {
-            header('Location: /public/index.php?route=/account/orders');
-            exit;
+            $this->redirect(
+                '/account/orders'
+            );
         }
 
-        // Load the products from this order.
-        $items = $saleModel->getItemsBySaleId($saleId);
 
-        $this->view('frontend/account/order', [
-            'client' => $client,
-            'sale' => $sale,
-            'items' => $items,
-        ]);
+        $items = $saleModel->getItemsBySaleId(
+            $saleId
+        );
+
+        $this->view(
+            'frontend/account/order',
+            [
+                'client' => $client,
+                'sale' => $sale,
+                'items' => $items,
+            ]
+        );
     }
 
     /**
      * Show client security settings.
      *
      * @return void
+     * @throws JsonException
      */
     public function security(): void
     {
@@ -213,27 +259,34 @@ class PageClientController extends Controller
 
     /**
      * @return void
+     * @throws JsonException
      */
     #[NoReturn]
     public function updatePassword(): void
     {
         $client = $this->getCurrentClient();
 
-        $currentPassword = $_POST['current_password'] ?? '';
-        $newPassword = $_POST['new_password'] ?? '';
-        $confirmation = $_POST['password_confirmation'] ?? '';
+        $currentPassword =
+            $_POST['current_password'] ?? '';
 
-        // Validate required fields.
+        $newPassword =
+            $_POST['new_password'] ?? '';
+
+        $confirmation =
+            $_POST['password_confirmation'] ?? '';
+
+
+        // Require all password fields.
         if (
             $currentPassword === ''
             || $newPassword === ''
             || $confirmation === ''
         ) {
-            header(
-                'Location: /public/index.php?route=/account/security&error=1'
+            $this->redirect(
+                '/account/security&error=1'
             );
-            exit;
         }
+
 
         // Verify current password.
         if (
@@ -243,29 +296,28 @@ class PageClientController extends Controller
                 $client['password']
             )
         ) {
-            header(
-                'Location: /public/index.php?route=/account/security&current_password=1'
+            $this->redirect(
+                '/account/security&current_password=1'
             );
-            exit;
         }
 
-        // Require a reasonable password length.
+
+        // Require at least 8 characters.
         if (strlen($newPassword) < 8) {
-            header(
-                'Location: /public/index.php?route=/account/security&weak_password=1'
+            $this->redirect(
+                '/account/security&weak_password=1'
             );
-            exit;
         }
 
-        // Verify password confirmation.
+
+        // Verify confirmation.
         if ($newPassword !== $confirmation) {
-            header(
-                'Location: /public/index.php?route=/account/security&mismatch=1'
+            $this->redirect(
+                '/account/security&mismatch=1'
             );
-            exit;
         }
 
-        // Save the new password.
+
         $clientModel = new Client();
 
         $clientModel->updatePassword(
@@ -273,53 +325,75 @@ class PageClientController extends Controller
             $newPassword
         );
 
+
         // Renew the authenticated session.
         session_regenerate_id(true);
 
-        header(
-            'Location: /public/index.php?route=/account/security&updated=1'
+        $this->redirect(
+            '/account/security&updated=1'
         );
-        exit;
     }
 
     /**
      * @return void
+     * @throws JsonException
      */
     #[NoReturn]
     public function deactivateAccount(): void
     {
-        $client = $this->getCurrentClient();
+       $client = $this->getCurrentClient();
 
-        $password = $_POST['password'] ?? '';
+        $password =
+            $_POST['password'] ?? '';
 
-        // Confirm the client's password.
+
+        // Verify account password.
         if (
             $password === ''
             || empty($client['password'])
-            || !password_verify($password, $client['password'])
+            || !password_verify(
+                $password,
+                $client['password']
+            )
         ) {
-            header(
-                'Location: /public/index.php?route=/account/security&deactivate_error=1'
+            $this->redirect(
+                '/account/security&deactivate_error=1'
             );
-            exit;
         }
+
 
         $clientModel = new Client();
 
-        // Deactivate the account.
         $clientModel->setActive(
             (int) $client['id'],
             false
         );
+
 
         // End the client session.
         unset($_SESSION['client']);
 
         session_regenerate_id(true);
 
-        header(
-            'Location: /public/index.php?route=/&account_deactivated=1'
+        $this->redirect(
+            '/&account_deactivated=1'
         );
+    }
+
+    /**
+     * Redirect to an application route.
+     *
+     * @param string $route
+     * @return never
+     */
+    private function redirect(
+        string $route
+    ): never {
+        header(
+            'Location: /public/index.php?route='
+            . $route
+        );
+
         exit;
     }
 }
