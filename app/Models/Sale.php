@@ -1166,4 +1166,37 @@ class Sale
 
         return $stmt->fetchAll();
     }
+
+    /**
+     * Get a sale with client and seller information.
+     *
+     * @param int $id
+     * @return array|null
+     */
+    public function findDetailedById(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT
+                sales.*,
+                clients.name AS client_name,
+                clients.email AS client_email,
+                clients.phone AS client_phone,
+                users.name AS user_name
+             FROM sales
+             LEFT JOIN clients
+                ON clients.id = sales.client_id
+             LEFT JOIN users
+                ON users.id = sales.user_id
+             WHERE sales.id = :id
+             LIMIT 1'
+        );
+
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        $sale = $stmt->fetch();
+
+        return $sale ?: null;
+    }
 }

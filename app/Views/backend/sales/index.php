@@ -128,6 +128,18 @@ require BACKEND_HEADER_PATH;
                         <tr class="transition hover:bg-white/40">
                             <td class="px-5 py-4 font-bold">
                                 #<?= (int) $sale['id'] ?>
+                                <a href="/public/index.php?route=/dashboard/sales/sale&id=<?= (int) $sale['id'] ?>"
+                                    className="
+                                        rounded-full
+                                        border border-black/20
+                                        px-3 py-2
+                                        text-sm font-bold
+                                        transition
+                                        hover:bg-black hover:text-white
+                                    "
+                                >
+                                    Voir
+                                </a>
                             </td>
 
                             <td class="whitespace-nowrap px-5 py-4 text-sm text-neutral-600">

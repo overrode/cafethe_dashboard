@@ -124,7 +124,7 @@ $router->post('/dashboard/sales/set-paid', [DashboardSaleController::class, 'set
 $router->post('/dashboard/sales/set-delivery-status', [DashboardSaleController::class, 'setDeliveryStatus']);
 $router->post('/dashboard/sales/set-completed', [DashboardSaleController::class, 'setCompleted']);
 $router->post('/dashboard/sales/set-cancelled', [DashboardSaleController::class, 'setCancelled']);
-
+$router->get('/dashboard/sales/sale', [DashboardSaleController::class, 'sale']);
 
 /*
  * DASHBOARD USERS

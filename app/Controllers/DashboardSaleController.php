@@ -30,6 +30,59 @@ class DashboardSaleController extends Controller
     }
 
     /**
+     * Display one sale.
+     *
+     * @return void
+     */
+    public function sale(): void
+    {
+        $saleId = (int) ($_GET['id'] ?? 0);
+
+        if ($saleId <= 0) {
+            header(
+                'Location: /public/index.php?route=/dashboard/sales'
+            );
+            exit;
+        }
+
+        $saleModel = new Sale();
+
+        $sale = $saleModel->findDetailedById($saleId);
+
+        if (!$sale) {
+            header(
+                'Location: /public/index.php?route=/dashboard/sales'
+            );
+            exit;
+        }
+
+        $items = $saleModel->getItemsBySaleId($saleId);
+
+        // Decode the delivery snapshot.
+        $deliveryAddress = null;
+
+        if (!empty($sale['delivery_address'])) {
+            $decodedAddress = json_decode(
+                $sale['delivery_address'],
+                true
+            );
+
+            if (is_array($decodedAddress)) {
+                $deliveryAddress = $decodedAddress;
+            }
+        }
+
+        $this->view(
+            'backend/sales/sale',
+            [
+                'sale' => $sale,
+                'items' => $items,
+                'deliveryAddress' => $deliveryAddress,
+            ]
+        );
+    }
+
+    /**
      * @return void
      */
     public function create(): void
